@@ -400,6 +400,10 @@ namespace kampfpanzerin {
             Redraw();
         }
 
+        private void AddCamera() {
+            //bars.Contains
+        }
+
         private void pictureBox_Resize(object sender, EventArgs e) {
             Redraw();
         }
@@ -580,6 +584,10 @@ namespace kampfpanzerin {
                 while (s.EndsWith("0") && s.Length > 2)
                     s = s.Substring(0, s.Length - 1);
             return s;
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e) {
+
         }
     }
 }

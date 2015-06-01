@@ -103,6 +103,7 @@
     <Compile Include="AppForm.Designer.cs">
       <DependentUpon>AppForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="CameraEvent.cs" />
     <Compile Include="EyedropColorPicker.cs">
       <SubType>Component</SubType>
     </Compile>

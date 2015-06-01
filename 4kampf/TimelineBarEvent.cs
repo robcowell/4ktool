@@ -8,7 +8,8 @@ namespace kampfpanzerin {
     public enum BarEventType {
         HOLD,
         LERP,
-        SMOOTH
+        SMOOTH,
+        CAMERA
     }
     
     public class TimelineBarEvent : IComparable {

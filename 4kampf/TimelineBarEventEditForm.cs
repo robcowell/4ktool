@@ -14,8 +14,9 @@ namespace kampfpanzerin {
 
             switch (type) {
                 case BarEventType.SMOOTH:   cmbType.SelectedIndex = 0; break;
-                case BarEventType.LERP:     cmbType.SelectedIndex = 1; break;
+                case BarEventType.LERP: cmbType.SelectedIndex = 1; break;
                 case BarEventType.HOLD: cmbType.SelectedIndex = 2; break;
+                case BarEventType.CAMERA: cmbType.SelectedIndex = 3; break;
             }
             numTime.Value = (decimal)time;
             txtValue.Text = value.ToString();
@@ -26,6 +27,10 @@ namespace kampfpanzerin {
             } else {
                 btnSave.Text = "Add";
                 Text = "Add Event";
+            }
+            if (type == BarEventType.CAMERA) {
+                txtValue.Enabled = false;
+                cmbType.Enabled = false;
             }
         }
 
@@ -42,6 +47,7 @@ namespace kampfpanzerin {
                 case 0: return BarEventType.SMOOTH;
                 case 1: return BarEventType.LERP;
                 case 2: return BarEventType.HOLD;
+                case 3: return BarEventType.CAMERA;
             }
             return BarEventType.HOLD;
         }
@@ -52,7 +58,11 @@ namespace kampfpanzerin {
 
         private void txtValue_TextChanged(object sender, EventArgs e) {
             try {
-                float f = float.Parse(txtValue.Text);
+                string text = txtValue.Text;
+                if (text.Length == 0) {
+                    text = "0";
+                }
+                float f = float.Parse(text);
                 int df = (int)(f * 100.0f);
                 if (df < trkValue.Maximum && df > trkValue.Minimum)
                     trkValue.Value = df;

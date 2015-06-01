@@ -59,7 +59,8 @@
             this.cmbType.Items.AddRange(new object[] {
             "Smooth",
             "Linear",
-            "Hold"});
+            "Hold",
+            "Camera"});
             this.cmbType.Location = new System.Drawing.Point(43, 37);
             this.cmbType.Name = "cmbType";
             this.cmbType.Size = new System.Drawing.Size(100, 21);
