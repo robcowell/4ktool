@@ -1,0 +1,300 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BD025CDD-6203-4B5E-B4AF-A905F6A9F05E}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>kampfpanzerin</RootNamespace>
+    <AssemblyName>4kampf</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationIcon>4kampf.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MetroFramework">
+      <HintPath>..\packages\MetroModernUI.1.3.0.0\lib\net\MetroFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="MetroFramework.Design">
+      <HintPath>..\packages\MetroModernUI.1.3.0.0\lib\net\MetroFramework.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="MetroFramework.Fonts">
+      <HintPath>..\packages\MetroModernUI.1.3.0.0\lib\net\MetroFramework.Fonts.dll</HintPath>
+    </Reference>
+    <Reference Include="ScintillaNET">
+      <HintPath>bin\Release\ScintillaNET.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Tao.Externals, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Release\Tao.Externals.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.Platform.Windows, Version=1.0.0.5, Culture=neutral, PublicKeyToken=701104b2da67a104, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Release\Tao.Platform.Windows.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AboutBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutBox.Designer.cs">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AppForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AppForm.Designer.cs">
+      <DependentUpon>AppForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EyedropColorPicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TimelineBarEventEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TimelineBarEventEditForm.Designer.cs">
+      <DependentUpon>TimelineBarEventEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BitmapFont.cs" />
+    <Compile Include="Camera.cs" />
+    <Compile Include="ColorChangedEventArgs.cs" />
+    <Compile Include="ColorChooser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ColorHandler.cs" />
+    <Compile Include="ColorWheel.cs" />
+    <Compile Include="GraphicsManager.cs" />
+    <Compile Include="KlangPlayer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="KlangPlayer.Designer.cs">
+      <DependentUpon>KlangPlayer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MenuColorTable.cs" />
+    <Compile Include="MessageBoxManager.cs" />
+    <Compile Include="Kampfpanzerin.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="TabControlFlat.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TextBoxWithScrollLeft.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TextBoxWithScrollLeft.Designer.cs">
+      <DependentUpon>TextBoxWithScrollLeft.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TimeLine.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TimeLine.Designer.cs">
+      <DependentUpon>TimeLine.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TimelineBar.cs" />
+    <Compile Include="TimelineBarEvent.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="Vector3f.cs" />
+    <Compile Include="VUMeter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="VUMeter.Designer.cs">
+      <DependentUpon>VUMeter.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="AboutBox.resx">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AppForm.resx">
+      <DependentUpon>AppForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TimelineBarEventEditForm.resx">
+      <DependentUpon>TimelineBarEventEditForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorChooser.resx">
+      <DependentUpon>ColorChooser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KlangPlayer.resx">
+      <DependentUpon>KlangPlayer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TimeLine.resx">
+      <DependentUpon>TimeLine.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VUMeter.resx">
+      <DependentUpon>VUMeter.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\DataSources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="AxWMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>aximp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+    <COMReference Include="WMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="4kampf.ico" />
+    <None Include="Resources\Snap.png" />
+    <None Include="Resources\Eyedropper.png" />
+    <None Include="Resources\Beat.png" />
+    <None Include="Resources\Mute.png" />
+    <None Include="Resources\Rewind.png" />
+    <None Include="Resources\Pause.png" />
+    <None Include="Resources\Play.png" />
+    <None Include="Resources\GotoFolder.png" />
+    <None Include="Resources\StandardUniforms.png" />
+    <None Include="Resources\Screenshot.png" />
+    <None Include="Resources\CleanBuild.png" />
+    <None Include="Resources\CleanProject.png" />
+    <None Include="Resources\SyncTracker.png" />
+    <None Include="Resources\Envelopes.png" />
+    <None Include="Resources\LineNumbers.png" />
+    <None Include="Resources\ZoomOut.png" />
+    <None Include="Resources\ZoomIn.png" />
+    <None Include="Resources\Walk.png" />
+    <None Include="Resources\Undo.png" />
+    <None Include="Resources\Slower.png" />
+    <None Include="Resources\Seperator.png" />
+    <None Include="Resources\SaveAll.png" />
+    <None Include="Resources\Run.png" />
+    <None Include="Resources\Remove.png" />
+    <None Include="Resources\Refresh.png" />
+    <None Include="Resources\Redo.png" />
+    <None Include="Resources\Open.png" />
+    <None Include="Resources\New.png" />
+    <None Include="Resources\Loop.png" />
+    <None Include="Resources\Lockfly.png" />
+    <None Include="Resources\Home.png" />
+    <None Include="Resources\Freefly.png" />
+    <None Include="Resources\Find.png" />
+    <None Include="Resources\Faster.png" />
+    <None Include="Resources\ExportProj.png" />
+    <None Include="Resources\ColourHelper.png" />
+    <None Include="Resources\Clear.png" />
+    <None Include="Resources\Camera.png" />
+    <None Include="Resources\BuildProd.png" />
+    <None Include="Resources\BuildAudio.png" />
+    <None Include="Resources\Add.png" />
+    <None Include="Resources\FullScreen.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

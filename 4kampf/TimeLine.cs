@@ -1,0 +1,581 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.IO;
+using System.Globalization;
+
+namespace kampfpanzerin {
+    public partial class TimeLine : UserControl {
+        private Bitmap bmp;
+        private List<TimelineBar> bars = new List<TimelineBar>();
+        private TimelineBarEvent eventUnderEdit = null;
+        private int eventUnderEditBarIndex;
+        private Point dragStart;
+        private static CultureInfo culture = CultureInfo.CreateSpecificCulture("en-GB");
+
+        /*
+        private Color BAR_COL = Color.FromArgb(150, 150, 150);
+        private Color BAR_COL_LABEL = Color.FromArgb(224,224,224);
+        private Color BAR_COL_HIGHLIGHT = Color.FromArgb(224,224,224);
+        private Color BAR_COL_LABEL_HIGHLIGHT = Color.White;
+        */
+        /*
+        private Color BAR_COL = Color.LimeGreen;
+        private Color BAR_COL_LABEL = Color.White;
+        private Color BAR_COL_HIGHLIGHT = Color.Orange;
+        private Color BAR_COL_LABEL_HIGHLIGHT = Color.Orange;
+        */
+        /*
+        private Color BAR_COL = Color.FromArgb((int)(.514 * 255.0), (int)(.651 * 255.0), (int)(.502 * 255.0));
+        private Color BAR_COL_LABEL = Color.White;
+        private Color BAR_COL_HIGHLIGHT = Color.FromArgb((int)(.894 * 255.0), (int)(.745 * 255.0), (int)(.427 * 255.0));
+        private Color BAR_COL_LABEL_HIGHLIGHT = Color.FromArgb((int)(.894 * 255.0), (int)(.745 * 255.0), (int)(.427 * 255.0));
+        */
+        private Color BAR_COL = Color.FromArgb(150, 150, 150);
+        private Color BAR_COL_LABEL = Color.White;
+        //private Color BAR_COL_HIGHLIGHT = Color.FromArgb((int)(.894 * 255.0), (int)(.745 * 255.0), (int)(.427 * 255.0));
+        //private Color BAR_COL_LABEL_HIGHLIGHT = Color.FromArgb((int)(.894 * 255.0), (int)(.745 * 255.0), (int)(.427 * 255.0));
+        private Color BAR_COL_HIGHLIGHT = Color.LimeGreen;
+        private Color BAR_COL_LABEL_HIGHLIGHT = Color.LimeGreen;
+        
+        private const int BAR_LEFT_MARGIN = 50;
+        private const int BAR_HORIZ_MARGIN = 2;
+        private const int WAVEFORM_MARGIN = 6;
+        private const int BOTTOM_CONTROL_MARGIN = 28;
+        
+        private int barHeight = 0;
+        private float timeMax = 100.0f;
+        private float timeStart = 0;
+        private float timeStop = 100.0f;
+        private float timeCurrent = 50.0f;
+
+        public TimeLine() {
+            InitializeComponent();
+            Redraw();
+        }
+
+        public void SetTime(float time) {
+            timeCurrent = time;
+        }
+
+        public void SetMaxTime(float time) {
+            timeMax = time;
+            SetZoomBounds();
+        }
+
+        public bool LoadData(string filename) {
+            eventUnderEdit = null;
+            bars = new List<TimelineBar>();
+
+            if (!File.Exists(filename))
+                return false;
+
+            string s = File.ReadAllText(filename);
+            string[] lines = s.Split(new char[]{'\n'},StringSplitOptions.RemoveEmptyEntries);
+            foreach (string line in lines) {
+                TimelineBar b = new TimelineBar("sn[" + bars.Count + "]");
+                bars.Add(b);
+
+                string[] events = line.Split(new char[]{';'}, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string ev in events) {
+                    string[] evsplit = ev.Split(',');
+                    TimelineBarEvent be = new TimelineBarEvent();
+                    be.time = float.Parse(evsplit[0], culture);
+                    be.value = float.Parse(evsplit[1], culture);
+                    if (evsplit[2] == "FIXEDVAL") be.type = BarEventType.HOLD;
+                    if (evsplit[2] == "LERP") be.type = BarEventType.LERP;
+                    if (evsplit[2] == "SMOOTH") be.type = BarEventType.SMOOTH;
+                    b.events.Add(be);
+                }
+
+                b.Recalc();
+            }
+
+            Redraw();
+
+            return true;
+        }
+
+        public void SaveData(string filename) {
+            string s = "";
+            foreach (TimelineBar b in bars) {
+                foreach (TimelineBarEvent be in b.events)
+                    s += be.time.ToString("0.000000",culture) + "," + be.value.ToString("0.000000",culture) + "," + be.type.ToString() + ";";
+                s += "\n";
+            }
+            File.WriteAllText(filename, s);
+        }
+
+        public void Redraw() {
+            if (timeCurrent < timeStart || timeCurrent > timeStop)
+                SetZoomBounds();
+
+            if (Height == 0)
+                return;
+
+            bmp = new Bitmap(Width, Height);
+            Graphics g = Graphics.FromImage(bmp);
+            Font f = new Font("Lucida Console", 8, FontStyle.Regular);
+            SolidBrush b = new SolidBrush(Color.White);
+            g.Clear(Color.FromArgb(64, 64, 64));
+
+            // Calculate steps
+            float pixWidth = (Width - 6) - BAR_LEFT_MARGIN;
+            float timeRange = timeStop - timeStart;
+            float pixelsPerInterval = pixWidth / timeRange * 0.25f;
+            float secsPerInterval = 0.25f;
+            while (pixelsPerInterval < Width/20.0f) {
+                pixelsPerInterval *= 2.0f;
+                secsPerInterval *= 2.0f;
+            }
+
+            trkZoom.Maximum = (int)timeMax;
+
+            // Render bars, labels, events
+            if (bars.Count > 0) {
+                barHeight = Height - (BAR_HORIZ_MARGIN * 2 + BOTTOM_CONTROL_MARGIN + 20 + BAR_HORIZ_MARGIN*(bars.Count-1));
+                barHeight /= bars.Count;
+                int currY = BAR_HORIZ_MARGIN + barHeight / 2;
+                Pen p = new Pen(Color.Lime, (float)barHeight);
+                foreach (TimelineBar bar in bars) {
+                    //bar.Draw();
+                    if (bar.events.Count > 0) {
+                        // Find start and end for trackbar
+                        int startX = TimeToXCoord(bar.events[0].time, false);
+                        int endX = TimeToXCoord(bar.events[bar.events.Count - 1].time, false);
+
+                        if (startX < BAR_LEFT_MARGIN)
+                            startX = BAR_LEFT_MARGIN;
+
+                        if (endX > Width - 6)
+                            endX = Width - 6;
+
+                        if (startX != endX && endX > BAR_LEFT_MARGIN && startX < Width - 6) {
+                            if (bar.selected)
+                                p.Color = BAR_COL_HIGHLIGHT;
+                            else
+                                p.Color = BAR_COL;
+
+                            // Main track box
+                            g.DrawLine(p, startX, currY, endX, currY);
+                            //g.DrawRectangle(p, new Rectangle(BAR_LEFT_MARGIN, currY - BAR_HEIGHT / 2, Width - (BAR_LEFT_MARGIN + 6), BAR_HEIGHT));
+                        }
+                    }
+
+                    // Bar label
+                    if (bar.selected)
+                        b.Color = BAR_COL_LABEL_HIGHLIGHT;
+                    else
+                        b.Color = BAR_COL_LABEL;
+                    
+                    if (barHeight >= 10)
+                        g.DrawString(bar.name, f, b, 2, currY - barHeight / 2);
+                    if (barHeight >= 20) {
+                        float val = bar.GetValueAtTime(timeCurrent);
+                        if (val != -666666.0) {
+                            b.Color = Color.FromArgb(128, 128, 128);
+                            g.DrawString(val.ToString("0.000"), f, b, 2, currY - barHeight / 2 + 12);
+                        }
+                    }
+
+                    // Events
+                    foreach (TimelineBarEvent be in bar.events) {
+                        int xCoord = TimeToXCoord(be.time);
+                        if (xCoord != -1) {
+                            Color c = Color.FromArgb(64,64,64);
+                            if (bar.events.Count == 1)
+                                c = Color.White;
+                            be.Draw(g, xCoord, currY, barHeight, c);
+                        }
+                    }
+
+                    // Waveform
+                    if (barHeight > 10 && bar.events.Count > 0) {
+                        float wavRange = Math.Abs(bar.maxVal - bar.minVal);
+                        float pixWavConv = 0;
+                        if (wavRange > 0)
+                            pixWavConv = (barHeight - WAVEFORM_MARGIN * 2) / wavRange;
+                        b.Color = Color.FromArgb(32,32,32);
+                        for (int wavX = BAR_LEFT_MARGIN; wavX < Width - 6; wavX++) {
+                            float currVal = bar.GetValueAtTime(XCoordToTime(wavX)); 
+                            if (currVal != -666666.0) {
+                                if (wavRange > 0) {    
+                                    int wavY = (int)(currY + barHeight / 2 - (currVal * pixWavConv + WAVEFORM_MARGIN));
+                                    wavY += (int)(bar.minVal * pixWavConv);
+                                    g.FillRectangle(b, wavX, wavY, 1, 1);
+                                } else
+                                    g.FillRectangle(b, wavX, currY, 1, 1);
+                            }   
+                        }
+                    }
+
+                    currY += barHeight + BAR_HORIZ_MARGIN;
+                }
+            }
+
+            // Render ticks
+            int timeY = Height - (BOTTOM_CONTROL_MARGIN + 10); 
+            Pen pt = new Pen(Color.FromArgb(64, 32, 32, 32), 1.0f);
+            pt.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+            b.Color = Color.White;
+            g.DrawString("Time", f, b, 2, timeY - 2);
+            float currentTimePos = timeStart;
+            f = new Font("Lucida Console", 6, FontStyle.Regular);
+            for (float x = BAR_LEFT_MARGIN; x < Width - 6; x += pixelsPerInterval) {
+                g.DrawLine(pt, x, timeY, x, BAR_HORIZ_MARGIN);
+                g.DrawString(currentTimePos.ToString(), f, b, x - 4, timeY);
+                currentTimePos += secsPerInterval;
+            }
+
+            // Render current time marker
+            int xPos = TimeToXCoord(timeCurrent);
+            if (xPos != -1) {
+                pt = new Pen(Color.Lime, 1.0f);
+                b.Color = Color.LimeGreen; 
+                g.DrawLine(pt, xPos, BAR_HORIZ_MARGIN, xPos, Height - BOTTOM_CONTROL_MARGIN);
+                g.DrawString(timeCurrent.ToString("0.00"), f, b, xPos, Height - BOTTOM_CONTROL_MARGIN - f.Size / 2);
+            }
+
+            g.Dispose();
+            pictureBox.Image = bmp;
+            button1.Enabled = (bars.Count<16);
+        }
+
+        public void ApplySettings() {
+            btnSnapBeat.BackColor = Properties.Settings.Default.snapBarEvents ? Color.FromArgb(100, 100, 100) : BackColor;
+        }
+
+        private int TimeToXCoord(float time, bool clip=true) {
+            if (time < timeStart || time > timeStop)
+                if (clip)
+                    return -1;
+
+            float timeRange = timeStop - timeStart;
+            float pixWidth = (Width - 6) - BAR_LEFT_MARGIN;
+            return (int)(BAR_LEFT_MARGIN + (time - timeStart) / timeRange * pixWidth);
+        }
+
+        private float XCoordToTime(int x) {
+            if (x < BAR_LEFT_MARGIN || x > Width-6)
+                return -1.0f;
+
+            float timeRange = timeStop - timeStart;
+            float pixWidth = (Width - 6) - BAR_LEFT_MARGIN;
+            return (float)((x - BAR_LEFT_MARGIN) / pixWidth * timeRange + timeStart);
+        }
+
+        private void DeleteBar(int which) {
+            if (bars == null || which >= bars.Count)
+                return;
+
+            if (bars[which].events.Count > 0) {
+                string s = "Are you sure you want to delete this track?";
+                if (which < bars.Count - 1)
+                    s += "\n\nTracks below this one will be renamed!";
+                MessageBoxManager.Yes = "Do it man";
+                MessageBoxManager.No = "Hell no!";
+                if (MessageBox.Show(s, "4kampf", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                    return;
+            }
+
+            bars.RemoveAt(which);
+
+            for (int i = 0; i < bars.Count; i++)
+                bars[i].name = "sn[" + i + "]";
+
+            Kampfpanzerin.SetDirty();
+            Redraw();
+        }
+
+        private void HandleClick(object sender, EventArgs e) {
+            MouseEventArgs mea = (MouseEventArgs)e;
+            Point clickPos = new Point(mea.X, mea.Y);
+            int whichBar = clickPos.Y / (barHeight + BAR_HORIZ_MARGIN);
+            
+            // Select clicked bar
+            if (whichBar < bars.Count) {
+                for (int i = 0; i < bars.Count; i++)
+                    bars[i].selected = false;
+                bars[whichBar].selected = true;
+            }
+
+            // Transport / rewind to start
+            if (mea.Button == MouseButtons.Left && mea.Y >= Height - (BOTTOM_CONTROL_MARGIN + 20)) {
+                float t=0;
+                if (mea.X > BAR_LEFT_MARGIN)
+                    t = XCoordToTime(clickPos.X);
+
+                AppForm.GetInstance().klangPlayer.SetPosition(t);
+            }
+
+            // Add/edit/del event
+            if (whichBar < bars.Count && mea.Button == MouseButtons.Right) {
+                float evTime = XCoordToTime(clickPos.X);
+                if (evTime >= 0) {
+                    if (Properties.Settings.Default.snapBarEvents)
+                        evTime = NearestBeat(evTime);
+                    TimelineBarEvent chosenEvent = null;
+                    float chosenDist = 1000.0f;
+                    foreach (TimelineBarEvent be in bars[whichBar].events) {
+                        float diff = Math.Abs(be.time - evTime);
+                        if (diff < 1.0f && diff < chosenDist)
+                            chosenEvent = be;
+                    }
+                    if (chosenEvent != null)
+                        EditEvent(bars[whichBar], chosenEvent);
+                    else
+                        AddEvent(bars[whichBar], evTime);
+                }
+            }
+
+            Redraw();
+        }
+
+        private void AddEvent(TimelineBar b, float time) {
+            TimelineBarEventEditForm frm = new TimelineBarEventEditForm(time, 0, BarEventType.SMOOTH, false);
+            frm.StartPosition = FormStartPosition.Manual;
+            frm.Location = new Point(Cursor.Position.X - 97, Cursor.Position.Y - 169);
+            if (frm.ShowDialog() == DialogResult.OK) {
+                TimelineBarEvent be = new TimelineBarEvent();
+                be.time = frm.GetTime();
+                be.type = frm.GetEventType();
+                be.value = frm.GetValue();
+                b.events.Add(be);
+                Kampfpanzerin.SetDirty();
+                b.Recalc();
+            }
+        }
+
+        private void EditEvent(TimelineBar b, TimelineBarEvent be) {
+            TimelineBarEventEditForm frm = new TimelineBarEventEditForm(be.time, be.value, be.type, true);
+            frm.StartPosition = FormStartPosition.Manual;
+            //Point offset = PointToScreen(new Point(0,0));
+            //frm.Location = new Point(TimeToXCoord(be.time) - 97 + offset.X, Cursor.Position.Y - 169 + offset.Y);
+            frm.Location = new Point(Cursor.Position.X - 97, Cursor.Position.Y - 169);
+            DialogResult d = frm.ShowDialog();
+            if (d == DialogResult.OK) {
+                be.time = frm.GetTime();
+                be.type = frm.GetEventType();
+                be.value = frm.GetValue();
+                Kampfpanzerin.SetDirty();
+                b.Recalc();
+            } else if (d == DialogResult.Abort) {
+                b.events.Remove(be);
+                Kampfpanzerin.SetDirty();
+                b.Recalc();
+            }
+        }
+        
+        private void trkZoom_ValueChanged(object sender, EventArgs e) {
+            SetZoomBounds();
+        }
+
+        private void SetZoomBounds() {
+            float zoomLevel = Math.Max(1.0f, trkZoom.Maximum - trkZoom.Value);
+
+            timeStart = (float)Math.Floor(Math.Max(0, timeCurrent - zoomLevel));
+            timeStart = (float)Math.Round(timeStart * 4, MidpointRounding.ToEven) / 4;
+            timeStop = Math.Min(timeMax, timeCurrent + zoomLevel);
+        }
+
+        private void button1_Click(object sender, EventArgs e) {
+            AddBar();
+        }
+
+        private void AddBar() {
+            if (bars.Count > 15)
+                return;
+
+            bars.Add(new TimelineBar("sn[" + bars.Count + "]"));
+            Kampfpanzerin.SetDirty();
+            Redraw();
+        }
+
+        private void pictureBox_Resize(object sender, EventArgs e) {
+            Redraw();
+        }
+
+        private void btnDel_Click(object sender, EventArgs e) {
+            for (int i = 0; i < bars.Count; i++)
+                if (bars[i].selected)
+                    DeleteBar(i);
+        }
+
+        private void pictureBox_MouseDown(object sender, MouseEventArgs e) {
+            MouseEventArgs mea = (MouseEventArgs)e;
+            Point clickPos = new Point(mea.X, mea.Y);
+            int whichBar = clickPos.Y / (barHeight + BAR_HORIZ_MARGIN);
+
+            if (whichBar < bars.Count && mea.Button == MouseButtons.Left) {
+                float evTime = XCoordToTime(clickPos.X);
+                TimelineBarEvent chosenEvent = null;
+                float chosenDist = 1000.0f;
+                foreach (TimelineBarEvent be in bars[whichBar].events) {
+                    float diff = Math.Abs(be.time - evTime);
+                    if (diff < 1.0f && diff < chosenDist)
+                        chosenEvent = be;
+                }
+                if (chosenEvent != null) {
+                    eventUnderEdit = chosenEvent;
+                    eventUnderEditBarIndex = whichBar;
+                    dragStart = clickPos;
+                }
+            }
+        }
+
+        private void pictureBox_MouseUp(object sender, MouseEventArgs e) {
+            eventUnderEdit = null;
+        }
+
+        private float NearestBeat(float f) {
+            int bpm = AppForm.GetInstance().klangPlayer.GetBPM();
+            float oneBeatLength = 1.0f / ((float)bpm / 60.0f);   // secs
+            float rem = f % oneBeatLength;
+            f -= rem;
+            if (rem > (oneBeatLength / 2))
+                f += oneBeatLength;
+            return f;
+        }
+
+        private void pictureBox_MouseMove(object sender, MouseEventArgs e) {
+            if (eventUnderEdit != null) {
+                if (Control.ModifierKeys == Keys.Control) { // Edit value
+                    float y = (float)e.Y;
+                    if (eventUnderEditBarIndex > 0)
+                        y -= eventUnderEditBarIndex * (barHeight + BAR_HORIZ_MARGIN);
+                    y /= barHeight;
+                    float minVal = bars[eventUnderEditBarIndex].minVal;
+                    float maxVal = bars[eventUnderEditBarIndex].maxVal; 
+                    float range =  maxVal - minVal;
+                    float newVal = maxVal - y * range;
+                    eventUnderEdit.value = newVal;
+                    bars[eventUnderEditBarIndex].Recalc();
+                } else {    // Edit time
+                    float t = XCoordToTime(e.X);
+                    if (Properties.Settings.Default.snapBarEvents)
+                        t = NearestBeat(t);
+                    if (t > -0.1f)
+                        eventUnderEdit.time = t;
+                    bars[eventUnderEditBarIndex].Recalc();
+                }
+            }
+        }
+
+        private void btnZoomIn_Click(object sender, EventArgs e) {
+            trkZoom.Value = Math.Min(trkZoom.Maximum, trkZoom.Value + trkZoom.Maximum / 10);
+        }
+
+        private void btnZoomOut_Click(object sender, EventArgs e) {
+            trkZoom.Value = Math.Max(trkZoom.Minimum, trkZoom.Value - trkZoom.Maximum / 10);
+        }
+        
+        private void btnSnapBeat_Click(object sender, EventArgs e) {
+            Properties.Settings.Default.snapBarEvents = !Properties.Settings.Default.snapBarEvents;
+            Kampfpanzerin.ApplySettings();
+        }
+
+        private bool TypeIsPresent(BarEventType t) {
+            foreach (TimelineBar bar in bars)
+                foreach (TimelineBarEvent be in bar.events)
+                    if (be.type == t)
+                        return true;
+
+            return false;
+        }
+
+        public string CompileTrackerCode() {
+            if (bars.Count == 0)
+                return "";
+
+            string res = "";
+            if (TypeIsPresent(BarEventType.HOLD))
+                res += "#define fx(b,bb) u.z<b?bb:bbb\r\n";
+            if (TypeIsPresent(BarEventType.LERP))
+                res += "#define mx(b,bb,bbb,bbbb) u.z<bb?mix(bbb,bbbb,(u.z-b)/(bb-b)):bbbb\r\n";
+            if (TypeIsPresent(BarEventType.SMOOTH))
+                res += "#define sx(b,bb,bbb,bbbb) u.z<bb?bbb+(bbbb-bbb)*smoothstep(b,bb,u.z):bbbb\r\n";
+            if (bars.Count == 1)
+                res += "float sn;";
+            else
+                res += "float sn[" + bars.Count + "];";
+
+            int i = 0;
+            foreach (TimelineBar bar in bars) {
+                if (bar.events.Count == 0)
+                    continue;
+
+                if (bars.Count == 1)
+                    res += "sn=";
+                else
+                    res += "sn[" + (i++) + "]=";
+
+                string current = "{0}";
+
+                for (i = 0; i < bar.events.Count; i++) {
+                    TimelineBarEvent be = bar.events[i];
+                    string startVal = FloatToOptimisedString(be.value);
+                    string startTime = FloatToOptimisedString(be.time);
+                    if (i == bar.events.Count - 1) {
+                        current = string.Format(current, startVal);
+                        return res + current;
+                    } else {
+                        string stopVal = FloatToOptimisedString(bar.events[i + 1].value);
+                        string stopTime = FloatToOptimisedString(bar.events[i + 1].time);
+                        switch (be.type) {
+                            case BarEventType.HOLD:
+                                current = string.Format(current, "fx(" + stopTime + "," + startVal + ",{0})");
+                                break;
+                            case BarEventType.LERP:
+                                current = string.Format(current, "mx(" + startTime + "," + stopTime + "," + startVal + ",{0})");
+                                break;
+                            case BarEventType.SMOOTH:
+                                current = string.Format(current, "sx(" + startTime + "," + stopTime + "," + startVal + ",{0})");
+                                break;
+                        }
+                    }
+                }
+
+                for (i=0; i<bar.events.Count; i++) {
+                    TimelineBarEvent be = bar.events[i];
+                    string startVal = FloatToOptimisedString(be.value);
+                    string startTime = FloatToOptimisedString(be.time);
+                    if (i == bar.events.Count - 1)
+                        res += ";";
+                    else {
+                        string stopVal = FloatToOptimisedString(bar.events[i + 1].value);
+                        string stopTime = FloatToOptimisedString(bar.events[i + 1].time);
+                        switch (be.type) {
+                            case BarEventType.HOLD:
+                                res += "fx(" + stopTime + "," + startVal + ")";
+                                break;
+                            case BarEventType.LERP:
+                                res += "mx(" + startTime + "," + stopTime + "," + startVal + "," + stopVal + ")";
+                                break;
+                            case BarEventType.SMOOTH:
+                                res += "sx(" + startTime + "," + stopTime + "," + startVal + "," + stopVal + ")";
+                                break;
+                        }
+                    }
+                }
+            }
+            return res;
+        }
+
+        private string FloatToOptimisedString(float f) {
+            string s = f.ToString(".000", culture);
+            if (s.StartsWith("-0."))
+                s = s.Substring(2);
+            if (s.StartsWith("0."))
+                s = s.Substring(1);
+            if (s.Contains("."))
+                while (s.EndsWith("0") && s.Length > 2)
+                    s = s.Substring(0, s.Length - 1);
+            return s;
+        }
+    }
+}
