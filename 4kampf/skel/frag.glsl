@@ -1,6 +1,6 @@
 // This is the default frag shader.
 
-uniform vec3 un,cp;					// Standard uniforms; time in .z. Also using cam pos cp.
+uniform vec3 u,cp;					// Standard uniforms; time in .z. Also using cam pos cp.
 varying vec3 rd;					// Ray direction
 
 float d,M=.001;						// Epsilon
@@ -30,7 +30,7 @@ float ao(vec3 p,vec3 n,float s){	// Do AO for point p with normal n and strength
 
 void main(){						// Entrypoint
 	// Alternative method to calculate raydir here:
- 	//vec3 rd=normalize(vec3((gl_FragCoord.xy-un.xy/2.0)/un.y,-1.));
+ 	//vec3 rd=normalize(vec3((gl_FragCoord.xy-u.xy/2.0)/u.y,-1.));
 	//rd*=transpose(mat3(cross(fd,up),up,-fd));
 	
 	vec3 p=cp,r=normalize(rd);
@@ -45,5 +45,5 @@ void main(){						// Entrypoint
 		dc=mix(dc/2.,dc,ao(p,n,.5));
 		gl_FragColor=vec4(dc,1.);
 	}else
-		gl_FragColor=vec4(abs(sin(un.z)),.1,.4,1.);
+		gl_FragColor=vec4(abs(sin(u.z)),.1,.4,1.);
 }

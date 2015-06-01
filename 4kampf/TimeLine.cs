@@ -200,14 +200,18 @@ namespace kampfpanzerin {
                         float pixWavConv = 0;
                         if (wavRange > 0)
                             pixWavConv = (barHeight - WAVEFORM_MARGIN * 2) / wavRange;
-                        b.Color = Color.FromArgb(32,32,32);
-                        for (int wavX = BAR_LEFT_MARGIN; wavX < Width - 6; wavX++) {
-                            float currVal = bar.GetValueAtTime(XCoordToTime(wavX)); 
+                        b.Color = Color.FromArgb(32, 32, 32);
+                        Pen p2 = new Pen(b);
+                        for (int wavX = BAR_LEFT_MARGIN; wavX < Width - 7; wavX++) {
+                            float currVal = bar.GetValueAtTime(XCoordToTime(wavX));
+                            float nextVal = bar.GetValueAtTime(XCoordToTime(wavX + 1)); 
                             if (currVal != -666666.0) {
-                                if (wavRange > 0) {    
+                                if (wavRange > 0) {
                                     int wavY = (int)(currY + barHeight / 2 - (currVal * pixWavConv + WAVEFORM_MARGIN));
+                                    int wavY2 = (int)(currY + barHeight / 2 - (nextVal * pixWavConv + WAVEFORM_MARGIN));
                                     wavY += (int)(bar.minVal * pixWavConv);
-                                    g.FillRectangle(b, wavX, wavY, 1, 1);
+                                    wavY2 += (int)(bar.minVal * pixWavConv);
+                                    g.DrawLine(p2, wavX, wavY, wavX + 1, wavY2);
                                 } else
                                     g.FillRectangle(b, wavX, currY, 1, 1);
                             }   
