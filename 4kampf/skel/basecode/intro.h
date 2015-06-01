@@ -83,7 +83,7 @@ __forceinline void IntroFrame(float t) {
 	((PFNGLUSEPROGRAMPROC)wglGetProcAddress("glUseProgram"))(sceneProg);
 #endif
 #ifdef USE_STANDARD_UNIFORMS
-	((PFNGLUNIFORM3FPROC)wglGetProcAddress("glUniform3f"))(((PFNGLGETUNIFORMLOCATIONPROC)wglGetProcAddress("glGetUniformLocation"))(sceneProg, "un"), XRES, YRES, t);
+	((PFNGLUNIFORM3FPROC)wglGetProcAddress("glUniform3f"))(((PFNGLGETUNIFORMLOCATIONPROC)wglGetProcAddress("glGetUniformLocation"))(sceneProg, "u"), XRES, YRES, t);
 #endif
 #ifdef USE_4KLANG_ENV_SYNC
 	((PFNGLUNIFORM1FVPROC)wglGetProcAddress("glUniform1fv"))(((PFNGLGETUNIFORMLOCATIONPROC)wglGetProcAddress("glGetUniformLocation"))(sceneProg, "ev"), MAX_INSTRUMENTS, syncVal);
@@ -94,7 +94,7 @@ __forceinline void IntroFrame(float t) {
 	((PFNGLUSEPROGRAMPROC)wglGetProcAddress("glUseProgram"))(ppProg);
 	glBindTexture(GL_TEXTURE_2D, rtt);
 #ifdef USE_STANDARD_UNIFORMS
-	((PFNGLUNIFORM3FPROC)wglGetProcAddress("glUniform3f"))(((PFNGLGETUNIFORMLOCATIONPROC)wglGetProcAddress("glGetUniformLocation"))(ppProg, "un"), XRES, YRES, t);
+	((PFNGLUNIFORM3FPROC)wglGetProcAddress("glUniform3f"))(((PFNGLGETUNIFORMLOCATIONPROC)wglGetProcAddress("glGetUniformLocation"))(ppProg, "u"), XRES, YRES, t);
 #endif
 	((PFNGLUNIFORM1IPROC)wglGetProcAddress("glUniform1i"))(((PFNGLGETUNIFORMLOCATIONPROC)wglGetProcAddress("glGetUniformLocation"))(ppProg, "fr"), 0);
 	glRects(-1, -1, 1, 1);

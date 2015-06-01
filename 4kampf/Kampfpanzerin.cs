@@ -134,9 +134,9 @@ namespace kampfpanzerin
             }
             string src = AppDomain.CurrentDomain.BaseDirectory + "skel";
             Utils.CopyFolderContents(src, dest);
-            File.Create(dest + "\\vert.glsl").Close();
-            File.Create(dest + "\\frag.glsl").Close();
-            File.Create(dest + "\\ppfrag.glsl").Close();
+            //File.Create(dest + "\\vert.glsl").Close();
+            //File.Create(dest + "\\frag.glsl").Close();
+            //File.Create(dest + "\\ppfrag.glsl").Close();
             MessageBox.Show("Project created! Now drop your 4klang.obj and 4klang.h in there and run Build->Render 4klang Music.\n\n(Or just run Build->Render 4klang Music now to render the example tune!)", "4kampf", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             OpenProject(dest, true);

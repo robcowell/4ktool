@@ -516,29 +516,29 @@ namespace kampfpanzerin {
 
                 string current = "{0}";
 
-                for (i = 0; i < bar.events.Count; i++) {
-                    TimelineBarEvent be = bar.events[i];
-                    string startVal = FloatToOptimisedString(be.value);
-                    string startTime = FloatToOptimisedString(be.time);
-                    if (i == bar.events.Count - 1) {
-                        current = string.Format(current, startVal);
-                        return res + current;
-                    } else {
-                        string stopVal = FloatToOptimisedString(bar.events[i + 1].value);
-                        string stopTime = FloatToOptimisedString(bar.events[i + 1].time);
-                        switch (be.type) {
-                            case BarEventType.HOLD:
-                                current = string.Format(current, "fx(" + stopTime + "," + startVal + ",{0})");
-                                break;
-                            case BarEventType.LERP:
-                                current = string.Format(current, "mx(" + startTime + "," + stopTime + "," + startVal + ",{0})");
-                                break;
-                            case BarEventType.SMOOTH:
-                                current = string.Format(current, "sx(" + startTime + "," + stopTime + "," + startVal + ",{0})");
-                                break;
-                        }
-                    }
-                }
+                //for (i = 0; i < bar.events.Count; i++) {
+                //    TimelineBarEvent be = bar.events[i];
+                //    string startVal = FloatToOptimisedString(be.value);
+                //    string startTime = FloatToOptimisedString(be.time);
+                //    if (i == bar.events.Count - 1) {
+                //        current = string.Format(current, startVal);
+                //        return res + current;
+                //    } else {
+                //        string stopVal = FloatToOptimisedString(bar.events[i + 1].value);
+                //        string stopTime = FloatToOptimisedString(bar.events[i + 1].time);
+                //        switch (be.type) {
+                //            case BarEventType.HOLD:
+                //                current = string.Format(current, "fx(" + stopTime + "," + startVal + ",{0})");
+                //                break;
+                //            case BarEventType.LERP:
+                //                current = string.Format(current, "mx(" + startTime + "," + stopTime + "," + startVal + ",{0})");
+                //                break;
+                //            case BarEventType.SMOOTH:
+                //                current = string.Format(current, "sx(" + startTime + "," + stopTime + "," + startVal + ",{0})");
+                //                break;
+                //        }
+                //    }
+                //}
 
                 for (i=0; i<bar.events.Count; i++) {
                     TimelineBarEvent be = bar.events[i];
