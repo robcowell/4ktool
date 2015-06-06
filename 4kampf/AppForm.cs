@@ -16,6 +16,8 @@ namespace kampfpanzerin {
         private static AppForm formInstance;
         private bool logBusy = false;
 
+        private Project project;
+
         public static AppForm GetInstance() {
             if (formInstance == null)
                 formInstance = new AppForm();

@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System.IO;
 using Tao.OpenGl;
+using System.Xml.Serialization;
 
 namespace kampfpanzerin
 {
@@ -13,6 +14,7 @@ namespace kampfpanzerin
         private static AppForm form;
         private static string currentProjectDirectory; 
         private static bool projectDirty;
+        private static Project project = new Project();
 
         [STAThread]
         static void Main() {
@@ -28,7 +30,7 @@ namespace kampfpanzerin
             DialogResult d;
             do {
                 MessageBoxManager.Cancel = "Quit";
-                d = MessageBox.Show("Welcome to 4kampf boss!\nShall we create a project or open one?", "4kampf", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                d = MessageBox.Show("Welcome to 4kampfpanzerin boss!\nShall we create a project or open one?", "4kampfpanzerin", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                 if (d == DialogResult.Yes)
                     CreateProject();
                 else if (d == DialogResult.No)
@@ -46,8 +48,6 @@ namespace kampfpanzerin
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
             }
-
-            return;
         }
 
         public static void GoToProjectFolder() {
@@ -134,9 +134,6 @@ namespace kampfpanzerin
             }
             string src = AppDomain.CurrentDomain.BaseDirectory + "skel";
             Utils.CopyFolderContents(src, dest);
-            //File.Create(dest + "\\vert.glsl").Close();
-            //File.Create(dest + "\\frag.glsl").Close();
-            //File.Create(dest + "\\ppfrag.glsl").Close();
             MessageBox.Show("Project created! Now drop your 4klang.obj and 4klang.h in there and run Build->Render 4klang Music.\n\n(Or just run Build->Render 4klang Music now to render the example tune!)", "4kampf", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             OpenProject(dest, true);
@@ -157,6 +154,18 @@ namespace kampfpanzerin
             if (dir == "" || dir == null)
                 return;
 
+            if (!File.Exists(dir + "/project.kml")) {
+                MessageBox.Show("Wow, you are quite old fashioned trying to open such an old project.\nI will convert it to the new format on save.", "4kampfpanzerin", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                form.timeLine.LoadData("sync.dat");
+            } else {
+                using (Stream stream = File.Open(dir + "/project.kml", FileMode.Open)) {
+                    XmlSerializer serializer = new XmlSerializer(typeof(Project));
+                    project = (Project) serializer.Deserialize(stream);
+                    stream.Close();
+                }
+                form.timeLine.SetProject(project);
+            }
+
             if (!File.Exists(dir + "\\vert.glsl") || !File.Exists(dir + "\\frag.glsl")) {
                 MessageBox.Show("That doesn't seem to be a project directory;\nI couldn't find vert.glsl and frag.glsl :(", "4kampf", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -168,7 +177,6 @@ namespace kampfpanzerin
             Properties.Settings.Default.lastProjectLocation = currentProjectDirectory;
             Properties.Settings.Default.Save();
 
-            form.timeLine.LoadData("sync.dat");
             LoadShader();
             BuildShader();
             
@@ -287,19 +295,19 @@ namespace kampfpanzerin
                 return;
             }
 
-            if (form.klangPlayer.LoadWAV(currentProjectDirectory + "\\music.wav"))
+            if (form.klangPlayer.LoadWAV(currentProjectDirectory + "/music.wav"))
                 form.ConcatLog("* 4klang tune rendered and loaded");
             else
                 form.ConcatLog("! Couldn't read WAV :(");
         }
 
         public static void DoBuildClean() {
-            string[] paths = { "basecode\\bin", "basecode\\exe", "wavwriter\\bin" };
+            string[] paths = { "basecode/bin", "basecode/exe", "wavwriter/bin" };
             foreach (string s in paths)
                 if (Directory.Exists(s))
                     Directory.Delete(s, true);
 
-            string[] files = { "wavwriter.exe", "wavwriter\\wavwriter.pdb" };
+            string[] files = { "wavwriter.exe", "wavwriter/wavwriter.pdb" };
             foreach (string s in files)
                 if (File.Exists(s))
                     File.Delete(s);
@@ -311,12 +319,13 @@ namespace kampfpanzerin
             ExportHeader();
             try {
                 Process.Start("basecode\\prod.vcxproj");
-            } catch (Exception e) {
+            } catch (Exception) {
                 MessageBox.Show("This Aggression will not stand dude, I need basecode!", "4kampfpanzer", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         public static void SaveProject() {
+            
             StreamWriter sw = new StreamWriter("frag.glsl");
             sw.Write(form.edFrag.Text);
             sw.Close();
@@ -327,6 +336,20 @@ namespace kampfpanzerin
             sw.Write(form.edPost.Text);
             sw.Close();
             form.timeLine.SaveData("sync.dat");
+
+            project.camBars = form.timeLine.camBars;
+            project.syncBars = form.timeLine.syncBars;
+            //project.settings = kampfpanzerin.Properties.Settings.Default;
+            try {
+                using (Stream stream = File.Open("project.kml", FileMode.Create)) {
+                    XmlSerializer serializer = new XmlSerializer(typeof(Project));
+                    serializer.Serialize(stream, project);
+                    stream.Close();
+                }
+            } catch (IOException) {
+                MessageBox.Show("Something went wrong when saving.", "4kampfpanzerin", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
             form.ShowLog("Saved all project assets");
             projectDirty = false;
         }

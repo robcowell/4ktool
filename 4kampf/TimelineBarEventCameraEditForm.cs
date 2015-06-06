@@ -80,7 +80,6 @@ namespace kampfpanzerin {
             if (text.Length == 0) {
                 text = "0";
             }
-            float f;
             try {
                 float.Parse(text, NumberStyles.Any, culture);
                 return true;

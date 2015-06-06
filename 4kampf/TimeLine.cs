@@ -11,33 +11,17 @@ using System.Globalization;
 
 namespace kampfpanzerin {
     public partial class TimeLine : UserControl {
+        private static readonly Color[] camColors = { Color.Red, Color.Green, Color.Blue };
+
         private Bitmap bmp;
-        private List<TimelineBar> syncBars = new List<TimelineBar>();
-        private List<TimelineBar> camBars = new List<TimelineBar>();
+        public List<TimelineBar> syncBars;
+        public List<TimelineBar> camBars;
         private TimelineBarEvent eventUnderEdit = null;
         private int eventUnderEditBarIndex;
         private Point dragStart;
         private static CultureInfo culture = CultureInfo.CreateSpecificCulture("en-GB");
         public bool camMode { get; set; }
 
-        /*
-        private Color BAR_COL = Color.FromArgb(150, 150, 150);
-        private Color BAR_COL_LABEL = Color.FromArgb(224,224,224);
-        private Color BAR_COL_HIGHLIGHT = Color.FromArgb(224,224,224);
-        private Color BAR_COL_LABEL_HIGHLIGHT = Color.White;
-        */
-        /*
-        private Color BAR_COL = Color.LimeGreen;
-        private Color BAR_COL_LABEL = Color.White;
-        private Color BAR_COL_HIGHLIGHT = Color.Orange;
-        private Color BAR_COL_LABEL_HIGHLIGHT = Color.Orange;
-        */
-        /*
-        private Color BAR_COL = Color.FromArgb((int)(.514 * 255.0), (int)(.651 * 255.0), (int)(.502 * 255.0));
-        private Color BAR_COL_LABEL = Color.White;
-        private Color BAR_COL_HIGHLIGHT = Color.FromArgb((int)(.894 * 255.0), (int)(.745 * 255.0), (int)(.427 * 255.0));
-        private Color BAR_COL_LABEL_HIGHLIGHT = Color.FromArgb((int)(.894 * 255.0), (int)(.745 * 255.0), (int)(.427 * 255.0));
-        */
         private Color BAR_COL = Color.FromArgb(150, 150, 150);
         private Color BAR_COL_LABEL = Color.White;
         //private Color BAR_COL_HIGHLIGHT = Color.FromArgb((int)(.894 * 255.0), (int)(.745 * 255.0), (int)(.427 * 255.0));
@@ -58,12 +42,20 @@ namespace kampfpanzerin {
 
         public TimeLine() {
             InitializeComponent();
+            syncBars = new List<TimelineBar>();
+            camBars = new List<TimelineBar>();
             TimelineBar camPos = new TimelineBar("cam pos", TimelineBar.TimeLineMode.CAMERA_POS);
             TimelineBar referencePoint = new TimelineBar("look at", TimelineBar.TimeLineMode.CAMERA_REF);
             TimelineBar upVector = new TimelineBar("up", TimelineBar.TimeLineMode.CAMERA_UP);
             camBars.Add(camPos);
             camBars.Add(referencePoint);
             camBars.Add(upVector);
+            Redraw();
+        }
+
+        public void SetProject(Project project) {
+            this.camBars = project.camBars;
+            this.syncBars = project.syncBars;
             Redraw();
         }
 
@@ -84,12 +76,12 @@ namespace kampfpanzerin {
                 return false;
 
             string s = File.ReadAllText(filename);
-            string[] lines = s.Split(new char[]{'\n'},StringSplitOptions.RemoveEmptyEntries);
+            string[] lines = s.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string line in lines) {
                 TimelineBar b = new TimelineBar("sn[" + syncBars.Count + "]");
                 syncBars.Add(b);
 
-                string[] events = line.Split(new char[]{';'}, StringSplitOptions.RemoveEmptyEntries);
+                string[] events = line.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string ev in events) {
                     string[] evsplit = ev.Split(',');
                     TimelineBarEvent be = new TimelineBarEvent();
@@ -177,6 +169,8 @@ namespace kampfpanzerin {
             button1.Enabled = (syncBars.Count<16);
         }
 
+        private TimelineBar selectedBar;
+
         private void RenderGraphs(Graphics g, Font f, SolidBrush b, List<TimelineBar> bars) {
             // Render bars, labels, events
             if (bars.Count > 0) {
@@ -198,7 +192,7 @@ namespace kampfpanzerin {
                             endX = Width - 6;
 
                         if (startX != endX && endX > BAR_LEFT_MARGIN && startX < Width - 6) {
-                            if (bar.selected)
+                            if (bar == selectedBar)
                                 p.Color = BAR_COL_HIGHLIGHT;
                             else
                                 p.Color = BAR_COL;
@@ -210,7 +204,7 @@ namespace kampfpanzerin {
                     }
 
                     // Bar label
-                    if (bar.selected)
+                    if (bar == selectedBar)
                         b.Color = BAR_COL_LABEL_HIGHLIGHT;
                     else
                         b.Color = BAR_COL_LABEL;
@@ -218,10 +212,20 @@ namespace kampfpanzerin {
                     if (barHeight >= 10)
                         g.DrawString(bar.name, f, b, 2, currY - barHeight / 2);
                     if (barHeight >= 20) {
-                        float val = bar.GetValueAtTime(timeCurrent);
-                        if (val != -666666.0) {
-                            b.Color = Color.FromArgb(128, 128, 128);
-                            g.DrawString(val.ToString("0.000"), f, b, 2, currY - barHeight / 2 + 12);
+                        if (cameraModeCheckBox.Checked) {
+                            Vector3f val = bar.GetVectorValueAtTime(timeCurrent);
+                            string text = val.ToString();
+                            if (val != Vector3f.INVALID) {
+                                b.Color = Color.FromArgb(128, 128, 128);
+                                g.DrawString(text, f, b, 2, currY - barHeight / 2 + 12);
+                            }
+                        } else {
+                            float val = bar.GetValueAtTime(timeCurrent);
+                            string text = val.ToString("0.000");
+                            if (val != -666666.0) {
+                                b.Color = Color.FromArgb(128, 128, 128);
+                                g.DrawString(text, f, b, 2, currY - barHeight / 2 + 12);
+                            }
                         }
                     }
 
@@ -232,7 +236,7 @@ namespace kampfpanzerin {
                             Color c = Color.FromArgb(64, 64, 64);
                             if (bar.events.Count == 1)
                                 c = Color.White;
-                            be.Draw(g, xCoord, currY, barHeight, c);
+                            DrawEvent(g, xCoord, currY, barHeight, c);
                         }
                     }
 
@@ -245,6 +249,33 @@ namespace kampfpanzerin {
                     currY += barHeight + BAR_HORIZ_MARGIN;
                 }
             }
+        }
+
+
+        public void DrawEvent(Graphics g, int x, int y, int height, Color c) {
+            Pen p = new Pen(c, 1.0f);
+            SolidBrush b = new SolidBrush(c);
+
+            g.DrawLine(p, x, y + height / 2, x, y - height / 2);
+
+            if (height < 16)
+                return;
+
+            y = y + height / 2;
+            if (height % 2 == 1)
+                y++;
+
+            Point[] Points = new Point[3];
+            Points[0] = new Point(x, y - 4);
+            Points[1] = new Point(x + 4, y);
+            Points[2] = new Point(x - 4, y);
+            g.FillPolygon(b, Points);
+
+            y -= height;
+            Points[0] = new Point(x, y + 4);
+            Points[1] = new Point(x + 4, y);
+            Points[2] = new Point(x - 4, y);
+            g.FillPolygon(b, Points);
         }
 
         private void RenderSyncWave(Graphics g, SolidBrush b, int currY, TimelineBar bar) {
@@ -285,8 +316,10 @@ namespace kampfpanzerin {
                     Vector3f nextVal = bar.GetVectorValueAtTime(XCoordToTime(wavX + 1));
                     if (currVal != Vector3f.INVALID) {
                         if (wavRange > 0) {
-                            for (int i = 0; i < 3; i++ )
+                            for (int i = 0; i < 3; i++) {
+                                p2.Color = camColors[i];
                                 RenderStep(g, currY, bar, pixWavConv, p2, wavX, currVal[i], nextVal[i]);
+                            }
                         } else
                             g.FillRectangle(b, wavX, currY, 1, 1);
                     }
@@ -395,9 +428,7 @@ namespace kampfpanzerin {
 
         private void SelectBar(int whichBar, List<TimelineBar> syncBars) {
             if (whichBar < syncBars.Count) {
-                for (int i = 0; i < syncBars.Count; i++)
-                    syncBars[i].selected = false;
-                syncBars[whichBar].selected = true;
+                selectedBar = syncBars[whichBar];
             }
         }
 
@@ -445,22 +476,44 @@ namespace kampfpanzerin {
         }
 
         private void EditEvent(TimelineBar b, TimelineBarEvent be) {
-            TimelineBarEventEditForm frm = new TimelineBarEventEditForm(be.time, be.value, be.type, true);
-            frm.StartPosition = FormStartPosition.Manual;
-            //Point offset = PointToScreen(new Point(0,0));
-            //frm.Location = new Point(TimeToXCoord(be.time) - 97 + offset.X, Cursor.Position.Y - 169 + offset.Y);
-            frm.Location = new Point(Cursor.Position.X - 97, Cursor.Position.Y - 169);
-            DialogResult d = frm.ShowDialog();
-            if (d == DialogResult.OK) {
-                be.time = frm.GetTime();
-                be.type = frm.GetEventType();
-                be.value = frm.GetValue();
-                Kampfpanzerin.SetDirty();
-                b.Recalc();
-            } else if (d == DialogResult.Abort) {
-                b.events.Remove(be);
-                Kampfpanzerin.SetDirty();
-                b.Recalc();
+            if (cameraModeCheckBox.Checked) {
+                Vector3f value = new Vector3f();
+                TimelineBarEventCameraEditForm frm = new TimelineBarEventCameraEditForm(be.time,
+                    be.vecValue, BarEventType.CAMERA, true);
+                frm.StartPosition = FormStartPosition.Manual;
+                //Point offset = PointToScreen(new Point(0,0));
+                //frm.Location = new Point(TimeToXCoord(be.time) - 97 + offset.X, Cursor.Position.Y - 169 + offset.Y);
+                frm.Location = new Point(Cursor.Position.X - 97, Cursor.Position.Y - 169);
+                DialogResult d = frm.ShowDialog();
+                if (d == DialogResult.OK) {
+                    be.time = frm.GetTime();
+                    be.type = frm.GetEventType();
+                    be.vecValue = frm.GetValue();
+                    Kampfpanzerin.SetDirty();
+                    b.Recalc();
+                } else if (d == DialogResult.Abort) {
+                    b.events.Remove(be);
+                    Kampfpanzerin.SetDirty();
+                    b.Recalc();
+                }
+            } else {
+                TimelineBarEventEditForm frm = new TimelineBarEventEditForm(be.time, be.value, be.type, true);
+                frm.StartPosition = FormStartPosition.Manual;
+                //Point offset = PointToScreen(new Point(0,0));
+                //frm.Location = new Point(TimeToXCoord(be.time) - 97 + offset.X, Cursor.Position.Y - 169 + offset.Y);
+                frm.Location = new Point(Cursor.Position.X - 97, Cursor.Position.Y - 169);
+                DialogResult d = frm.ShowDialog();
+                if (d == DialogResult.OK) {
+                    be.time = frm.GetTime();
+                    be.type = frm.GetEventType();
+                    be.value = frm.GetValue();
+                    Kampfpanzerin.SetDirty();
+                    b.Recalc();
+                } else if (d == DialogResult.Abort) {
+                    b.events.Remove(be);
+                    Kampfpanzerin.SetDirty();
+                    b.Recalc();
+                }
             }
         }
         
@@ -499,8 +552,10 @@ namespace kampfpanzerin {
 
         private void btnDel_Click(object sender, EventArgs e) {
             for (int i = 0; i < syncBars.Count; i++)
-                if (syncBars[i].selected)
+                if (syncBars[i] == selectedBar) {
                     DeleteBar(i);
+                    selectedBar = null;
+                }
         }
 
         private void pictureBox_MouseDown(object sender, MouseEventArgs e) {
@@ -611,7 +666,7 @@ namespace kampfpanzerin {
                 else
                     res += "sn[" + (i++) + "]=";
 
-                string current = "{0}";
+                //string current = "{0}";
 
                 //for (i = 0; i < bar.events.Count; i++) {
                 //    TimelineBarEvent be = bar.events[i];

@@ -4,19 +4,23 @@ using System.Linq;
 using System.Text;
 
 namespace kampfpanzerin {
+    [Serializable]
     public class TimelineBar {
         public string name;
-        public bool selected = false;
-        public List<TimelineBarEvent> events = new List<TimelineBarEvent>();
-        public float maxVal, minVal;
 
-        public Vector3f vecVal;
+        [NonSerialized]
+        public List<TimelineBarEvent> events = new List<TimelineBarEvent>();
+
+        [NonSerialized]
+        public float maxVal, minVal;
 
         public TimeLineMode mode { get; set; }
 
         public enum TimeLineMode {
             SYNC, CAMERA_POS, CAMERA_REF, CAMERA_UP
         };
+
+        public TimelineBar() { }
 
         public TimelineBar(string name)
             : this(name, TimeLineMode.SYNC) {

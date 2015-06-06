@@ -3,22 +3,32 @@ using System.ComponentModel;
 
 namespace kampfpanzerin
 {
+    [Serializable]
 	public class Vector3f
 	{
 
+        [NonSerialized]
         public static readonly Vector3f INVALID = new Vector3f(-666666.0f);
 
 		public float x, y, z;
 
-        public Vector3f() : this(0)
-        {
+        public Vector3f()
+            : this(0) {
+        }
+        public Vector3f(string encoded, System.Globalization.CultureInfo culture) {
+            string val = encoded.Substring(1, encoded.Length - 1);
+            string[] components = val.Split(new char[] { ',' });
+            for (int i = 0; i < components.Length; i++) {
+                this[i] = float.Parse(components[i], culture);
+            }
         }
 
-        public Vector3f(float initValue):this(initValue, initValue, initValue) {
+        public Vector3f(float initValue)
+            : this(initValue, initValue, initValue) {
         }
 
-        public Vector3f(Vector3f v) : this(v.x, v.y, v.z)
-        {
+        public Vector3f(Vector3f v)
+            : this(v.x, v.y, v.z) {
         }
 
 		public Vector3f(float x, float y, float z)
@@ -141,6 +151,10 @@ namespace kampfpanzerin
 
         public float Min() {
             return Math.Min(x, Math.Min(y, z));
+        }
+
+        public string ToString(string p, System.Globalization.CultureInfo culture) {
+            return "{" + x.ToString(p, culture) + "," + y.ToString(p, culture) + "," + z.ToString(p, culture) + "}";
         }
     }
 }
