@@ -58,9 +58,9 @@ namespace kampfpanzerin {
 
         public TimeLine() {
             InitializeComponent();
-            TimelineBar camPos = new TimelineBar("cam pos");
-            TimelineBar referencePoint = new TimelineBar("look at");
-            TimelineBar upVector = new TimelineBar("up");
+            TimelineBar camPos = new TimelineBar("cam pos", TimelineBar.TimeLineMode.CAMERA_POS);
+            TimelineBar referencePoint = new TimelineBar("look at", TimelineBar.TimeLineMode.CAMERA_REF);
+            TimelineBar upVector = new TimelineBar("up", TimelineBar.TimeLineMode.CAMERA_UP);
             camBars.Add(camPos);
             camBars.Add(referencePoint);
             camBars.Add(upVector);
@@ -237,32 +237,69 @@ namespace kampfpanzerin {
                     }
 
                     // Waveform
-                    if (barHeight > 10 && bar.events.Count > 0) {
-                        float wavRange = Math.Abs(bar.maxVal - bar.minVal);
-                        float pixWavConv = 0;
-                        if (wavRange > 0)
-                            pixWavConv = (barHeight - WAVEFORM_MARGIN * 2) / wavRange;
-                        b.Color = Color.FromArgb(32, 32, 32);
-                        Pen p2 = new Pen(b);
-                        for (int wavX = BAR_LEFT_MARGIN; wavX < Width - 7; wavX++) {
-                            float currVal = bar.GetValueAtTime(XCoordToTime(wavX));
-                            float nextVal = bar.GetValueAtTime(XCoordToTime(wavX + 1));
-                            if (currVal != -666666.0) {
-                                if (wavRange > 0) {
-                                    int wavY = (int)(currY + barHeight / 2 - (currVal * pixWavConv + WAVEFORM_MARGIN));
-                                    int wavY2 = (int)(currY + barHeight / 2 - (nextVal * pixWavConv + WAVEFORM_MARGIN));
-                                    wavY += (int)(bar.minVal * pixWavConv);
-                                    wavY2 += (int)(bar.minVal * pixWavConv);
-                                    g.DrawLine(p2, wavX, wavY, wavX + 1, wavY2);
-                                } else
-                                    g.FillRectangle(b, wavX, currY, 1, 1);
-                            }
-                        }
-                    }
+                    if (bar.mode == TimelineBar.TimeLineMode.SYNC)
+                        RenderSyncWave(g, b, currY, bar);
+                    else
+                        RenderCamWave(g, b, currY, bar);
 
                     currY += barHeight + BAR_HORIZ_MARGIN;
                 }
             }
+        }
+
+        private void RenderSyncWave(Graphics g, SolidBrush b, int currY, TimelineBar bar) {
+            if (barHeight > 10 && bar.events.Count > 0) {
+                float wavRange = Math.Abs(bar.maxVal - bar.minVal);
+                float pixWavConv = 0;
+                if (wavRange > 0)
+                    pixWavConv = (barHeight - WAVEFORM_MARGIN * 2) / wavRange;
+                b.Color = Color.FromArgb(32, 32, 32);
+                Pen p2 = new Pen(b);
+                for (int wavX = BAR_LEFT_MARGIN; wavX < Width - 7; wavX++) {
+                    float currVal = bar.GetValueAtTime(XCoordToTime(wavX));
+                    float nextVal = bar.GetValueAtTime(XCoordToTime(wavX + 1));
+                    if (currVal != -666666.0) {
+                        if (wavRange > 0) {
+                            int wavY = (int)(currY + barHeight / 2 - (currVal * pixWavConv + WAVEFORM_MARGIN));
+                            int wavY2 = (int)(currY + barHeight / 2 - (nextVal * pixWavConv + WAVEFORM_MARGIN));
+                            wavY += (int)(bar.minVal * pixWavConv);
+                            wavY2 += (int)(bar.minVal * pixWavConv);
+                            g.DrawLine(p2, wavX, wavY, wavX + 1, wavY2);
+                        } else
+                            g.FillRectangle(b, wavX, currY, 1, 1);
+                    }
+                }
+            }
+        }
+
+        private void RenderCamWave(Graphics g, SolidBrush b, int currY, TimelineBar bar) {
+            if (barHeight > 10 && bar.events.Count > 0) {
+                float wavRange = Math.Abs(bar.maxVal - bar.minVal);
+                float pixWavConv = 0;
+                if (wavRange > 0)
+                    pixWavConv = (barHeight - WAVEFORM_MARGIN * 2) / wavRange;
+                b.Color = Color.FromArgb(32, 32, 32);
+                Pen p2 = new Pen(b);
+                for (int wavX = BAR_LEFT_MARGIN; wavX < Width - 7; wavX++) {
+                    Vector3f currVal = bar.GetVectorValueAtTime(XCoordToTime(wavX));
+                    Vector3f nextVal = bar.GetVectorValueAtTime(XCoordToTime(wavX + 1));
+                    if (currVal != Vector3f.INVALID) {
+                        if (wavRange > 0) {
+                            for (int i = 0; i < 3; i++ )
+                                RenderStep(g, currY, bar, pixWavConv, p2, wavX, currVal[i], nextVal[i]);
+                        } else
+                            g.FillRectangle(b, wavX, currY, 1, 1);
+                    }
+                }
+            }
+        }
+
+        private void RenderStep(Graphics g, int currY, TimelineBar bar, float pixWavConv, Pen p2, int wavX, float currVal, float nextVal) {
+            int wavY = (int)(currY + barHeight / 2 - (currVal * pixWavConv + WAVEFORM_MARGIN));
+            int wavY2 = (int)(currY + barHeight / 2 - (nextVal * pixWavConv + WAVEFORM_MARGIN));
+            wavY += (int)(bar.minVal * pixWavConv);
+            wavY2 += (int)(bar.minVal * pixWavConv);
+            g.DrawLine(p2, wavX, wavY, wavX + 1, wavY2);
         }
 
         public void ApplySettings() {
@@ -311,21 +348,23 @@ namespace kampfpanzerin {
             Redraw();
         }
 
+        private List<TimelineBar> GetCurrentBars() {
+            return cameraModeCheckBox.Checked ? camBars : syncBars;
+        }
+
         private void HandleClick(object sender, EventArgs e) {
             MouseEventArgs mea = (MouseEventArgs)e;
             Point clickPos = new Point(mea.X, mea.Y);
             int whichBar = clickPos.Y / (barHeight + BAR_HORIZ_MARGIN);
-            
+
+            List<TimelineBar> barsUnderEdit = GetCurrentBars();
+
             // Select clicked bar
-            if (whichBar < syncBars.Count) {
-                for (int i = 0; i < syncBars.Count; i++)
-                    syncBars[i].selected = false;
-                syncBars[whichBar].selected = true;
-            }
+            SelectBar(whichBar, barsUnderEdit);
 
             // Transport / rewind to start
             if (mea.Button == MouseButtons.Left && mea.Y >= Height - (BOTTOM_CONTROL_MARGIN + 20)) {
-                float t=0;
+                float t = 0;
                 if (mea.X > BAR_LEFT_MARGIN)
                     t = XCoordToTime(clickPos.X);
 
@@ -333,39 +372,58 @@ namespace kampfpanzerin {
             }
 
             // Add/edit/del event
-            if (whichBar < syncBars.Count && mea.Button == MouseButtons.Right) {
+            if (whichBar < barsUnderEdit.Count && mea.Button == MouseButtons.Right) {
                 float evTime = XCoordToTime(clickPos.X);
                 if (evTime >= 0) {
                     if (Properties.Settings.Default.snapBarEvents)
                         evTime = NearestBeat(evTime);
                     TimelineBarEvent chosenEvent = null;
                     float chosenDist = 1000.0f;
-                    foreach (TimelineBarEvent be in syncBars[whichBar].events) {
+                    foreach (TimelineBarEvent be in barsUnderEdit[whichBar].events) {
                         float diff = Math.Abs(be.time - evTime);
                         if (diff < 1.0f && diff < chosenDist)
                             chosenEvent = be;
                     }
                     if (chosenEvent != null)
-                        EditEvent(syncBars[whichBar], chosenEvent);
+                        EditEvent(barsUnderEdit[whichBar], chosenEvent);
                     else
-                        AddEvent(syncBars[whichBar], evTime);
+                        AddEvent(barsUnderEdit[whichBar], evTime);
                 }
             }
-
             Redraw();
         }
 
+        private void SelectBar(int whichBar, List<TimelineBar> syncBars) {
+            if (whichBar < syncBars.Count) {
+                for (int i = 0; i < syncBars.Count; i++)
+                    syncBars[i].selected = false;
+                syncBars[whichBar].selected = true;
+            }
+        }
+
         private void AddEvent(TimelineBar b, float time) {
-            if (camMode) {
+            if (cameraModeCheckBox.Checked) {
+                Vector3f value = new Vector3f();
+                switch (b.mode) {
+                    case TimelineBar.TimeLineMode.CAMERA_POS:
+                        value = GraphicsManager.GetInstance().GetCamera().position;
+                        break;
+                    case TimelineBar.TimeLineMode.CAMERA_REF:
+                        value = GraphicsManager.GetInstance().GetCamera().forward;
+                        break;
+                    case TimelineBar.TimeLineMode.CAMERA_UP:
+                        value = GraphicsManager.GetInstance().GetCamera().up;
+                        break;
+                }
                 TimelineBarEventCameraEditForm frm = new TimelineBarEventCameraEditForm(time, 
-                    GraphicsManager.GetInstance().GetCamera().position, BarEventType.CAMERA, false);
+                    value, BarEventType.CAMERA, false);
                 frm.StartPosition = FormStartPosition.Manual;
                 frm.Location = new Point(Cursor.Position.X - 97, Cursor.Position.Y - 169);
                 if (frm.ShowDialog() == DialogResult.OK) {
                     TimelineBarEvent be = new TimelineBarEvent();
                     be.time = frm.GetTime();
                     be.type = frm.GetEventType();
-                    //be.value = frm.GetValue();
+                    be.vecValue = frm.GetValue();
                     b.events.Add(be);
                     Kampfpanzerin.SetDirty();
                     b.Recalc();

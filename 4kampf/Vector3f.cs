@@ -5,27 +5,25 @@ namespace kampfpanzerin
 {
 	public class Vector3f
 	{
+
+        public static readonly Vector3f INVALID = new Vector3f(-666666.0f);
+
 		public float x, y, z;
 
-        public Vector3f()
+        public Vector3f() : this(0)
         {
-            this.x = 0;
-            this.y = 0;
-            this.z = 0;
         }
 
-        public Vector3f(Vector3f v)
+        public Vector3f(float initValue):this(initValue, initValue, initValue) {
+        }
+
+        public Vector3f(Vector3f v) : this(v.x, v.y, v.z)
         {
-            this.x = v.x;
-            this.y = v.y;
-            this.z = v.z;
         }
 
 		public Vector3f(float x, float y, float z)
 		{
-			this.x = x;
-			this.y = y;
-			this.z = z;
+            Set(x, y, z);
 		}
 
         public void Set(float x, float y, float z)
@@ -106,9 +104,43 @@ namespace kampfpanzerin
         public static Vector3f operator /(Vector3f a, float b) {
             return new Vector3f(a.x / b, a.y / b, a.z / b);
         }
+
+        public float this [int i] {
+            get {
+                switch (i) {
+                    case 0: return this.x;
+                    case 1: return this.y;
+                    case 2: return this.z;
+                    default: throw new IndexOutOfRangeException("Index must be 0-2");
+                }
+            }
+            set {
+                switch (i) {
+                    case 0:
+                        this.x = value;
+                        break;
+                    case 1: 
+                        this.y = value;
+                        break;
+                    case 2: 
+                        this.z = value;
+                        break;
+                    default: throw new IndexOutOfRangeException("Index must be 0-2");
+                }
+            }
+        }
+
         public float Magnitude()
         {
             return ((float)Math.Sqrt(x * x + y * y + z * z));
+        }
+
+        public float Max() {
+            return Math.Max(x, Math.Max(y, z));
+        }
+
+        public float Min() {
+            return Math.Min(x, Math.Min(y, z));
         }
     }
 }

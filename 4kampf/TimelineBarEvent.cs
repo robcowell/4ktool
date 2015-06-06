@@ -17,6 +17,8 @@ namespace kampfpanzerin {
         public float value;
         public BarEventType type;
 
+        public Vector3f vecValue;
+
         public int CompareTo(Object obj) {
             TimelineBarEvent be = (TimelineBarEvent)obj;
             if (time == be.time)

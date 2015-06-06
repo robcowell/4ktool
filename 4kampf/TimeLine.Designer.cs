@@ -33,7 +33,7 @@
             this.btnSnapBeat = new System.Windows.Forms.Button();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.cameraModeCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             this.SuspendLayout();
@@ -166,28 +166,28 @@
             // 
             // checkBox1
             // 
-            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.checkBox1.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.checkBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.checkBox1.FlatAppearance.BorderSize = 0;
-            this.checkBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.checkBox1.Image = global::kampfpanzerin.Properties.Resources.Camera;
-            this.checkBox1.Location = new System.Drawing.Point(44, 625);
-            this.checkBox1.Margin = new System.Windows.Forms.Padding(0);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(22, 22);
-            this.checkBox1.TabIndex = 10;
-            this.toolTip1.SetToolTip(this.checkBox1, "Toggle Cam Track");
-            this.checkBox1.UseVisualStyleBackColor = false;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.cameraModeCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cameraModeCheckBox.Appearance = System.Windows.Forms.Appearance.Button;
+            this.cameraModeCheckBox.AutoSize = true;
+            this.cameraModeCheckBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.cameraModeCheckBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.cameraModeCheckBox.FlatAppearance.BorderSize = 0;
+            this.cameraModeCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cameraModeCheckBox.Image = global::kampfpanzerin.Properties.Resources.Camera;
+            this.cameraModeCheckBox.Location = new System.Drawing.Point(44, 625);
+            this.cameraModeCheckBox.Margin = new System.Windows.Forms.Padding(0);
+            this.cameraModeCheckBox.Name = "checkBox1";
+            this.cameraModeCheckBox.Size = new System.Drawing.Size(22, 22);
+            this.cameraModeCheckBox.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.cameraModeCheckBox, "Toggle Cam Track");
+            this.cameraModeCheckBox.UseVisualStyleBackColor = false;
+            this.cameraModeCheckBox.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // TimeLine
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.cameraModeCheckBox);
             this.Controls.Add(this.pictureBox4);
             this.Controls.Add(this.btnSnapBeat);
             this.Controls.Add(this.trkZoom);
@@ -217,6 +217,6 @@
         private MetroFramework.Controls.MetroTrackBar trkZoom;
         private System.Windows.Forms.Button btnSnapBeat;
         private System.Windows.Forms.PictureBox pictureBox4;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox cameraModeCheckBox;
     }
 }

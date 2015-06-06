@@ -15,16 +15,10 @@ namespace kampfpanzerin {
         public TimelineBarEventCameraEditForm(float time, Vector3f value, BarEventType type, bool editMode) {
             InitializeComponent();
 
-            //switch (type) {
-            //    case BarEventType.SMOOTH:   cmbType.SelectedIndex = 0; break;
-            //    case BarEventType.LERP: cmbType.SelectedIndex = 1; break;
-            //    case BarEventType.HOLD: cmbType.SelectedIndex = 2; break;
-            //    case BarEventType.CAMERA: cmbType.SelectedIndex = 3; break;
-            //}
             numTime.Value = (decimal)time;
             xValue.Text = value.x.ToString(culture);
-            xValue.Text = value.x.ToString(culture);
-            xValue.Text = value.x.ToString(culture);
+            yValue.Text = value.y.ToString(culture);
+            zValue.Text = value.z.ToString(culture);
 
             if (editMode) {
                 btnDelete.Visible = true;
@@ -56,22 +50,7 @@ namespace kampfpanzerin {
         }
 
         private void txtValue_TextChanged(object sender, EventArgs ev) {
-            //try {
-                
-                //string text = xValue.Text;
-                //if (text.Length == 0) {
-                //    text = "0";
-                //}
-                //float f = float.Parse(text);
-                //int df = (int)(f * 100.0f);
-                //xValue.BackColor = Color.FromArgb(unchecked ((int)0xff7f7f7f));
-                ValidateInputs();
-        //    } catch (Exception) {
-        //        xValue.BackColor = Color.Red;
-        //        btnSave.Enabled = false;
-        //        //MessageBox.Show("Dude! That ain't no float, man!", "4kampf", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        //xValue.Text="0";
-        //    }
+            ValidateInputs();
         }
 
         private void ValidateInputs() {
@@ -108,7 +87,6 @@ namespace kampfpanzerin {
             } catch (Exception) {
                 return false;
             }
-            //int df = (int)(f * 100.0f);
         }
     }
 }
