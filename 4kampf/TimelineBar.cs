@@ -10,8 +10,19 @@ namespace kampfpanzerin {
         public List<TimelineBarEvent> events = new List<TimelineBarEvent>();
         public float maxVal, minVal;
 
-        public TimelineBar(string name) {
+        public TimeLineMode mode { get; set; }
+
+        public enum TimeLineMode {
+            SYNC, CAMERA
+        };
+
+        public TimelineBar(string name)
+            : this(name, TimeLineMode.SYNC) {
+        }
+
+        public TimelineBar(string name, TimeLineMode mode) {
             this.name = name;
+            this.mode = mode;
         }
 
         public void Recalc() {
@@ -52,5 +63,6 @@ namespace kampfpanzerin {
                 amount = (amount * amount) * (3.0f - (2.0f * amount));
             return be1.value + (be2.value - be1.value) * amount;
         }
+
     }
 }

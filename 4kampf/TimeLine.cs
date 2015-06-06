@@ -58,6 +58,12 @@ namespace kampfpanzerin {
 
         public TimeLine() {
             InitializeComponent();
+            TimelineBar camPos = new TimelineBar("cam pos");
+            TimelineBar referencePoint = new TimelineBar("look at");
+            TimelineBar upVector = new TimelineBar("up");
+            camBars.Add(camPos);
+            camBars.Add(referencePoint);
+            camBars.Add(upVector);
             Redraw();
         }
 
@@ -171,14 +177,14 @@ namespace kampfpanzerin {
             button1.Enabled = (syncBars.Count<16);
         }
 
-        private void RenderGraphs(Graphics g, Font f, SolidBrush b, List<TimelineBar> syncBars) {
+        private void RenderGraphs(Graphics g, Font f, SolidBrush b, List<TimelineBar> bars) {
             // Render bars, labels, events
-            if (syncBars.Count > 0) {
-                barHeight = Height - (BAR_HORIZ_MARGIN * 2 + BOTTOM_CONTROL_MARGIN + 20 + BAR_HORIZ_MARGIN * (syncBars.Count - 1));
-                barHeight /= syncBars.Count;
+            if (bars.Count > 0) {
+                barHeight = Height - (BAR_HORIZ_MARGIN * 2 + BOTTOM_CONTROL_MARGIN + 20 + BAR_HORIZ_MARGIN * (bars.Count - 1));
+                barHeight /= bars.Count;
                 int currY = BAR_HORIZ_MARGIN + barHeight / 2;
                 Pen p = new Pen(Color.Lime, (float)barHeight);
-                foreach (TimelineBar bar in syncBars) {
+                foreach (TimelineBar bar in bars) {
                     //bar.Draw();
                     if (bar.events.Count > 0) {
                         // Find start and end for trackbar
@@ -350,17 +356,33 @@ namespace kampfpanzerin {
         }
 
         private void AddEvent(TimelineBar b, float time) {
-            TimelineBarEventEditForm frm = new TimelineBarEventEditForm(time, 0, BarEventType.SMOOTH, false);
-            frm.StartPosition = FormStartPosition.Manual;
-            frm.Location = new Point(Cursor.Position.X - 97, Cursor.Position.Y - 169);
-            if (frm.ShowDialog() == DialogResult.OK) {
-                TimelineBarEvent be = new TimelineBarEvent();
-                be.time = frm.GetTime();
-                be.type = frm.GetEventType();
-                be.value = frm.GetValue();
-                b.events.Add(be);
-                Kampfpanzerin.SetDirty();
-                b.Recalc();
+            if (camMode) {
+                TimelineBarEventCameraEditForm frm = new TimelineBarEventCameraEditForm(time, 
+                    GraphicsManager.GetInstance().GetCamera().position, BarEventType.CAMERA, false);
+                frm.StartPosition = FormStartPosition.Manual;
+                frm.Location = new Point(Cursor.Position.X - 97, Cursor.Position.Y - 169);
+                if (frm.ShowDialog() == DialogResult.OK) {
+                    TimelineBarEvent be = new TimelineBarEvent();
+                    be.time = frm.GetTime();
+                    be.type = frm.GetEventType();
+                    //be.value = frm.GetValue();
+                    b.events.Add(be);
+                    Kampfpanzerin.SetDirty();
+                    b.Recalc();
+                }
+            } else {
+                TimelineBarEventEditForm frm = new TimelineBarEventEditForm(time, 0, BarEventType.SMOOTH, false);
+                frm.StartPosition = FormStartPosition.Manual;
+                frm.Location = new Point(Cursor.Position.X - 97, Cursor.Position.Y - 169);
+                if (frm.ShowDialog() == DialogResult.OK) {
+                    TimelineBarEvent be = new TimelineBarEvent();
+                    be.time = frm.GetTime();
+                    be.type = frm.GetEventType();
+                    be.value = frm.GetValue();
+                    b.events.Add(be);
+                    Kampfpanzerin.SetDirty();
+                    b.Recalc();
+                }
             }
         }
 
