@@ -12,11 +12,13 @@ using System.Globalization;
 namespace kampfpanzerin {
     public partial class TimeLine : UserControl {
         private Bitmap bmp;
-        private List<TimelineBar> bars = new List<TimelineBar>();
+        private List<TimelineBar> syncBars = new List<TimelineBar>();
+        private List<TimelineBar> camBars = new List<TimelineBar>();
         private TimelineBarEvent eventUnderEdit = null;
         private int eventUnderEditBarIndex;
         private Point dragStart;
         private static CultureInfo culture = CultureInfo.CreateSpecificCulture("en-GB");
+        public bool camMode { get; set; }
 
         /*
         private Color BAR_COL = Color.FromArgb(150, 150, 150);
@@ -70,7 +72,7 @@ namespace kampfpanzerin {
 
         public bool LoadData(string filename) {
             eventUnderEdit = null;
-            bars = new List<TimelineBar>();
+            syncBars = new List<TimelineBar>();
 
             if (!File.Exists(filename))
                 return false;
@@ -78,8 +80,8 @@ namespace kampfpanzerin {
             string s = File.ReadAllText(filename);
             string[] lines = s.Split(new char[]{'\n'},StringSplitOptions.RemoveEmptyEntries);
             foreach (string line in lines) {
-                TimelineBar b = new TimelineBar("sn[" + bars.Count + "]");
-                bars.Add(b);
+                TimelineBar b = new TimelineBar("sn[" + syncBars.Count + "]");
+                syncBars.Add(b);
 
                 string[] events = line.Split(new char[]{';'}, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string ev in events) {
@@ -103,7 +105,7 @@ namespace kampfpanzerin {
 
         public void SaveData(string filename) {
             string s = "";
-            foreach (TimelineBar b in bars) {
+            foreach (TimelineBar b in syncBars) {
                 foreach (TimelineBarEvent be in b.events)
                     s += be.time.ToString("0.000000",culture) + "," + be.value.ToString("0.000000",culture) + "," + be.type.ToString() + ";";
                 s += "\n";
@@ -119,10 +121,10 @@ namespace kampfpanzerin {
                 return;
 
             bmp = new Bitmap(Width, Height);
-            Graphics g = Graphics.FromImage(bmp);
-            Font f = new Font("Lucida Console", 8, FontStyle.Regular);
-            SolidBrush b = new SolidBrush(Color.White);
-            g.Clear(Color.FromArgb(64, 64, 64));
+            Graphics graphics = Graphics.FromImage(bmp);
+            Font font = new Font("Lucida Console", 8, FontStyle.Regular);
+            SolidBrush brush = new SolidBrush(Color.White);
+            graphics.Clear(Color.FromArgb(64, 64, 64));
 
             // Calculate steps
             float pixWidth = (Width - 6) - BAR_LEFT_MARGIN;
@@ -136,13 +138,47 @@ namespace kampfpanzerin {
 
             trkZoom.Maximum = (int)timeMax;
 
+            if (camMode)
+                RenderGraphs(graphics, font, brush, camBars);
+            else
+                RenderGraphs(graphics, font, brush, syncBars);
+
+            // Render ticks
+            int timeY = Height - (BOTTOM_CONTROL_MARGIN + 10); 
+            Pen pt = new Pen(Color.FromArgb(64, 32, 32, 32), 1.0f);
+            pt.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+            brush.Color = Color.White;
+            graphics.DrawString("Time", font, brush, 2, timeY - 2);
+            float currentTimePos = timeStart;
+            font = new Font("Lucida Console", 6, FontStyle.Regular);
+            for (float x = BAR_LEFT_MARGIN; x < Width - 6; x += pixelsPerInterval) {
+                graphics.DrawLine(pt, x, timeY, x, BAR_HORIZ_MARGIN);
+                graphics.DrawString(currentTimePos.ToString(), font, brush, x - 4, timeY);
+                currentTimePos += secsPerInterval;
+            }
+
+            // Render current time marker
+            int xPos = TimeToXCoord(timeCurrent);
+            if (xPos != -1) {
+                pt = new Pen(Color.Lime, 1.0f);
+                brush.Color = Color.LimeGreen; 
+                graphics.DrawLine(pt, xPos, BAR_HORIZ_MARGIN, xPos, Height - BOTTOM_CONTROL_MARGIN);
+                graphics.DrawString(timeCurrent.ToString("0.00"), font, brush, xPos, Height - BOTTOM_CONTROL_MARGIN - font.Size / 2);
+            }
+
+            graphics.Dispose();
+            pictureBox.Image = bmp;
+            button1.Enabled = (syncBars.Count<16);
+        }
+
+        private void RenderGraphs(Graphics g, Font f, SolidBrush b, List<TimelineBar> syncBars) {
             // Render bars, labels, events
-            if (bars.Count > 0) {
-                barHeight = Height - (BAR_HORIZ_MARGIN * 2 + BOTTOM_CONTROL_MARGIN + 20 + BAR_HORIZ_MARGIN*(bars.Count-1));
-                barHeight /= bars.Count;
+            if (syncBars.Count > 0) {
+                barHeight = Height - (BAR_HORIZ_MARGIN * 2 + BOTTOM_CONTROL_MARGIN + 20 + BAR_HORIZ_MARGIN * (syncBars.Count - 1));
+                barHeight /= syncBars.Count;
                 int currY = BAR_HORIZ_MARGIN + barHeight / 2;
                 Pen p = new Pen(Color.Lime, (float)barHeight);
-                foreach (TimelineBar bar in bars) {
+                foreach (TimelineBar bar in syncBars) {
                     //bar.Draw();
                     if (bar.events.Count > 0) {
                         // Find start and end for trackbar
@@ -172,7 +208,7 @@ namespace kampfpanzerin {
                         b.Color = BAR_COL_LABEL_HIGHLIGHT;
                     else
                         b.Color = BAR_COL_LABEL;
-                    
+
                     if (barHeight >= 10)
                         g.DrawString(bar.name, f, b, 2, currY - barHeight / 2);
                     if (barHeight >= 20) {
@@ -187,7 +223,7 @@ namespace kampfpanzerin {
                     foreach (TimelineBarEvent be in bar.events) {
                         int xCoord = TimeToXCoord(be.time);
                         if (xCoord != -1) {
-                            Color c = Color.FromArgb(64,64,64);
+                            Color c = Color.FromArgb(64, 64, 64);
                             if (bar.events.Count == 1)
                                 c = Color.White;
                             be.Draw(g, xCoord, currY, barHeight, c);
@@ -204,7 +240,7 @@ namespace kampfpanzerin {
                         Pen p2 = new Pen(b);
                         for (int wavX = BAR_LEFT_MARGIN; wavX < Width - 7; wavX++) {
                             float currVal = bar.GetValueAtTime(XCoordToTime(wavX));
-                            float nextVal = bar.GetValueAtTime(XCoordToTime(wavX + 1)); 
+                            float nextVal = bar.GetValueAtTime(XCoordToTime(wavX + 1));
                             if (currVal != -666666.0) {
                                 if (wavRange > 0) {
                                     int wavY = (int)(currY + barHeight / 2 - (currVal * pixWavConv + WAVEFORM_MARGIN));
@@ -214,40 +250,13 @@ namespace kampfpanzerin {
                                     g.DrawLine(p2, wavX, wavY, wavX + 1, wavY2);
                                 } else
                                     g.FillRectangle(b, wavX, currY, 1, 1);
-                            }   
+                            }
                         }
                     }
 
                     currY += barHeight + BAR_HORIZ_MARGIN;
                 }
             }
-
-            // Render ticks
-            int timeY = Height - (BOTTOM_CONTROL_MARGIN + 10); 
-            Pen pt = new Pen(Color.FromArgb(64, 32, 32, 32), 1.0f);
-            pt.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
-            b.Color = Color.White;
-            g.DrawString("Time", f, b, 2, timeY - 2);
-            float currentTimePos = timeStart;
-            f = new Font("Lucida Console", 6, FontStyle.Regular);
-            for (float x = BAR_LEFT_MARGIN; x < Width - 6; x += pixelsPerInterval) {
-                g.DrawLine(pt, x, timeY, x, BAR_HORIZ_MARGIN);
-                g.DrawString(currentTimePos.ToString(), f, b, x - 4, timeY);
-                currentTimePos += secsPerInterval;
-            }
-
-            // Render current time marker
-            int xPos = TimeToXCoord(timeCurrent);
-            if (xPos != -1) {
-                pt = new Pen(Color.Lime, 1.0f);
-                b.Color = Color.LimeGreen; 
-                g.DrawLine(pt, xPos, BAR_HORIZ_MARGIN, xPos, Height - BOTTOM_CONTROL_MARGIN);
-                g.DrawString(timeCurrent.ToString("0.00"), f, b, xPos, Height - BOTTOM_CONTROL_MARGIN - f.Size / 2);
-            }
-
-            g.Dispose();
-            pictureBox.Image = bmp;
-            button1.Enabled = (bars.Count<16);
         }
 
         public void ApplySettings() {
@@ -274,12 +283,12 @@ namespace kampfpanzerin {
         }
 
         private void DeleteBar(int which) {
-            if (bars == null || which >= bars.Count)
+            if (syncBars == null || which >= syncBars.Count)
                 return;
 
-            if (bars[which].events.Count > 0) {
+            if (syncBars[which].events.Count > 0) {
                 string s = "Are you sure you want to delete this track?";
-                if (which < bars.Count - 1)
+                if (which < syncBars.Count - 1)
                     s += "\n\nTracks below this one will be renamed!";
                 MessageBoxManager.Yes = "Do it man";
                 MessageBoxManager.No = "Hell no!";
@@ -287,10 +296,10 @@ namespace kampfpanzerin {
                     return;
             }
 
-            bars.RemoveAt(which);
+            syncBars.RemoveAt(which);
 
-            for (int i = 0; i < bars.Count; i++)
-                bars[i].name = "sn[" + i + "]";
+            for (int i = 0; i < syncBars.Count; i++)
+                syncBars[i].name = "sn[" + i + "]";
 
             Kampfpanzerin.SetDirty();
             Redraw();
@@ -302,10 +311,10 @@ namespace kampfpanzerin {
             int whichBar = clickPos.Y / (barHeight + BAR_HORIZ_MARGIN);
             
             // Select clicked bar
-            if (whichBar < bars.Count) {
-                for (int i = 0; i < bars.Count; i++)
-                    bars[i].selected = false;
-                bars[whichBar].selected = true;
+            if (whichBar < syncBars.Count) {
+                for (int i = 0; i < syncBars.Count; i++)
+                    syncBars[i].selected = false;
+                syncBars[whichBar].selected = true;
             }
 
             // Transport / rewind to start
@@ -318,22 +327,22 @@ namespace kampfpanzerin {
             }
 
             // Add/edit/del event
-            if (whichBar < bars.Count && mea.Button == MouseButtons.Right) {
+            if (whichBar < syncBars.Count && mea.Button == MouseButtons.Right) {
                 float evTime = XCoordToTime(clickPos.X);
                 if (evTime >= 0) {
                     if (Properties.Settings.Default.snapBarEvents)
                         evTime = NearestBeat(evTime);
                     TimelineBarEvent chosenEvent = null;
                     float chosenDist = 1000.0f;
-                    foreach (TimelineBarEvent be in bars[whichBar].events) {
+                    foreach (TimelineBarEvent be in syncBars[whichBar].events) {
                         float diff = Math.Abs(be.time - evTime);
                         if (diff < 1.0f && diff < chosenDist)
                             chosenEvent = be;
                     }
                     if (chosenEvent != null)
-                        EditEvent(bars[whichBar], chosenEvent);
+                        EditEvent(syncBars[whichBar], chosenEvent);
                     else
-                        AddEvent(bars[whichBar], evTime);
+                        AddEvent(syncBars[whichBar], evTime);
                 }
             }
 
@@ -392,10 +401,10 @@ namespace kampfpanzerin {
         }
 
         private void AddBar() {
-            if (bars.Count > 15)
+            if (syncBars.Count > 15)
                 return;
 
-            bars.Add(new TimelineBar("sn[" + bars.Count + "]"));
+            syncBars.Add(new TimelineBar("sn[" + syncBars.Count + "]"));
             Kampfpanzerin.SetDirty();
             Redraw();
         }
@@ -409,8 +418,8 @@ namespace kampfpanzerin {
         }
 
         private void btnDel_Click(object sender, EventArgs e) {
-            for (int i = 0; i < bars.Count; i++)
-                if (bars[i].selected)
+            for (int i = 0; i < syncBars.Count; i++)
+                if (syncBars[i].selected)
                     DeleteBar(i);
         }
 
@@ -419,11 +428,11 @@ namespace kampfpanzerin {
             Point clickPos = new Point(mea.X, mea.Y);
             int whichBar = clickPos.Y / (barHeight + BAR_HORIZ_MARGIN);
 
-            if (whichBar < bars.Count && mea.Button == MouseButtons.Left) {
+            if (whichBar < syncBars.Count && mea.Button == MouseButtons.Left) {
                 float evTime = XCoordToTime(clickPos.X);
                 TimelineBarEvent chosenEvent = null;
                 float chosenDist = 1000.0f;
-                foreach (TimelineBarEvent be in bars[whichBar].events) {
+                foreach (TimelineBarEvent be in syncBars[whichBar].events) {
                     float diff = Math.Abs(be.time - evTime);
                     if (diff < 1.0f && diff < chosenDist)
                         chosenEvent = be;
@@ -457,19 +466,19 @@ namespace kampfpanzerin {
                     if (eventUnderEditBarIndex > 0)
                         y -= eventUnderEditBarIndex * (barHeight + BAR_HORIZ_MARGIN);
                     y /= barHeight;
-                    float minVal = bars[eventUnderEditBarIndex].minVal;
-                    float maxVal = bars[eventUnderEditBarIndex].maxVal; 
+                    float minVal = syncBars[eventUnderEditBarIndex].minVal;
+                    float maxVal = syncBars[eventUnderEditBarIndex].maxVal; 
                     float range =  maxVal - minVal;
                     float newVal = maxVal - y * range;
                     eventUnderEdit.value = newVal;
-                    bars[eventUnderEditBarIndex].Recalc();
+                    syncBars[eventUnderEditBarIndex].Recalc();
                 } else {    // Edit time
                     float t = XCoordToTime(e.X);
                     if (Properties.Settings.Default.snapBarEvents)
                         t = NearestBeat(t);
                     if (t > -0.1f)
                         eventUnderEdit.time = t;
-                    bars[eventUnderEditBarIndex].Recalc();
+                    syncBars[eventUnderEditBarIndex].Recalc();
                 }
             }
         }
@@ -488,7 +497,7 @@ namespace kampfpanzerin {
         }
 
         private bool TypeIsPresent(BarEventType t) {
-            foreach (TimelineBar bar in bars)
+            foreach (TimelineBar bar in syncBars)
                 foreach (TimelineBarEvent be in bar.events)
                     if (be.type == t)
                         return true;
@@ -497,7 +506,7 @@ namespace kampfpanzerin {
         }
 
         public string CompileTrackerCode() {
-            if (bars.Count == 0)
+            if (syncBars.Count == 0)
                 return "";
 
             string res = "";
@@ -507,17 +516,17 @@ namespace kampfpanzerin {
                 res += "#define mx(b,bb,bbb,bbbb) u.z<bb?mix(bbb,bbbb,(u.z-b)/(bb-b)):bbbb\r\n";
             if (TypeIsPresent(BarEventType.SMOOTH))
                 res += "#define sx(b,bb,bbb,bbbb) u.z<bb?bbb+(bbbb-bbb)*smoothstep(b,bb,u.z):bbbb\r\n";
-            if (bars.Count == 1)
+            if (syncBars.Count == 1)
                 res += "float sn;";
             else
-                res += "float sn[" + bars.Count + "];";
+                res += "float sn[" + syncBars.Count + "];";
 
             int i = 0;
-            foreach (TimelineBar bar in bars) {
+            foreach (TimelineBar bar in syncBars) {
                 if (bar.events.Count == 0)
                     continue;
 
-                if (bars.Count == 1)
+                if (syncBars.Count == 1)
                     res += "sn=";
                 else
                     res += "sn[" + (i++) + "]=";
@@ -587,7 +596,8 @@ namespace kampfpanzerin {
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e) {
-
+            this.camMode = ((CheckBox)sender).Checked;
         }
+
     }
 }
