@@ -43,6 +43,12 @@ namespace kampfpanzerin
             this.z = z;
         }
 
+        public void Set(Vector3f that) {
+            this.x = that.x;
+            this.y = that.y;
+            this.z = that.z;
+        }
+
 		public float Dot(Vector3f b)
 		{
 			return (x*b.x + y*b.y + z*b.z);

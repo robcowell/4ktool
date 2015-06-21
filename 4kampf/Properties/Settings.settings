@@ -29,9 +29,6 @@
     <Setting Name="useSoundThread" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="use4klangEnv" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="useSyncTracker" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>

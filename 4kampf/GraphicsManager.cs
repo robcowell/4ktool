@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 using Tao.OpenGl;
 using Tao.Platform.Windows;
@@ -40,11 +41,11 @@ namespace kampfpanzerin
         private int rtt, fbo;
 
         private BitmapFont debugLabeller;
+        private Project project;
 
 		public static GraphicsManager GetInstance() {
 			if(instance == null)
 				instance = new GraphicsManager();
-            
 			return instance;
 		}
 
@@ -291,9 +292,9 @@ namespace kampfpanzerin
 
                 camera.UpdateVectors();
 
-                float[] forward = { camera.forward.x, camera.forward.y, camera.forward.z };
-                float[] up = { camera.up.x, camera.up.y, camera.up.z };
-                float[] campos = { camera.position.x, camera.position.y, camera.position.z };
+                float[] forward = { camera.Forward.x, camera.Forward.y, camera.Forward.z };
+                float[] up = { camera.Up.x, camera.Up.y, camera.Up.z };
+                float[] campos = { camera.Position.x, camera.Position.y, camera.Position.z };
                 Gl.glUniform3fv(Gl.glGetUniformLocation(shaderProg[0], "cp"), 1, campos);
                 Gl.glUniform3fv(Gl.glGetUniformLocation(shaderProg[0], "fd"), 1, forward);
                 Gl.glUniform3fv(Gl.glGetUniformLocation(shaderProg[0], "up"), 1, up);
@@ -304,7 +305,7 @@ namespace kampfpanzerin
                 Gl.glUniform3fv(Gl.glGetUniformLocation(shaderProg[0], "u"), 1, standardUniforms);
             }
 
-            if (Properties.Settings.Default.use4klangEnv) {
+            if (project.use4klangEnv) {
                 float[] syncVals = AppForm.GetInstance().klangPlayer.Get4klangSync();
                 if (syncVals!=null)
                     Gl.glUniform1fv(Gl.glGetUniformLocation(shaderProg[0], "ev"), syncVals.Length, syncVals);
@@ -465,7 +466,7 @@ namespace kampfpanzerin
             float t = 0;
             try {
                 t = (float)af.klangPlayer.GetPosition();
-            } catch (Exception) {}
+            } catch (Exception) { }
             return t;
         }
 
@@ -482,11 +483,15 @@ namespace kampfpanzerin
         }
         
         public void SetCameraMode(CameraMode newCamMode) {
-            camera.mode = newCamMode;
+            camera.Mode = newCamMode;
         }
 
         public Camera GetCamera() {
             return camera;
+        }
+
+        public void updateProject(Project project) {
+            this.project = project;
         }
 	}
 }

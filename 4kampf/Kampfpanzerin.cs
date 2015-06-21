@@ -79,7 +79,7 @@ namespace kampfpanzerin
                 form.edPost.Margins[0].Width = 0;
             }
 
-            form.enableTrack02EnvsInUniformSvrequiresCorrect4klangExportToolStripMenuItem.Checked = Properties.Settings.Default.use4klangEnv;
+            form.enableTrack02EnvsInUniformSvrequiresCorrect4klangExportToolStripMenuItem.Checked = project.use4klangEnv;
             form.enableCamControlToolStripMenuItem.Checked = Properties.Settings.Default.enableCamControls;
             form.enableStandardUniformsToolStripMenuItem.Checked = Properties.Settings.Default.enableStandardUniforms;
             form.loopTrackToolStripMenuItem.Checked = Properties.Settings.Default.enableLooping;
@@ -95,10 +95,10 @@ namespace kampfpanzerin
             form.btnFullscreen.BackColor = Properties.Settings.Default.fullscreen ? Color.FromArgb(100, 100, 100) : form.BackColor;
             form.btnLineNumbers.BackColor = Properties.Settings.Default.showLineNumbers ? Color.FromArgb(100, 100, 100) : form.BackColor;
             form.btnTracker.BackColor = Properties.Settings.Default.useSyncTracker ? Color.FromArgb(100, 100, 100) : form.BackColor;
-            form.btnEnvelopes.BackColor = Properties.Settings.Default.use4klangEnv ? Color.FromArgb(100, 100, 100) : form.BackColor;
+            form.btnEnvelopes.BackColor = project.use4klangEnv ? Color.FromArgb(100, 100, 100) : form.BackColor;
             form.btnStandardUniforms.BackColor = Properties.Settings.Default.enableStandardUniforms ? Color.FromArgb(100, 100, 100) : form.BackColor;
 
-            form.klangPlayer.ApplySettings();
+            form.klangPlayer.ApplySettings(project);
             form.timeLine.ApplySettings();
 
             Properties.Settings.Default.Save();
@@ -164,6 +164,7 @@ namespace kampfpanzerin
                     stream.Close();
                 }
                 form.timeLine.SetProject(project);
+                GraphicsManager.GetInstance().updateProject(project);
             }
 
             if (!File.Exists(dir + "\\vert.glsl") || !File.Exists(dir + "\\frag.glsl")) {
@@ -245,6 +246,8 @@ namespace kampfpanzerin
             string syncCode = form.timeLine.CompileTrackerCode();
             vertText = vertText.Replace("//#SYNCCODE#", syncCode);
             fragText = fragText.Replace("//#SYNCCODE#", syncCode);
+
+            vertText = vertText.Replace("CAMVARS", "uniform vec3 cp, fd, up;");
             
             form.ShowLog("");
 
@@ -355,55 +358,14 @@ namespace kampfpanzerin
         }
 
         private static void ExportHeader() {
-            string s = "// Prod shaders, sync and config\n// Exported from 4kampf\n\n#pragma once\n\n";
-            if (Properties.Settings.Default.enableStandardUniforms)
-                s += "#define USE_STANDARD_UNIFORMS\n";
-            if (Properties.Settings.Default.use4klangEnv)
-                s += "#define USE_4KLANG_ENV_SYNC\n";
-            if (Properties.Settings.Default.usePP)
-                s += "#define USE_PP\n";
-            if (Properties.Settings.Default.useSoundThread)
-                s += "#define USE_SOUND_THREAD\n";
-            float prodLength = 100.0f;
-            if (File.Exists("music.wav")) // Music must be rendered; should be cool to query length
-                prodLength = form.klangPlayer.GetDuration();
-            s += "#define PROD_LENGTH " + ((int)prodLength) + "\n\n";
-            s += "#pragma data_seg(\".vertShader\")\nstatic const char *vertShader[] = {\"";
-            s += CleanShader(form.edVert.Text);
-            s += "\"};\n\n#pragma data_seg(\".fragShader\")\nstatic const char *fragShader[] = {\"";
-            s += CleanShader(form.edFrag.Text);
             if (Properties.Settings.Default.usePP) {
-                s += "\"};\n\n#pragma data_seg(\".ppShader\")\nstatic const char *ppShader[] = {\"";
-                s += CleanShader(form.edPost.Text);
+                BuildUtils.DoExportHeader(project, form.klangPlayer.GetDuration(), form.edVert.Text, form.edFrag.Text, form.edPost.Text);
+            } else {
+                BuildUtils.DoExportHeader(project, form.klangPlayer.GetDuration(), form.edVert.Text, form.edFrag.Text);
             }
-            s += "\"};\n";
-            File.WriteAllText("4kampfpanzerin.h", s);
         }
 
-        private static string CleanShader(string s) {
-            string r = "";
-            string[] lines = s.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
-            for (int i = 0; i < lines.Count(); i++) {
-                // Remove comments
-                int commentPos = lines[i].IndexOf("//");
-                if (commentPos == 0)
-                    continue;
-                if (commentPos > 0)
-                    lines[i] = lines[i].Substring(0, commentPos - 1);
-                // Trim
-                lines[i] = lines[i].Trim();
-                // Add newlines for lines starting #
-                if (lines[i].StartsWith("#"))
-                    lines[i] += "\\n";
-                // Add spaces after braceless elses
-                if (lines[i].EndsWith("else"))
-                    lines[i] += " ";
-                // Got anything left? Cool, add it!
-                if (lines[i].Length > 0)
-                    r += lines[i];
-            }
-            return r;
-        }
+
 
         public static void DoRun() {
             form.klangPlayer.Stop();

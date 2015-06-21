@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 using Tao.OpenGl;
 
@@ -11,22 +12,79 @@ namespace kampfpanzerin
     {
         WALK,
         LOCKFLY,
-        FREEFLY
+        FREEFLY,
+        AUTOMATED
     }
 
     public class Camera
     {
         private const float PI_OVER_180 = 0.0174532925f;
 
-        public Vector3f position;
-        public Vector3f rotation;
-        public Vector3f forward, right, up;
-        public CameraMode mode = CameraMode.FREEFLY;
+        private Vector3f position;
+        private Vector3f rotation;
+        private Vector3f forward, right, up;
+        public Vector3f Forward {
+            get {
+                return forward;
+            }
+        }
+        public Vector3f Up {
+            get {
+                return up;
+            }
+        }
+
+        public Vector3f Rotation {
+            get {
+                if (mode == CameraMode.AUTOMATED) {
+                    return automation.Rot;
+                }
+                return rotation;
+            }
+        }
+        
+        public Vector3f Position {
+            get {
+                if (mode == CameraMode.AUTOMATED)
+                    return automation.Pos;
+                return position;
+            }
+        }
+
+        private CamAutomationProxy automation;
+        private CameraMode mode;
+
+
+        public CameraMode Mode {
+                get {
+                    return mode;
+                }
+                set {
+                    if (value != mode) {
+                        if (value == CameraMode.AUTOMATED) {
+                            List<TimelineBar> bars = AppForm.GetInstance().timeLine.camBars;
+                            Dictionary<TimelineBar.TimeLineMode, TimelineBar> d = new Dictionary<TimelineBar.TimeLineMode, TimelineBar>();
+                            d.Add(TimelineBar.TimeLineMode.CAMERA_POS, bars[0]);
+                            d.Add(TimelineBar.TimeLineMode.CAMERA_ROT, bars[1]);
+
+                            automation = new CamAutomationProxy(d, AppForm.GetInstance().klangPlayer);
+                        } else if(mode == CameraMode.AUTOMATED) {
+
+                            this.position = automation.Pos;
+                            this.rotation = automation.Rot;
+                            UpdateVectors();
+                        }
+                        mode = value;
+                        UpdateVectors();
+                    }
+                }
+        }
         
         private bool dirty;
 
         public Camera() {
             Reset();
+            mode = CameraMode.FREEFLY ;
         }
 
         public bool CheckAndResetDirty() {
@@ -43,15 +101,16 @@ namespace kampfpanzerin
             up = new Vector3f();
             dirty = true;
         }
-        
-        public void UpdateVectors() {
-            if (rotation.x < -90) rotation.x = -90;
-            if (rotation.x > 90) rotation.x = 90;
 
-            Gl.glMatrixMode(Gl.GL_MODELVIEW); 
+        public void UpdateVectors() {
+            if (Rotation.x < -90) Rotation.x = -90;
+            if (Rotation.x > 90) Rotation.x = 90;
+
+            Gl.glMatrixMode(Gl.GL_MODELVIEW);
             Gl.glLoadIdentity();
-            Gl.glRotatef(rotation.x, 1, 0, 0);
-            Gl.glRotatef(360 - rotation.y, 0, 1, 0);
+            Gl.glRotatef(Rotation.x, 1, 0, 0);
+            Gl.glRotatef(360 - Rotation.y, 0, 1, 0);
+            Gl.glRotatef(Rotation.z, 0, 0, 1);
 
             // Store orientation vectors!
             float[] model = new float[16];
@@ -95,18 +154,24 @@ namespace kampfpanzerin
         }
 
         public void Mouselook(PointF mouseMovement) {
-            Yaw(-mouseMovement.X);
-            Pitch(-mouseMovement.Y);
+            if (mode != CameraMode.AUTOMATED) {
+                Yaw(-mouseMovement.X);
+                Pitch(-mouseMovement.Y);
+            }
         }
 
         public void Yaw(float amount) {
-            rotation.y = (rotation.y + amount) % 360;
-            dirty = true;
+            if (mode != CameraMode.AUTOMATED) {
+                rotation.y = (rotation.y + amount) % 360;
+                dirty = true;
+            }
         }
         
         public void Pitch(float amount) {
-            rotation.x += amount;
-            dirty = true;
+            if (mode != CameraMode.AUTOMATED) {
+                rotation.x += amount;
+                dirty = true;
+            }
         }
     }
 }

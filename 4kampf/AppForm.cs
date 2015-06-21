@@ -57,6 +57,7 @@ namespace kampfpanzerin {
             walkButton.BackColor = Color.FromArgb(100, 100, 100);
             lockFlyButton.BackColor = Color.FromArgb(32, 32, 32);
             freeFlyButton.BackColor = Color.FromArgb(32, 32, 32);
+            camAutoButton.BackColor = Color.FromArgb(32, 32, 32);
             preview.Focus();
         }
 
@@ -66,6 +67,7 @@ namespace kampfpanzerin {
             walkButton.BackColor = Color.FromArgb(32, 32, 32);
             lockFlyButton.BackColor = Color.FromArgb(100, 100, 100);
             freeFlyButton.BackColor = Color.FromArgb(32, 32, 32);
+            camAutoButton.BackColor = Color.FromArgb(32, 32, 32);
             preview.Focus();
         }
 
@@ -75,6 +77,17 @@ namespace kampfpanzerin {
             walkButton.BackColor = Color.FromArgb(32, 32, 32);
             lockFlyButton.BackColor = Color.FromArgb(32, 32, 32);
             freeFlyButton.BackColor = Color.FromArgb(100, 100, 100);
+            camAutoButton.BackColor = Color.FromArgb(32, 32, 32);
+            preview.Focus();
+        }
+
+        private void camAutoButton_Click(object sender, EventArgs e) {
+            GraphicsManager gfx = GraphicsManager.GetInstance();
+            gfx.SetCameraMode(CameraMode.AUTOMATED);
+            walkButton.BackColor = Color.FromArgb(32, 32, 32);
+            lockFlyButton.BackColor = Color.FromArgb(32, 32, 32);
+            freeFlyButton.BackColor = Color.FromArgb(32, 32, 32);
+            camAutoButton.BackColor = Color.FromArgb(100, 100, 100);
             preview.Focus();
         }
 
@@ -116,7 +129,7 @@ namespace kampfpanzerin {
         }
 
         private void enableTrack02EnvsInUniformSvrequiresCorrect4klangExportToolStripMenuItem_Click(object sender, EventArgs e) {
-            Properties.Settings.Default.use4klangEnv = !Properties.Settings.Default.use4klangEnv;
+            project.use4klangEnv = !project.use4klangEnv;
             Kampfpanzerin.ApplySettings();
         }
 
@@ -262,7 +275,7 @@ namespace kampfpanzerin {
             if (Properties.Settings.Default.enableCamControls) {
                 Camera c = gfx.GetCamera();
                 if (c.CheckAndResetDirty()) {
-                    Vector3f camPos = c.position, up = c.up, forward = c.forward;
+                    Vector3f camPos = c.Position, up = c.Up, forward = c.Forward;
                     camStr = "cp={" + camPos.x.ToString("0.00") + " " + camPos.y.ToString("0.00") + " " + camPos.z.ToString("0.00") + "}";
                     camStr += " up={" + up.x.ToString("0.00") + " " + up.y.ToString("0.00") + " " + up.z.ToString("0.00") + "}";
                     camStr += " fd={" + forward.x.ToString("0.00") + " " + forward.y.ToString("0.00") + " " + forward.z.ToString("0.00") + "}";
@@ -445,7 +458,7 @@ namespace kampfpanzerin {
         }
 
         private void btnEnvelopes_Click(object sender, EventArgs e) {
-            Properties.Settings.Default.use4klangEnv = !Properties.Settings.Default.use4klangEnv;
+            project.use4klangEnv = !project.use4klangEnv;
             Kampfpanzerin.ApplySettings();
         }
 

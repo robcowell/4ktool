@@ -1,0 +1,65 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+
+namespace kampfpanzerin {
+    class BuildUtils {
+        public static void DoExportHeader(Project p, float length, string vertexShader, string fragmentShader, string ppShader = null) {
+            string s = "// Prod shaders, sync and config\n// Exported from 4kampf\n\n#pragma once\n\n";
+            if (Properties.Settings.Default.enableStandardUniforms)
+                s += "#define USE_STANDARD_UNIFORMS\n";
+            if (p.use4klangEnv)
+                s += "#define USE_4KLANG_ENV_SYNC\n";
+            if (Properties.Settings.Default.usePP)
+                s += "#define USE_PP\n";
+            if (Properties.Settings.Default.useSoundThread)
+                s += "#define USE_SOUND_THREAD\n";
+            float prodLength = 100.0f;
+            if (File.Exists("music.wav")) // Music must be rendered; should be cool to query length
+                prodLength = length;
+
+            vertexShader = vertexShader.Replace("CAMVARS", "vec3 cp, fd, up;");
+
+            s += "#define PROD_LENGTH " + ((int)prodLength) + "\n\n";
+            s += "#pragma data_seg(\".vertShader\")\nstatic const char *vertShader[] = {\"";
+            s += CleanShader(vertexShader);
+            s += "\"};\n\n#pragma data_seg(\".fragShader\")\nstatic const char *fragShader[] = {\"";
+            s += CleanShader(fragmentShader);
+            if (ppShader != null) {
+                s += "\"};\n\n#pragma data_seg(\".ppShader\")\nstatic const char *ppShader[] = {\"";
+                s += CleanShader(ppShader);
+            }
+            s += "\"};\n";
+            File.WriteAllText("4kampfpanzerin.h", s);
+        }
+
+
+
+        private static string CleanShader(string s) {
+            string r = "";
+            string[] lines = s.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+            for (int i = 0; i < lines.Count(); i++) {
+                // Remove comments
+                int commentPos = lines[i].IndexOf("//");
+                if (commentPos == 0)
+                    continue;
+                if (commentPos > 0)
+                    lines[i] = lines[i].Substring(0, commentPos - 1);
+                // Trim
+                lines[i] = lines[i].Trim();
+                // Add newlines for lines starting #
+                if (lines[i].StartsWith("#"))
+                    lines[i] += "\\n";
+                // Add spaces after braceless elses
+                if (lines[i].EndsWith("else"))
+                    lines[i] += " ";
+                // Got anything left? Cool, add it!
+                if (lines[i].Length > 0)
+                    r += lines[i];
+            }
+            return r;
+        }
+    }
+}

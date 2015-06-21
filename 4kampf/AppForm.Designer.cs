@@ -80,6 +80,7 @@
             this.stepUpButton = new System.Windows.Forms.Button();
             this.btnCamReset = new System.Windows.Forms.Button();
             this.freeFlyButton = new System.Windows.Forms.Button();
+            this.camAutoButton = new System.Windows.Forms.Button();
             this.stepDownButton = new System.Windows.Forms.Button();
             this.lockFlyButton = new System.Windows.Forms.Button();
             this.preview = new System.Windows.Forms.PictureBox();
@@ -615,11 +616,12 @@
             this.pnlCam.Controls.Add(this.stepUpButton);
             this.pnlCam.Controls.Add(this.btnCamReset);
             this.pnlCam.Controls.Add(this.freeFlyButton);
+            this.pnlCam.Controls.Add(this.camAutoButton);
             this.pnlCam.Controls.Add(this.stepDownButton);
             this.pnlCam.Controls.Add(this.lockFlyButton);
-            this.pnlCam.Location = new System.Drawing.Point(180, 292);
+            this.pnlCam.Location = new System.Drawing.Point(160, 292);
             this.pnlCam.Name = "pnlCam";
-            this.pnlCam.Size = new System.Drawing.Size(122, 20);
+            this.pnlCam.Size = new System.Drawing.Size(142, 20);
             this.pnlCam.TabIndex = 2;
             // 
             // walkButton
@@ -645,7 +647,7 @@
             this.stepUpButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
             this.stepUpButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.stepUpButton.Image = global::kampfpanzerin.Properties.Resources.Faster;
-            this.stepUpButton.Location = new System.Drawing.Point(100, 0);
+            this.stepUpButton.Location = new System.Drawing.Point(120, 0);
             this.stepUpButton.Name = "stepUpButton";
             this.stepUpButton.Size = new System.Drawing.Size(22, 20);
             this.stepUpButton.TabIndex = 0;
@@ -661,7 +663,7 @@
             this.btnCamReset.Font = new System.Drawing.Font("Microsoft Sans Serif", 3.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCamReset.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.btnCamReset.Image = global::kampfpanzerin.Properties.Resources.Home;
-            this.btnCamReset.Location = new System.Drawing.Point(80, 0);
+            this.btnCamReset.Location = new System.Drawing.Point(100, 0);
             this.btnCamReset.Name = "btnCamReset";
             this.btnCamReset.Size = new System.Drawing.Size(20, 20);
             this.btnCamReset.TabIndex = 0;
@@ -686,6 +688,22 @@
             this.freeFlyButton.UseVisualStyleBackColor = false;
             this.freeFlyButton.Click += new System.EventHandler(this.freeFlyButton_Click);
             // 
+            // camAutoButton
+            // 
+            this.camAutoButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.camAutoButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.camAutoButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
+            this.camAutoButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.camAutoButton.Image = global::kampfpanzerin.Properties.Resources.Envelopes;
+            this.camAutoButton.Location = new System.Drawing.Point(60, 0);
+            this.camAutoButton.Name = "camAutoButton";
+            this.camAutoButton.Size = new System.Drawing.Size(20, 20);
+            this.camAutoButton.TabIndex = 0;
+            this.camAutoButton.TabStop = false;
+            this.toolTip1.SetToolTip(this.camAutoButton, "Fly (full freefly)");
+            this.camAutoButton.UseVisualStyleBackColor = false;
+            this.camAutoButton.Click += new System.EventHandler(this.camAutoButton_Click);
+            // 
             // stepDownButton
             // 
             this.stepDownButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
@@ -693,7 +711,7 @@
             this.stepDownButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
             this.stepDownButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.stepDownButton.Image = global::kampfpanzerin.Properties.Resources.Slower;
-            this.stepDownButton.Location = new System.Drawing.Point(60, 0);
+            this.stepDownButton.Location = new System.Drawing.Point(80, 0);
             this.stepDownButton.Name = "stepDownButton";
             this.stepDownButton.Size = new System.Drawing.Size(20, 20);
             this.stepDownButton.TabIndex = 0;
@@ -1235,18 +1253,6 @@
             this.tabControl1.TabIndex = 4;
             this.tabControl1.TabStop = false;
             // 
-            // tabPage1
-            // 
-            this.tabPage1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.tabPage1.Controls.Add(this.edVert);
-            this.tabPage1.ForeColor = System.Drawing.Color.White;
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(594, 160);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Vertex shader";
-            // 
             // edVert
             // 
             this.edVert.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
@@ -1277,6 +1283,18 @@
             this.edVert.Styles.Max.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
             this.edVert.TabIndex = 0;
             this.edVert.TextChanged += new System.EventHandler(this.edVert_TextChanged);
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.tabPage1.Controls.Add(this.edVert);
+            this.tabPage1.ForeColor = System.Drawing.Color.White;
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Size = new System.Drawing.Size(594, 160);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Vertex shader";
             // 
             // tabPage2
             // 
@@ -1484,6 +1502,7 @@
         private System.Windows.Forms.Button freeFlyButton;
         private System.Windows.Forms.Button stepDownButton;
         private System.Windows.Forms.Button lockFlyButton;
+        private System.Windows.Forms.Button camAutoButton;
         public System.Windows.Forms.PictureBox preview;
         public TimeLine timeLine;
         private System.Windows.Forms.ToolStripMenuItem colourHelperToolStripMenuItem;

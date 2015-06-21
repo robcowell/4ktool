@@ -15,6 +15,7 @@ namespace kampfpanzerin {
         private bool transportBusy = false;
         private int numInstruments = 0;
         private int bpm;
+        private Project project;
 
         public KlangPlayer() {
             InitializeComponent();
@@ -104,7 +105,7 @@ namespace kampfpanzerin {
         }
 
         public void UpdateStuff() {
-            if (Properties.Settings.Default.use4klangEnv)
+            if (project.use4klangEnv)
                 vu.Redraw();
 
             float f = GetPosition();
@@ -123,8 +124,9 @@ namespace kampfpanzerin {
                 lblCam.Text = cam;
         }
 
-        public void ApplySettings() {
-            vu.Visible = Properties.Settings.Default.use4klangEnv;
+        public void ApplySettings(Project p) {
+            this.project = p;
+            vu.Visible = p.use4klangEnv;
             lblCam.Visible = Properties.Settings.Default.enableCamControls;
             mediaPlayer.settings.setMode("Loop", Properties.Settings.Default.enableLooping);
         }
@@ -166,11 +168,15 @@ namespace kampfpanzerin {
             mediaPlayer.Ctlcontrols.currentPosition = t;
         }
 
-        private void mediaPlayer_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e) {
+        public void TogglePlayPause() {
             if (mediaPlayer.playState == WMPLib.WMPPlayState.wmppsPlaying)
                 btnPlay.Image = Properties.Resources.Pause;
             else
                 btnPlay.Image = Properties.Resources.Play;
+        }
+
+        private void mediaPlayer_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e) {
+            TogglePlayPause();
         }
 
         private void btnPlay_Click(object sender, EventArgs e) {

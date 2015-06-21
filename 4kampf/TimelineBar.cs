@@ -17,7 +17,7 @@ namespace kampfpanzerin {
         public TimeLineMode mode { get; set; }
 
         public enum TimeLineMode {
-            SYNC, CAMERA_POS, CAMERA_REF, CAMERA_UP
+            SYNC, CAMERA_POS, CAMERA_ROT
         };
 
         public TimelineBar() { }
@@ -32,7 +32,7 @@ namespace kampfpanzerin {
         }
 
         public void Recalc() {
-            maxVal = 0;
+            maxVal = -9999999;
             minVal = 9999999;
             if (mode == TimeLineMode.SYNC) {
                 foreach (TimelineBarEvent be in events) {
@@ -42,7 +42,7 @@ namespace kampfpanzerin {
             } else {
                 foreach (TimelineBarEvent be in events) {
                     maxVal = Math.Max(be.vecValue.Max(), maxVal);
-                    minVal = Math.Min(be.vecValue.Min(), maxVal);
+                    minVal = Math.Min(be.vecValue.Min(), minVal);
                 }
             }
 
@@ -87,7 +87,7 @@ namespace kampfpanzerin {
             }
 
             if (be1 == null || be2 == null)
-                return Vector3f.INVALID;
+                return new Vector3f(0);
 
             float amount = (t - be1.time) / (be2.time - be1.time);
             amount = (amount * amount) * (3.0f - (2.0f * amount));
