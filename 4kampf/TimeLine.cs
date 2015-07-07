@@ -19,7 +19,7 @@ namespace kampfpanzerin {
         private TimelineBarEvent eventUnderEdit = null;
         private int eventUnderEditBarIndex;
         private Point dragStart;
-        private static CultureInfo culture = CultureInfo.CreateSpecificCulture("en-GB");
+        public static CultureInfo culture = CultureInfo.CreateSpecificCulture("en-GB");
         public bool camMode { get; set; }
 
         private Color BAR_COL = Color.FromArgb(150, 150, 150);

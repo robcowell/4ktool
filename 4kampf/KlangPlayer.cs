@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace kampfpanzerin {
     public partial class KlangPlayer : UserControl {
@@ -38,7 +39,7 @@ namespace kampfpanzerin {
                     continue;
 
                 float f;
-                if (float.TryParse(s.Substring(s.IndexOf(search) + search.Length), out f)) {
+                if (float.TryParse(s.Substring(s.IndexOf(search) + search.Length), NumberStyles.Number, Kampfpanzerin.culture, out f)) {
                     bpm = (int)f;
                     lblBPM.Text = bpm.ToString() + " bpm";
                     lblBPM.Visible = true;

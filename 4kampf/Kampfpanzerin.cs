@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using Tao.OpenGl;
 using System.Xml.Serialization;
+using System.Globalization;
 
 namespace kampfpanzerin
 {
@@ -15,6 +16,7 @@ namespace kampfpanzerin
         private static string currentProjectDirectory; 
         private static bool projectDirty;
         private static Project project = new Project();
+        public static CultureInfo culture = CultureInfo.CreateSpecificCulture("en-GB");
 
         [STAThread]
         static void Main() {
