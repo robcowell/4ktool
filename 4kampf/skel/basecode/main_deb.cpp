@@ -5,6 +5,9 @@
 
 #define WIN32_LEAN_AND_MEAN
 #define WIN32_EXTRA_LEAN
+
+#define USE_CLINKSTER
+
 #include <windows.h>
 #include <windowsx.h>
 #include <mmsystem.h>
@@ -13,7 +16,9 @@
 #include <stdio.h>
 #include <math.h>
 #include "intro.h"
+
 #include "music.h"
+
 #include "../4kampfpanzerin.h"
 
 typedef struct {

@@ -34,6 +34,8 @@
     <ClInclude Include="..\clinksterwriter\clinkster.h" />
     <ClInclude Include="glext.h" />
     <ClInclude Include="intro.h" />
+    <ClInclude Include="m4klang.h" />
+    <ClInclude Include="mclinkster.h" />
     <ClInclude Include="music.h" />
   </ItemGroup>
   <ItemGroup>
