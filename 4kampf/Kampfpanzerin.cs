@@ -190,6 +190,7 @@ namespace kampfpanzerin
                 }
                 form.timeLine.SetProject(project);
                 GraphicsManager.GetInstance().updateProject(project);
+                ApplySettings();
             }
 
             if (!File.Exists(dir + "\\vert.glsl") || !File.Exists(dir + "\\frag.glsl")) {

@@ -29,6 +29,35 @@ namespace kampfpanzerin {
 
         private void LoadBPM() {
             lblBPM.Visible = false;
+            if (!project.useClinkster) {
+                LoadFrom4Klang();
+            } else {
+                LoadFromClinkster();
+            }
+        }
+
+        private void LoadFromClinkster() {
+            if (!File.Exists("music.asm"))
+                return;
+
+            string[] lines = File.ReadAllLines("music.asm");
+            string search = "%define TICKS_PER_SECOND ";
+            foreach (string s in lines) {
+                if (!s.Contains(search))
+                    continue;
+
+                float f;
+                if (float.TryParse(s.Substring(s.IndexOf(search) + search.Length), NumberStyles.Number, Kampfpanzerin.culture, out f)) {
+                    bpm = (int)(f * 15.0);
+                    lblBPM.Text = bpm.ToString() + " bpm";
+                    lblBPM.Visible = true;
+                }
+
+                return;
+            }
+        }
+
+        private void LoadFrom4Klang() {
 
             if (!File.Exists("4klang.h"))
                 return;
