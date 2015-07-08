@@ -267,9 +267,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="4kampf.ico" />
+    <Content Include="AxInterop.WMPLib.dll" />
+    <Content Include="Interop.WMPLib.dll" />
+    <Content Include="MetroFramework.Design.dll" />
+    <Content Include="MetroFramework.dll" />
+    <Content Include="MetroFramework.Fonts.dll" />
     <Content Include="SciLexer.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SciLexer64.dll" />
+    <Content Include="ScintillaNET.dll" />
     <Content Include="skel\4klang.h" />
     <Content Include="skel\basecode\glext.h" />
     <Content Include="skel\basecode\intro.h" />
@@ -285,6 +292,8 @@
     <Content Include="skel\clinksterwriter\readme.txt" />
     <Content Include="skel\music.asm" />
     <Content Include="skel\wavwriter\main.cpp" />
+    <Content Include="Tao.Externals.dll" />
+    <Content Include="Tao.Platform.Windows.dll" />
     <None Include="Resources\Snap.png" />
     <None Include="Resources\Eyedropper.png" />
     <None Include="Resources\Beat.png" />
