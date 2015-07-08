@@ -154,6 +154,9 @@ namespace kampfpanzerin
 
             string src = AppDomain.CurrentDomain.BaseDirectory + "skel";
             Utils.CopyFolderContents(src, dest);
+            p.syncBars = form.timeLine.syncBars;
+            p.camBars = form.timeLine.camBars;
+
             SaveProjectSettings(p, dest + "/");
 
             MessageBox.Show("Project created! Now drop your 4klang.obj and 4klang.h in there and run Build->Render 4klang Music.\n\n(Or just run Build->Render 4klang Music now to render the example tune!)", "4kampf", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -295,7 +298,7 @@ namespace kampfpanzerin
             }
         }
 
-        public static void RenderMusic() {
+        public static void RenderMusic(Boolean clinkster = false) {
             if (!CheckDCP())
                 return;
 
@@ -311,9 +314,14 @@ namespace kampfpanzerin
 
             foreach (FileInfo f in new DirectoryInfo(currentProjectDirectory).GetFiles("envelope-*.dat"))
                 f.Delete();
+            string commandFormat = String.Format("/k \"\"{0}\" & cd \"{1}\\{2}\" & msbuild -p:configuration=\"Release\" & cd .. & wavwriter.exe\"",
+                Properties.Settings.Default.devCommandPromptLocation, 
+                currentProjectDirectory, 
+                project.useClinkster ? "clinksterwriter" : "wavwriter");
+            
             string command = "/k \"\"" + Properties.Settings.Default.devCommandPromptLocation + "\" & cd \"" + currentProjectDirectory + "\\wavwriter\" & msbuild -p:configuration=\"Release\" & cd .. & wavwriter.exe\"";
             form.ShowLog("Executing 'cmd.exe " + command + "'");
-            Utils.LaunchAndLog("cmd.exe", command);
+            Utils.LaunchAndLog("cmd.exe", commandFormat);
 
             if (!File.Exists("music.wav")) {
                 form.ConcatLog("! The WAV didn't get written :O");
