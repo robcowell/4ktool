@@ -24,6 +24,7 @@ namespace kampfpanzerin {
             trkVolume.Value = mediaPlayer.settings.volume;
             lblBPM.Visible = false;
             pbBeat.Visible = false;
+            mediaPlayer.settings.autoStart = false;
         }
 
         private void LoadBPM() {
