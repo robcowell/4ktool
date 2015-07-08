@@ -9,7 +9,8 @@
 
 uniform vec3 u;		// If Standard Uniforms are enabled, this gives {xres, yres, time}
 // uniform vec3 cp,up,fd;	// If the camera system is enabled, these uniforms give cam position, up and forward vectors, use in the tool
-vec3 cp=vec3(0,0,0),up=vec3(0,1,0),fd=vec3(0,0,1); // workaround for issue in rendering the prod, as there is no cam system export atm
+//vec3 cp=vec3(0,0,0),up=vec3(0,1,0),fd=vec3(0,0,1); // workaround for issue in rendering the prod, as there is no cam system export atm
+CAMVARS
 uniform float ev[6];		// If 4klang envelopes are enabled, this gives envelopes for tracks 0, 1 and 2
 
 // If not using the cam system, you would create these another way :)

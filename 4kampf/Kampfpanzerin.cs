@@ -134,8 +134,28 @@ namespace kampfpanzerin
                 MessageBox.Show("Dude! I can't create a project in a non-empty folder, man!", "4kampf", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            MessageBoxManager.Yes = "Clinkster!";
+            MessageBoxManager.No = "4klang pls";
+            //MessageBoxManager.Register();
+
+
+            Project p = new Project();
+
+            DialogResult musicDialogResult = MessageBox.Show("Who do you like more, Blueberry or Gopher?", "4kampf", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (musicDialogResult == DialogResult.Yes) {
+                p.useClinkster = true;
+            }
+            MessageBoxManager.OK = "Bestätigt";
+            MessageBoxManager.Cancel = "Lieber nicht";
+            MessageBoxManager.Yes = "Abfahrt!";
+            MessageBoxManager.No = "Geh kacken...";
+            //MessageBoxManager.Register();
+
             string src = AppDomain.CurrentDomain.BaseDirectory + "skel";
             Utils.CopyFolderContents(src, dest);
+            SaveProjectSettings(p, dest + "/");
+
             MessageBox.Show("Project created! Now drop your 4klang.obj and 4klang.h in there and run Build->Render 4klang Music.\n\n(Or just run Build->Render 4klang Music now to render the example tune!)", "4kampf", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             OpenProject(dest, true);
@@ -329,7 +349,7 @@ namespace kampfpanzerin
             }
         }
 
-        public static void SaveProject() {
+        public static void SaveProject(string directory = "") {
             
             StreamWriter sw = new StreamWriter("frag.glsl");
             sw.Write(form.edFrag.Text);
@@ -345,8 +365,15 @@ namespace kampfpanzerin
             project.camBars = form.timeLine.camBars;
             project.syncBars = form.timeLine.syncBars;
             //project.settings = kampfpanzerin.Properties.Settings.Default;
+            SaveProjectSettings(project);
+
+            form.ShowLog("Saved all project assets");
+            projectDirty = false;
+        }
+
+        private static void SaveProjectSettings(Project project, string directory = "") {
             try {
-                using (Stream stream = File.Open("project.kml", FileMode.Create)) {
+                using (Stream stream = File.Open(directory + "project.kml", FileMode.Create)) {
                     XmlSerializer serializer = new XmlSerializer(typeof(Project));
                     serializer.Serialize(stream, project);
                     stream.Close();
@@ -354,9 +381,6 @@ namespace kampfpanzerin
             } catch (IOException) {
                 MessageBox.Show("Something went wrong when saving.", "4kampfpanzerin", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            form.ShowLog("Saved all project assets");
-            projectDirty = false;
         }
 
         private static void ExportHeader() {

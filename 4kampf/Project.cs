@@ -10,8 +10,11 @@ namespace kampfpanzerin {
         public List<TimelineBar> camBars { get; set; }
         public List<TimelineBar> syncBars { get; set; }
         public bool enableStandardUniforms;
-        public bool use4klangEnv;
-        public bool usePP;
-        public bool useSoundThread;
+
+        public bool useClinkster = false;
+
+        public bool use4klangEnv = false;
+        public bool usePP = false;
+        public bool useSoundThread = false;
     }
 }

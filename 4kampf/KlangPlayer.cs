@@ -154,6 +154,9 @@ namespace kampfpanzerin {
         }
 
         public float GetDuration() {
+            if (mediaPlayer.currentMedia == null) {
+                return 666;
+            }
             return (float)mediaPlayer.currentMedia.duration;
         }
 
