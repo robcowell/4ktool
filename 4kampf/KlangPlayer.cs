@@ -15,7 +15,7 @@ namespace kampfpanzerin {
         private float[][] envSamples;
         private bool transportBusy = false;
         private int numInstruments = 0;
-        private int bpm;
+        public int bpm { get; private set; }
         private Project project;
 
         public KlangPlayer() {
@@ -79,9 +79,9 @@ namespace kampfpanzerin {
             }
         }
 
-        public int GetBPM() {
-            return bpm;
-        }
+        //public int GetBPM() {
+        //    return bpm;
+        //}
 
         private void LoadEnvelopes() {
             envSamples = new float[16][];

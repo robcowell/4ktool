@@ -170,6 +170,7 @@ namespace kampfpanzerin {
         }
 
         private TimelineBar selectedBar;
+        private float zoomLevel;
 
         private void RenderGraphs(Graphics g, Font f, SolidBrush b, List<TimelineBar> bars) {
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
@@ -416,7 +417,8 @@ namespace kampfpanzerin {
                     TimelineBarEvent chosenEvent = null;
                     float chosenDist = 1000.0f;
                     foreach (TimelineBarEvent be in barsUnderEdit[whichBar].events) {
-                        float diff = Math.Abs(be.time - evTime);
+                        float scale = 50.0f / zoomLevel;
+                        float diff = Math.Abs((be.time - evTime)) * scale;
                         if (diff < 1.0f && diff < chosenDist)
                             chosenEvent = be;
                     }
@@ -520,7 +522,7 @@ namespace kampfpanzerin {
         }
 
         private void SetZoomBounds() {
-            float zoomLevel = Math.Max(1.0f, trkZoom.Maximum - trkZoom.Value);
+            zoomLevel = Math.Max(1.0f, trkZoom.Maximum - trkZoom.Value);
 
             timeStart = (float)Math.Floor(Math.Max(0, timeCurrent - zoomLevel));
             timeStart = (float)Math.Round(timeStart * 4, MidpointRounding.ToEven) / 4;
@@ -583,7 +585,7 @@ namespace kampfpanzerin {
         }
 
         private float NearestBeat(float f) {
-            int bpm = AppForm.GetInstance().klangPlayer.GetBPM();
+            int bpm = AppForm.GetInstance().klangPlayer.bpm;
             float oneBeatLength = 1.0f / ((float)bpm / 60.0f);   // secs
             float rem = f % oneBeatLength;
             f -= rem;
