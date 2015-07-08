@@ -120,6 +120,9 @@
       <LargeAddressAware>true</LargeAddressAware>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <YASM>
+      <IncludePaths>../</IncludePaths>
+    </YASM>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Asm Include="music.asm">

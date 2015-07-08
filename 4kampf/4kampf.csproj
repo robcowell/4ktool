@@ -218,7 +218,6 @@
     <None Include="skel\frag.glsl" />
     <None Include="skel\ppfrag.glsl" />
     <None Include="skel\vert.glsl" />
-    <None Include="skel\vert.glsl~" />
     <None Include="skel\wavwriter\wavwriter.vcxproj" />
   </ItemGroup>
   <ItemGroup>
@@ -284,6 +283,7 @@
     <Content Include="skel\clinksterwriter\ftol.asm" />
     <Content Include="skel\clinksterwriter\Main.cpp" />
     <Content Include="skel\clinksterwriter\readme.txt" />
+    <Content Include="skel\music.asm" />
     <Content Include="skel\wavwriter\main.cpp" />
     <None Include="Resources\Snap.png" />
     <None Include="Resources\Eyedropper.png" />

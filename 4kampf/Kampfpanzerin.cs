@@ -159,7 +159,7 @@ namespace kampfpanzerin
 
             SaveProjectSettings(p, dest + "/");
 
-            MessageBox.Show("Project created! Now drop your 4klang.obj and 4klang.h in there and run Build->Render 4klang Music.\n\n(Or just run Build->Render 4klang Music now to render the example tune!)", "4kampf", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Project created! Now drop your music.asm or 4klang.obj and 4klang.h in there and run Build->Render 4klang Music.\n\n(Or just run Build->Render 4klang Music now to render the example tune!)", "4kampf", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             OpenProject(dest, true);
         }
