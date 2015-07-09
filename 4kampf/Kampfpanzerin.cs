@@ -139,7 +139,6 @@ namespace kampfpanzerin
             }
             MessageBoxManager.Yes = "Clinkster!";
             MessageBoxManager.No = "4klang pls";
-            //MessageBoxManager.Register();
 
 
             Project p = new Project();
@@ -153,7 +152,6 @@ namespace kampfpanzerin
             MessageBoxManager.Cancel = "Lieber nicht";
             MessageBoxManager.Yes = "Abfahrt!";
             MessageBoxManager.No = "Geh kacken...";
-            //MessageBoxManager.Register();
 
             string src = AppDomain.CurrentDomain.BaseDirectory + "skel";
             Utils.CopyFolderContents(src, dest);
