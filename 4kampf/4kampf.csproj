@@ -91,104 +91,104 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AboutBox.cs">
+    <Compile Include="src\components\AboutBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AboutBox.Designer.cs">
+    <Compile Include="src\components\AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="AppForm.cs">
+    <Compile Include="src\components\AppForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AppForm.Designer.cs">
+    <Compile Include="src\components\AppForm.Designer.cs">
       <DependentUpon>AppForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="BuildUtils.cs" />
-    <Compile Include="CamAutomationProxy.cs" />
-    <Compile Include="CameraEvent.cs" />
-    <Compile Include="utils\NativeLoadHelper.cs" />
-    <Compile Include="Project.cs" />
-    <Compile Include="EyedropColorPicker.cs">
+    <Compile Include="src\core\Compiler\BuildUtils.cs" />
+    <Compile Include="src\core\Camera\CamAutomationProxy.cs" />
+    <Compile Include="src\core\Camera\CameraEvent.cs" />
+    <Compile Include="src\utils\NativeLoadHelper.cs" />
+    <Compile Include="src\core\Serialization\Project.cs" />
+    <Compile Include="src\components\EyedropColorPicker.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="TimelineBarEventCameraEditForm.cs">
+    <Compile Include="src\components\TimelineBarEventCameraEditForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TimelineBarEventCameraEditForm.Designer.cs">
+    <Compile Include="src\components\TimelineBarEventCameraEditForm.Designer.cs">
       <DependentUpon>TimelineBarEventCameraEditForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="TimelineBarEventEditForm.cs">
+    <Compile Include="src\components\TimelineBarEventEditForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TimelineBarEventEditForm.Designer.cs">
+    <Compile Include="src\components\TimelineBarEventEditForm.Designer.cs">
       <DependentUpon>TimelineBarEventEditForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="BitmapFont.cs" />
-    <Compile Include="Camera.cs" />
-    <Compile Include="ColorChangedEventArgs.cs" />
-    <Compile Include="ColorChooser.cs">
+    <Compile Include="src\core\BitmapFont.cs" />
+    <Compile Include="src\core\Camera\Camera.cs" />
+    <Compile Include="src\core\UI\ColorChangedEventArgs.cs" />
+    <Compile Include="src\components\ColorChooser.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ColorHandler.cs" />
-    <Compile Include="ColorWheel.cs" />
-    <Compile Include="GraphicsManager.cs" />
-    <Compile Include="KlangPlayer.cs">
+    <Compile Include="src\core\UI\ColorHandler.cs" />
+    <Compile Include="src\core\UI\ColorWheel.cs" />
+    <Compile Include="src\core\GraphicsManager.cs" />
+    <Compile Include="src\components\KlangPlayer.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="KlangPlayer.Designer.cs">
+    <Compile Include="src\components\KlangPlayer.Designer.cs">
       <DependentUpon>KlangPlayer.cs</DependentUpon>
     </Compile>
-    <Compile Include="MenuColorTable.cs" />
-    <Compile Include="MessageBoxManager.cs" />
-    <Compile Include="Kampfpanzerin.cs" />
+    <Compile Include="src\core\MenuColorTable.cs" />
+    <Compile Include="src\utils\MessageBoxManager.cs" />
+    <Compile Include="src\core\Kampfpanzerin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="TabControlFlat.cs">
+    <Compile Include="src\components\TabControlFlat.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="TextBoxWithScrollLeft.cs">
+    <Compile Include="src\components\TextBoxWithScrollLeft.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="TextBoxWithScrollLeft.Designer.cs">
+    <Compile Include="src\components\TextBoxWithScrollLeft.Designer.cs">
       <DependentUpon>TextBoxWithScrollLeft.cs</DependentUpon>
     </Compile>
-    <Compile Include="TimeLine.cs">
+    <Compile Include="src\core\TimeLine.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TimeLine.Designer.cs">
+    <Compile Include="src\core\TimeLine.Designer.cs">
       <DependentUpon>TimeLine.cs</DependentUpon>
     </Compile>
-    <Compile Include="TimelineBar.cs" />
-    <Compile Include="TimelineBarEvent.cs" />
-    <Compile Include="utils\Utils.cs" />
-    <Compile Include="utils\Vector3f.cs" />
-    <Compile Include="VUMeter.cs">
+    <Compile Include="src\core\Timeline\TimelineBar.cs" />
+    <Compile Include="src\core\Timeline\TimelineBarEvent.cs" />
+    <Compile Include="src\utils\Utils.cs" />
+    <Compile Include="src\core\Math\Vector3f.cs" />
+    <Compile Include="src\components\VUMeter.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="VUMeter.Designer.cs">
+    <Compile Include="src\components\VUMeter.Designer.cs">
       <DependentUpon>VUMeter.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="AboutBox.resx">
+    <EmbeddedResource Include="src\components\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AppForm.resx">
+    <EmbeddedResource Include="src\components\AppForm.resx">
       <DependentUpon>AppForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="TimelineBarEventCameraEditForm.resx">
+    <EmbeddedResource Include="src\components\TimelineBarEventCameraEditForm.resx">
       <DependentUpon>TimelineBarEventCameraEditForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TimelineBarEventEditForm.resx">
+    <EmbeddedResource Include="src\components\TimelineBarEventEditForm.resx">
       <DependentUpon>TimelineBarEventEditForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ColorChooser.resx">
+    <EmbeddedResource Include="src\components\ColorChooser.resx">
       <DependentUpon>ColorChooser.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="KlangPlayer.resx">
+    <EmbeddedResource Include="src\components\KlangPlayer.resx">
       <DependentUpon>KlangPlayer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -196,10 +196,10 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="TimeLine.resx">
+    <EmbeddedResource Include="src\core\TimeLine.resx">
       <DependentUpon>TimeLine.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="VUMeter.resx">
+    <EmbeddedResource Include="src\components\VUMeter.resx">
       <DependentUpon>VUMeter.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />

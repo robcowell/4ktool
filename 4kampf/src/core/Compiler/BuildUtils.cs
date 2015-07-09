@@ -6,7 +6,7 @@ using System.Text;
 
 namespace kampfpanzerin {
     class BuildUtils {
-        public static void DoExportHeader(Project p, float length, string vertexShader, string fragmentShader, string ppShader = null) {
+        public static void DoExportHeader(Project p, float length, /*string syncCode, string camCode, */string vertexShader, string fragmentShader, string ppShader = null) {
             string s = "// Prod shaders, sync and config\n// Exported from 4kampf\n\n#pragma once\n\n";
             if (Properties.Settings.Default.enableStandardUniforms)
                 s += "#define USE_STANDARD_UNIFORMS\n";
@@ -22,6 +22,9 @@ namespace kampfpanzerin {
             if (File.Exists("music.wav")) // Music must be rendered; should be cool to query length
                 prodLength = length;
 
+            //vertexShader = ReplaceShaderMacros(vertexShader, syncCode, camCode, true);
+            //fragmentShader = ReplaceShaderMacros(fragmentShader, syncCode, camCode, true);
+            //ppShader = ReplaceShaderMacros(ppShader, syncCode, camCode, true);
             vertexShader = vertexShader.Replace("CAMVARS", "vec3 cp, fd, up;");
 
             s += "#define PROD_LENGTH " + ((int)prodLength) + "\n\n";
@@ -63,5 +66,19 @@ namespace kampfpanzerin {
             }
             return r;
         }
+
+        public static string ReplaceShaderMacros(string shader, string syncCode, string camCode, bool prodmode = true) {
+            if (shader == null) {
+                return null;
+            }
+            shader = shader.Replace("//#SYNCCODE#", syncCode);
+            shader = shader.Replace("CAMVARS", (prodmode? "" : "uniform ") + "vec3 cp, fd, up;");
+
+            if (!prodmode) {
+                shader = shader.Replace("\n", "\r\n");
+            }
+            return shader;
+        }
+
     }
 }

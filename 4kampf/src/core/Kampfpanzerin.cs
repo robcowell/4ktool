@@ -266,6 +266,8 @@ namespace kampfpanzerin
             Utils.LaunchAndLog(cmd, args);
         }
 
+
+        // TODO: extract shader constant replacement stuff
         public static void BuildShader() {
             GraphicsManager gfx = GraphicsManager.GetInstance();
             string vertText = form.edVert.Text;
@@ -394,8 +396,14 @@ namespace kampfpanzerin
         }
 
         private static void ExportHeader() {
+            string syncCode = form.timeLine.CompileTrackerCode();
             if (Properties.Settings.Default.usePP) {
-                BuildUtils.DoExportHeader(project, form.klangPlayer.GetDuration(), form.edVert.Text, form.edFrag.Text, form.edPost.Text);
+                BuildUtils.DoExportHeader(
+                    project,
+                    form.klangPlayer.GetDuration(),
+                    form.edVert.Text,
+                    form.edFrag.Text,
+                    form.edPost.Text);
             } else {
                 BuildUtils.DoExportHeader(project, form.klangPlayer.GetDuration(), form.edVert.Text, form.edFrag.Text);
             }
@@ -448,12 +456,9 @@ namespace kampfpanzerin
                 form.klangPlayer.Unload();
 
                 string[] files = { "music.wav", "4kampfpanzerin.h" };
-                foreach (string s in files)
-                    if (File.Exists(s))
-                        File.Delete(s);
+                files.ToList().FindAll(File.Exists).ForEach(File.Delete);
+                new DirectoryInfo(currentProjectDirectory).GetFiles("envelope-*.dat").ToList().ForEach(f => f.Delete());
 
-                foreach (FileInfo f in new DirectoryInfo(currentProjectDirectory).GetFiles("envelope-*.dat"))
-                    f.Delete();
 
                 form.ShowLog("Project cleaned");
             }

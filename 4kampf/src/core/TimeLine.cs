@@ -542,10 +542,6 @@ namespace kampfpanzerin {
             Redraw();
         }
 
-        private void AddCamera() {
-            //bars.Contains
-        }
-
         private void pictureBox_Resize(object sender, EventArgs e) {
             Redraw();
         }
@@ -631,26 +627,25 @@ namespace kampfpanzerin {
             Kampfpanzerin.ApplySettings();
         }
 
-        private bool TypeIsPresent(BarEventType t) {
-            foreach (TimelineBar bar in syncBars)
-                foreach (TimelineBarEvent be in bar.events)
+        private bool TypeIsPresent(BarEventType t, List<TimelineBar>[] bars) {
+            var list = bars.SelectMany(b => b).SelectMany(b => b.events).GroupBy(e => e.GetType()).Select(Enumerable.First).Select(e => e.type);
+            foreach (List<TimelineBar> bar in bars) {
+
+                foreach (TimelineBarEvent be in bar.SelectMany(b => b.events))
                     if (be.type == t)
                         return true;
+            }
 
             return false;
         }
 
         public string CompileTrackerCode() {
-            if (syncBars.Count == 0)
+            if (syncBars.Count == 0) {
                 return "";
+            }
 
             string res = "";
-            if (TypeIsPresent(BarEventType.HOLD))
-                res += "#define fx(b,bb) u.z<b?bb:bbb\r\n";
-            if (TypeIsPresent(BarEventType.LERP))
-                res += "#define mx(b,bb,bbb,bbbb) u.z<bb?mix(bbb,bbbb,(u.z-b)/(bb-b)):bbbb\r\n";
-            if (TypeIsPresent(BarEventType.SMOOTH))
-                res += "#define sx(b,bb,bbb,bbbb) u.z<bb?bbb+(bbbb-bbb)*smoothstep(b,bb,u.z):bbbb\r\n";
+            res = GetInterpolationCode(camBars, syncBars);
             if (syncBars.Count == 1)
                 res += "float sn;";
             else
@@ -718,7 +713,19 @@ namespace kampfpanzerin {
             return res;
         }
 
-        private string FloatToOptimisedString(float f) {
+        private string GetInterpolationCode(List<TimelineBar> bars0, List<TimelineBar> bars1) {
+            List<TimelineBar>[] bars = { bars0, bars1 };
+            string res = "";
+            if (TypeIsPresent(BarEventType.HOLD, bars))
+                res += "#define fx(b,bb) u.z<b?bb:bbb\r\n";
+            if (TypeIsPresent(BarEventType.LERP, bars))
+                res += "#define mx(b,bb,bbb,bbbb) u.z<bb?mix(bbb,bbbb,(u.z-b)/(bb-b)):bbbb\r\n";
+            if (TypeIsPresent(BarEventType.SMOOTH, bars))
+                res += "#define sx(b,bb,bbb,bbbb) u.z<bb?bbb+(bbbb-bbb)*smoothstep(b,bb,u.z):bbbb\r\n";
+            return res;
+        }
+
+        private static string FloatToOptimisedString(float f) {
             string s = f.ToString(".000", culture);
             if (s.StartsWith("-0."))
                 s = s.Substring(2);
