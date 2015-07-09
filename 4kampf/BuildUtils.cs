@@ -16,6 +16,8 @@ namespace kampfpanzerin {
                 s += "#define USE_PP\n";
             if (Properties.Settings.Default.useSoundThread)
                 s += "#define USE_SOUND_THREAD\n";
+            if (p.useClinkster)
+                s += "#define USE_CLINKSTER\n";
             float prodLength = 100.0f;
             if (File.Exists("music.wav")) // Music must be rendered; should be cool to query length
                 prodLength = length;

@@ -8,6 +8,7 @@ using System.IO;
 using Tao.OpenGl;
 using System.Xml.Serialization;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace kampfpanzerin
 {
@@ -18,8 +19,10 @@ namespace kampfpanzerin
         private static Project project = new Project();
         public static CultureInfo culture = CultureInfo.CreateSpecificCulture("en-GB");
 
+
         [STAThread]
         static void Main() {
+            NativeLoadHelper.SetupDllPath();
             form = AppForm.GetInstance();
             ApplySettings();
             form.SetFullscreen();
