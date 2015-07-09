@@ -106,7 +106,7 @@
     <Compile Include="BuildUtils.cs" />
     <Compile Include="CamAutomationProxy.cs" />
     <Compile Include="CameraEvent.cs" />
-    <Compile Include="NativeLoadHelper.cs" />
+    <Compile Include="utils\NativeLoadHelper.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="EyedropColorPicker.cs">
       <SubType>Component</SubType>
@@ -164,8 +164,8 @@
     </Compile>
     <Compile Include="TimelineBar.cs" />
     <Compile Include="TimelineBarEvent.cs" />
-    <Compile Include="Utils.cs" />
-    <Compile Include="Vector3f.cs" />
+    <Compile Include="utils\Utils.cs" />
+    <Compile Include="utils\Vector3f.cs" />
     <Compile Include="VUMeter.cs">
       <SubType>UserControl</SubType>
     </Compile>
