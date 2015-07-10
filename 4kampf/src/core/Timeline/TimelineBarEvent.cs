@@ -9,16 +9,14 @@ namespace kampfpanzerin {
         HOLD,
         LERP,
         SMOOTH,
-        CAMERA
+        //CAMERA
     }
     
     [Serializable]
     public class TimelineBarEvent : IComparable {
         public float time;
-        public float value;
+        public Vector3f value;
         public BarEventType type;
-
-        public Vector3f vecValue;
 
         public int CompareTo(Object obj) {
             TimelineBarEvent be = (TimelineBarEvent)obj;

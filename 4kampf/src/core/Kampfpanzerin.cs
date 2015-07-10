@@ -9,6 +9,7 @@ using Tao.OpenGl;
 using System.Xml.Serialization;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using kampfpanzerin.src.core.Compiler;
 
 namespace kampfpanzerin
 {
@@ -162,6 +163,8 @@ namespace kampfpanzerin
 
             MessageBox.Show("Project created! Now drop your music.asm or 4klang.obj and 4klang.h in there and run Build->Render 4klang Music.\n\n(Or just run Build->Render 4klang Music now to render the example tune!)", "4kampf", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
+            LibGit2Sharp.Repository.Init(dest, dest);
+
             OpenProject(dest, true);
         }
 
@@ -272,9 +275,10 @@ namespace kampfpanzerin
             GraphicsManager gfx = GraphicsManager.GetInstance();
             string vertText = form.edVert.Text;
             string fragText = form.edFrag.Text;
-            string syncCode = form.timeLine.CompileTrackerCode();
-            vertText = vertText.Replace("//#SYNCCODE#", syncCode);
-            fragText = fragText.Replace("//#SYNCCODE#", syncCode);
+            string syncCode = TrackerCompiler.CompileSyncTrackerCode(form.timeLine.syncBars);
+            string syncRest = TrackerCompiler.GetInterpolationCode(form.timeLine.syncBars, form.timeLine.camBars);
+            vertText = vertText.Replace("//#SYNCCODE#", syncRest + syncCode);
+            fragText = fragText.Replace("//#SYNCCODE#", syncRest + syncCode);
 
             vertText = vertText.Replace("CAMVARS", "uniform vec3 cp, fd, up;");
             
@@ -396,16 +400,17 @@ namespace kampfpanzerin
         }
 
         private static void ExportHeader() {
-            string syncCode = form.timeLine.CompileTrackerCode();
+            string syncCode = TrackerCompiler.CompileSyncTrackerCode(form.timeLine.syncBars);
             if (Properties.Settings.Default.usePP) {
                 BuildUtils.DoExportHeader(
                     project,
                     form.klangPlayer.GetDuration(),
+                    form.timeLine.syncBars,
                     form.edVert.Text,
                     form.edFrag.Text,
                     form.edPost.Text);
             } else {
-                BuildUtils.DoExportHeader(project, form.klangPlayer.GetDuration(), form.edVert.Text, form.edFrag.Text);
+                BuildUtils.DoExportHeader(project, form.klangPlayer.GetDuration(), form.timeLine.syncBars, form.edVert.Text, form.edFrag.Text);
             }
         }
 

@@ -9,17 +9,21 @@ using System.Windows.Forms;
 
 namespace kampfpanzerin {
     public partial class TimelineBarEventEditForm : Form {
-        public TimelineBarEventEditForm(float time, float value, BarEventType type, bool editMode) {
+
+        private TextBox selectedTxt;
+
+        public TimelineBarEventEditForm(float time, Vector3f value, BarEventType type, bool editMode) {
             InitializeComponent();
 
             switch (type) {
                 case BarEventType.SMOOTH:   cmbType.SelectedIndex = 0; break;
                 case BarEventType.LERP: cmbType.SelectedIndex = 1; break;
                 case BarEventType.HOLD: cmbType.SelectedIndex = 2; break;
-                case BarEventType.CAMERA: cmbType.SelectedIndex = 3; break;
             }
             numTime.Value = (decimal)time;
-            txtValue.Text = value.ToString();
+            txtValueX.Text = value.x.ToString();
+            txtValueY.Text = value.y.ToString();
+            txtValueZ.Text = value.z.ToString();
 
             if (editMode) {
                 btnDelete.Visible = true;
@@ -28,18 +32,14 @@ namespace kampfpanzerin {
                 btnSave.Text = "Add";
                 Text = "Add Event";
             }
-            if (type == BarEventType.CAMERA) {
-                txtValue.Enabled = false;
-                cmbType.Enabled = false;
-            }
         }
 
         public float GetTime() {
             return (float)numTime.Value;
         }
 
-        public float GetValue() {
-            return float.Parse(txtValue.Text);
+        public Vector3f GetValue() {
+            return new Vector3f(float.Parse(txtValueX.Text), float.Parse(txtValueY.Text), float.Parse(txtValueZ.Text));
         }
 
         public BarEventType GetEventType() {
@@ -47,16 +47,16 @@ namespace kampfpanzerin {
                 case 0: return BarEventType.SMOOTH;
                 case 1: return BarEventType.LERP;
                 case 2: return BarEventType.HOLD;
-                case 3: return BarEventType.CAMERA;
             }
             return BarEventType.HOLD;
         }
 
         private void BarEventEditForm_Shown(object sender, EventArgs e) {
-            txtValue.Focus();
+            txtValueX.Focus();
         }
 
         private void txtValue_TextChanged(object sender, EventArgs e) {
+            TextBox txtValue = (TextBox)sender;
             try {
                 string text = txtValue.Text;
                 if (text.Length == 0) {
@@ -74,7 +74,15 @@ namespace kampfpanzerin {
 
         private void trkValue_ValueChanged(object sender, EventArgs e) {
             float f = (float)trkValue.Value / 100.0f;
-            txtValue.Text = f.ToString();
+            if (selectedTxt != null) {
+                selectedTxt.Text = f.ToString();
+            }
+        }
+
+
+        private void txtValue_Enter(object sender, EventArgs e) {
+            selectedTxt = (TextBox)sender;
+            txtValue_TextChanged(sender, e);
         }
     }
 }

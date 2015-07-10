@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Globalization;
+using kampfpanzerin.src.core.Compiler;
 
 namespace kampfpanzerin {
     public partial class TimeLine : UserControl {
@@ -86,7 +87,7 @@ namespace kampfpanzerin {
                     string[] evsplit = ev.Split(',');
                     TimelineBarEvent be = new TimelineBarEvent();
                     be.time = float.Parse(evsplit[0], culture);
-                    be.value = float.Parse(evsplit[1], culture);
+                    be.value = new Vector3f(float.Parse(evsplit[1], culture), 0, 0);
                     if (evsplit[2] == "FIXEDVAL") be.type = BarEventType.HOLD;
                     if (evsplit[2] == "LERP") be.type = BarEventType.LERP;
                     if (evsplit[2] == "SMOOTH") be.type = BarEventType.SMOOTH;
@@ -216,15 +217,18 @@ namespace kampfpanzerin {
                     if (barHeight >= 20) {
                         if (cameraModeCheckBox.Checked) {
                             Vector3f val = bar.GetVectorValueAtTime(timeCurrent);
-                            string text = string.Format("x = {0}\ny = {1}\nz = {2}", FloatToOptimisedString(val.x), FloatToOptimisedString(val.y), FloatToOptimisedString(val.z));
+                            string text = string.Format("x = {0}\ny = {1}\nz = {2}",
+                                TrackerCompiler.ToOptimisedString(val.x),
+                                TrackerCompiler.ToOptimisedString(val.y),
+                                TrackerCompiler.ToOptimisedString(val.z));
                             if (val != Vector3f.INVALID) {
                                 b.Color = Color.FromArgb(128, 128, 128);
                                 g.DrawString(text, f, b, 2, currY - barHeight / 2 + 12);
                             }
                         } else {
-                            float val = bar.GetValueAtTime(timeCurrent);
+                            Vector3f val = bar.GetValueAtTime(timeCurrent);
                             string text = val.ToString("0.000");
-                            if (val != -666666.0) {
+                            if (val != Vector3f.INVALID) {
                                 b.Color = Color.FromArgb(128, 128, 128);
                                 g.DrawString(text, f, b, 2, currY - barHeight / 2 + 12);
                             }
@@ -243,9 +247,9 @@ namespace kampfpanzerin {
                     }
 
                     // Waveform
-                    if (bar.mode == TimelineBar.TimeLineMode.SYNC)
-                        RenderSyncWave(g, b, currY, bar);
-                    else
+                    //if (bar.mode == TimelineBar.TimeLineMode.SYNC)
+                    //    RenderSyncWave(g, b, currY, bar);
+                    //else
                         RenderCamWave(g, b, currY, bar);
 
                     currY += barHeight + BAR_HORIZ_MARGIN;
@@ -280,30 +284,30 @@ namespace kampfpanzerin {
             g.FillPolygon(b, Points);
         }
 
-        private void RenderSyncWave(Graphics g, SolidBrush b, int currY, TimelineBar bar) {
-            if (barHeight > 10 && bar.events.Count > 0) {
-                float wavRange = Math.Abs(bar.maxVal - bar.minVal);
-                float pixWavConv = 0;
-                if (wavRange > 0)
-                    pixWavConv = (barHeight - WAVEFORM_MARGIN * 2) / wavRange;
-                b.Color = Color.FromArgb(32, 32, 32);
-                Pen p2 = new Pen(b);
-                for (int wavX = BAR_LEFT_MARGIN; wavX < Width - 7; wavX++) {
-                    float currVal = bar.GetValueAtTime(XCoordToTime(wavX));
-                    float nextVal = bar.GetValueAtTime(XCoordToTime(wavX + 1));
-                    if (currVal != -666666.0) {
-                        if (wavRange > 0) {
-                            int wavY = (int)(currY + barHeight / 2 - (currVal * pixWavConv + WAVEFORM_MARGIN));
-                            int wavY2 = (int)(currY + barHeight / 2 - (nextVal * pixWavConv + WAVEFORM_MARGIN));
-                            wavY += (int)(bar.minVal * pixWavConv);
-                            wavY2 += (int)(bar.minVal * pixWavConv);
-                            g.DrawLine(p2, wavX, wavY, wavX + 1, wavY2);
-                        } else
-                            g.FillRectangle(b, wavX, currY, 1, 1);
-                    }
-                }
-            }
-        }
+        //private void RenderSyncWave(Graphics g, SolidBrush b, int currY, TimelineBar bar) {
+        //    if (barHeight > 10 && bar.events.Count > 0) {
+        //        float wavRange = Math.Abs(bar.maxVal - bar.minVal);
+        //        float pixWavConv = 0;
+        //        if (wavRange > 0)
+        //            pixWavConv = (barHeight - WAVEFORM_MARGIN * 2) / wavRange;
+        //        b.Color = Color.FromArgb(32, 32, 32);
+        //        Pen p2 = new Pen(b);
+        //        for (int wavX = BAR_LEFT_MARGIN; wavX < Width - 7; wavX++) {
+        //            float currVal = bar.GetValueAtTime(XCoordToTime(wavX));
+        //            float nextVal = bar.GetValueAtTime(XCoordToTime(wavX + 1));
+        //            if (currVal != -666666.0) {
+        //                if (wavRange > 0) {
+        //                    int wavY = (int)(currY + barHeight / 2 - (currVal * pixWavConv + WAVEFORM_MARGIN));
+        //                    int wavY2 = (int)(currY + barHeight / 2 - (nextVal * pixWavConv + WAVEFORM_MARGIN));
+        //                    wavY += (int)(bar.minVal * pixWavConv);
+        //                    wavY2 += (int)(bar.minVal * pixWavConv);
+        //                    g.DrawLine(p2, wavX, wavY, wavX + 1, wavY2);
+        //                } else
+        //                    g.FillRectangle(b, wavX, currY, 1, 1);
+        //            }
+        //        }
+        //    }
+        //}
 
         private void RenderCamWave(Graphics g, SolidBrush b, int currY, TimelineBar bar) {
             if (barHeight > 10 && bar.events.Count > 0) {
@@ -448,21 +452,21 @@ namespace kampfpanzerin {
                         value = GraphicsManager.GetInstance().GetCamera().Rotation;
                         break;
                 }
-                TimelineBarEventCameraEditForm frm = new TimelineBarEventCameraEditForm(time, 
-                    value, BarEventType.CAMERA, false);
+                TimelineBarEventEditForm frm = new TimelineBarEventEditForm(time, 
+                    value, BarEventType.SMOOTH, false);
                 frm.StartPosition = FormStartPosition.Manual;
                 frm.Location = new Point(Cursor.Position.X - 97, Cursor.Position.Y - 169);
                 if (frm.ShowDialog() == DialogResult.OK) {
                     TimelineBarEvent be = new TimelineBarEvent();
                     be.time = frm.GetTime();
                     be.type = frm.GetEventType();
-                    be.vecValue = frm.GetValue();
+                    be.value = frm.GetValue();
                     b.events.Add(be);
                     Kampfpanzerin.SetDirty();
                 }
                 b.Recalc();
             } else {
-                TimelineBarEventEditForm frm = new TimelineBarEventEditForm(time, 0, BarEventType.SMOOTH, false);
+                TimelineBarEventEditForm frm = new TimelineBarEventEditForm(time, new Vector3f(), BarEventType.SMOOTH, false);
                 frm.StartPosition = FormStartPosition.Manual;
                 frm.Location = new Point(Cursor.Position.X - 97, Cursor.Position.Y - 169);
                 if (frm.ShowDialog() == DialogResult.OK) {
@@ -481,8 +485,8 @@ namespace kampfpanzerin {
         private void EditEvent(TimelineBar b, TimelineBarEvent be) {
             if (cameraModeCheckBox.Checked) {
                 Vector3f value = new Vector3f();
-                TimelineBarEventCameraEditForm frm = new TimelineBarEventCameraEditForm(be.time,
-                    be.vecValue, BarEventType.CAMERA, true);
+                TimelineBarEventEditForm frm = new TimelineBarEventEditForm(be.time,
+                    be.value, be.type, true);
                 frm.StartPosition = FormStartPosition.Manual;
                 //Point offset = PointToScreen(new Point(0,0));
                 //frm.Location = new Point(TimeToXCoord(be.time) - 97 + offset.X, Cursor.Position.Y - 169 + offset.Y);
@@ -491,7 +495,7 @@ namespace kampfpanzerin {
                 if (d == DialogResult.OK) {
                     be.time = frm.GetTime();
                     be.type = frm.GetEventType();
-                    be.vecValue = frm.GetValue();
+                    be.value = frm.GetValue();
                     Kampfpanzerin.SetDirty();
                 } else if (d == DialogResult.Abort) {
                     b.events.Remove(be);
@@ -590,6 +594,8 @@ namespace kampfpanzerin {
             return f;
         }
 
+
+        // FIXME value editing now needs a lot more shizzle coz vectors
         private void pictureBox_MouseMove(object sender, MouseEventArgs e) {
             if (eventUnderEdit != null) {
                 if (Control.ModifierKeys == Keys.Control) { // Edit value
@@ -601,7 +607,7 @@ namespace kampfpanzerin {
                     float maxVal = syncBars[eventUnderEditBarIndex].maxVal; 
                     float range =  maxVal - minVal;
                     float newVal = maxVal - y * range;
-                    eventUnderEdit.value = newVal;
+                    //eventUnderEdit.value = newVal;
                     syncBars[eventUnderEditBarIndex].Recalc();
                 } else {    // Edit time
                     float t = XCoordToTime(e.X);
@@ -637,104 +643,6 @@ namespace kampfpanzerin {
             }
 
             return false;
-        }
-
-        public string CompileTrackerCode() {
-            if (syncBars.Count == 0) {
-                return "";
-            }
-
-            string res = "";
-            res = GetInterpolationCode(camBars, syncBars);
-            if (syncBars.Count == 1)
-                res += "float sn;";
-            else
-                res += "float sn[" + syncBars.Count + "];";
-
-            int i = 0;
-            foreach (TimelineBar bar in syncBars) {
-                if (bar.events.Count == 0)
-                    continue;
-
-                if (syncBars.Count == 1)
-                    res += "sn=";
-                else
-                    res += "sn[" + (i++) + "]=";
-
-                //string current = "{0}";
-
-                //for (i = 0; i < bar.events.Count; i++) {
-                //    TimelineBarEvent be = bar.events[i];
-                //    string startVal = FloatToOptimisedString(be.value);
-                //    string startTime = FloatToOptimisedString(be.time);
-                //    if (i == bar.events.Count - 1) {
-                //        current = string.Format(current, startVal);
-                //        return res + current;
-                //    } else {
-                //        string stopVal = FloatToOptimisedString(bar.events[i + 1].value);
-                //        string stopTime = FloatToOptimisedString(bar.events[i + 1].time);
-                //        switch (be.type) {
-                //            case BarEventType.HOLD:
-                //                current = string.Format(current, "fx(" + stopTime + "," + startVal + ",{0})");
-                //                break;
-                //            case BarEventType.LERP:
-                //                current = string.Format(current, "mx(" + startTime + "," + stopTime + "," + startVal + ",{0})");
-                //                break;
-                //            case BarEventType.SMOOTH:
-                //                current = string.Format(current, "sx(" + startTime + "," + stopTime + "," + startVal + ",{0})");
-                //                break;
-                //        }
-                //    }
-                //}
-
-                for (i=0; i<bar.events.Count; i++) {
-                    TimelineBarEvent be = bar.events[i];
-                    string startVal = FloatToOptimisedString(be.value);
-                    string startTime = FloatToOptimisedString(be.time);
-                    if (i == bar.events.Count - 1)
-                        res += ";";
-                    else {
-                        string stopVal = FloatToOptimisedString(bar.events[i + 1].value);
-                        string stopTime = FloatToOptimisedString(bar.events[i + 1].time);
-                        switch (be.type) {
-                            case BarEventType.HOLD:
-                                res += "fx(" + stopTime + "," + startVal + ")";
-                                break;
-                            case BarEventType.LERP:
-                                res += "mx(" + startTime + "," + stopTime + "," + startVal + "," + stopVal + ")";
-                                break;
-                            case BarEventType.SMOOTH:
-                                res += "sx(" + startTime + "," + stopTime + "," + startVal + "," + stopVal + ")";
-                                break;
-                        }
-                    }
-                }
-            }
-            return res;
-        }
-
-        private string GetInterpolationCode(List<TimelineBar> bars0, List<TimelineBar> bars1) {
-            List<TimelineBar>[] bars = { bars0, bars1 };
-            string res = "";
-            if (TypeIsPresent(BarEventType.HOLD, bars))
-                res += "#define fx(b,bb) u.z<b?bb:bbb\r\n";
-            if (TypeIsPresent(BarEventType.LERP, bars))
-                res += "#define mx(b,bb,bbb,bbbb) u.z<bb?mix(bbb,bbbb,(u.z-b)/(bb-b)):bbbb\r\n";
-            if (TypeIsPresent(BarEventType.SMOOTH, bars))
-                res += "#define sx(b,bb,bbb,bbbb) u.z<bb?bbb+(bbbb-bbb)*smoothstep(b,bb,u.z):bbbb\r\n";
-            return res;
-        }
-
-        private static string FloatToOptimisedString(float f) {
-            string s = f.ToString(".000", culture);
-            if (s.StartsWith("-0."))
-                s = s.Substring(2);
-            if (s.StartsWith("0."))
-                s = s.Substring(1);
-            if (s.Contains("."))
-                while (s.EndsWith("0") && s.Length > 2)
-                    s = s.Substring(0, s.Length - 1);
-            return s;
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e) {

@@ -34,22 +34,16 @@ namespace kampfpanzerin {
         public void Recalc() {
             maxVal = -9999999;
             minVal = 9999999;
-            if (mode == TimeLineMode.SYNC) {
-                foreach (TimelineBarEvent be in events) {
-                    maxVal = Math.Max(be.value, maxVal);
-                    minVal = Math.Min(be.value, minVal);
-                }
-            } else {
-                foreach (TimelineBarEvent be in events) {
-                    maxVal = Math.Max(be.vecValue.Max(), maxVal);
-                    minVal = Math.Min(be.vecValue.Min(), minVal);
-                }
+            foreach (TimelineBarEvent be in events) {
+                maxVal = Math.Max(be.value.Max(), maxVal);
+                minVal = Math.Min(be.value.Min(), minVal);
             }
+            
 
             events.Sort();
         }
 
-        public float GetValueAtTime(float t) {
+        public Vector3f GetValueAtTime(float t) {
             TimelineBarEvent be1 = null, be2 = null;
 
             foreach (TimelineBarEvent be in events) {
@@ -61,13 +55,13 @@ namespace kampfpanzerin {
             }
 
             if (be1 == null)
-                return -666666.0f;
+                return Vector3f.INVALID;
 
             if (be1.type == BarEventType.HOLD)
                 return be1.value;
 
             if (be2 == null)
-                return -666666.0f;
+                return Vector3f.INVALID;
 
             float amount = (t - be1.time) / (be2.time - be1.time);
             if (be1.type == BarEventType.SMOOTH)
@@ -76,22 +70,24 @@ namespace kampfpanzerin {
         }
 
         public Vector3f GetVectorValueAtTime(float t) {
-            TimelineBarEvent be1 = null, be2 = null;
-
-            foreach (TimelineBarEvent be in events) {
-                if (be.time > t) {
-                    be2 = be;
-                    break;
-                } else
-                    be1 = be;
-            }
-
-            if (be1 == null || be2 == null)
-                return new Vector3f(0);
-
-            float amount = (t - be1.time) / (be2.time - be1.time);
-            amount = (amount * amount) * (3.0f - (2.0f * amount));
-            return be1.vecValue + (be2.vecValue - be1.vecValue) * amount;
+            return GetValueAtTime(t);
         }
+        //    TimelineBarEvent be1 = null, be2 = null;
+
+        //    foreach (TimelineBarEvent be in events) {
+        //        if (be.time > t) {
+        //            be2 = be;
+        //            break;
+        //        } else
+        //            be1 = be;
+        //    }
+
+        //    if (be1 == null || be2 == null)
+        //        return new Vector3f(0);
+
+        //    float amount = (t - be1.time) / (be2.time - be1.time);
+        //    amount = (amount * amount) * (3.0f - (2.0f * amount));
+        //    return be1.value + (be2.value - be1.value) * amount;
+        //}
     }
 }

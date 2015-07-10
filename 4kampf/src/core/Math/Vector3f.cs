@@ -159,7 +159,10 @@ namespace kampfpanzerin
             return Math.Min(x, Math.Min(y, z));
         }
 
-        public string ToString(string p, System.Globalization.CultureInfo culture) {
+        public string ToString(string p, System.Globalization.CultureInfo culture = null) {
+            if (culture == null) {
+                culture = System.Globalization.CultureInfo.CurrentCulture;
+            }
             return "{" + x.ToString(p, culture) + "," + y.ToString(p, culture) + "," + z.ToString(p, culture) + "}";
         }
     }
