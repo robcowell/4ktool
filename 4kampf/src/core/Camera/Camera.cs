@@ -94,7 +94,7 @@ namespace kampfpanzerin
         }
 
         public void Reset() {
-            rotation = new Vector3f(0, (float)Math.PI, 0);
+            rotation = new Vector3f(0, 0, 0);
             position = new Vector3f(0, 0, 0);
             forward = new Vector3f();
             right = new Vector3f();
@@ -108,9 +108,9 @@ namespace kampfpanzerin
 
             Gl.glMatrixMode(Gl.GL_MODELVIEW);
             Gl.glLoadIdentity();
-            Gl.glRotatef(Rotation.z / PI_OVER_180, 0, 0, 1);
-            Gl.glRotatef(360 - Rotation.y / PI_OVER_180, 0, 1, 0);
             Gl.glRotatef(Rotation.x / PI_OVER_180, 1, 0, 0);
+            Gl.glRotatef(360 - Rotation.y / PI_OVER_180, 0, 1, 0);
+            Gl.glRotatef(Rotation.z / PI_OVER_180, 0, 0, 1);
 
             // Store orientation vectors!
             float[] model = new float[16];
@@ -127,7 +127,7 @@ namespace kampfpanzerin
                 position.x += (float)Math.Sin(rotation.y) * amount;
                 position.z += (float)Math.Cos(rotation.y) * amount;
             } else if (mode == CameraMode.FREEFLY)
-                position -= (forward * amount);
+                position += (forward * amount);
 
             dirty = true;
         }

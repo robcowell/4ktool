@@ -29,7 +29,7 @@ namespace kampfpanzerin.git {
                     gitRepo.Index.Add(relative);
                 }
             }
-            Signature s = new Signature(Properties.Settings.Default.gitAuthor, Properties.Settings.Default.gitEmail, DateTime.Now);
+            //Signature s = new Signature(Properties.Settings.Default.gitAuthor, Properties.Settings.Default.gitEmail, DateTime.Now);
             Commit c = gitRepo.Commit(@"Created a new intro \o/");
             Logger.log("commited " + c.ToString());
             return new GitHandler(folder);

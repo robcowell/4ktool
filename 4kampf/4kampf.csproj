@@ -60,6 +60,9 @@
   <PropertyGroup />
   <PropertyGroup />
   <ItemGroup>
+    <Reference Include="CredentialManagement">
+      <HintPath>..\packages\CredentialManagement.1.0.2\lib\net35\CredentialManagement.dll</HintPath>
+    </Reference>
     <Reference Include="LibGit2Sharp">
       <HintPath>..\packages\LibGit2Sharp.0.21.0.176\lib\net40\LibGit2Sharp.dll</HintPath>
     </Reference>
@@ -72,8 +75,17 @@
     <Reference Include="MetroFramework.Fonts">
       <HintPath>..\packages\MetroModernUI.1.3.0.0\lib\net\MetroFramework.Fonts.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="ScintillaNET">
       <HintPath>bin\Release\ScintillaNET.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpBucket">
+      <HintPath>..\packages\SharpBucket.0.4.1.0\lib\net40\SharpBucket.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -96,6 +108,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\components\GitForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\components\GitForm.Designer.cs">
+      <DependentUpon>GitForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="src\git\GitHandler.cs" />
     <Compile Include="src\components\AboutBox.cs">
       <SubType>Form</SubType>
@@ -179,6 +197,9 @@
     <EmbeddedResource Include="src\components\AppForm.resx">
       <DependentUpon>AppForm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\components\GitForm.resx">
+      <DependentUpon>GitForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="src\components\TimelineBarEventEditForm.resx">
       <DependentUpon>TimelineBarEventEditForm.cs</DependentUpon>
