@@ -280,7 +280,7 @@ namespace kampfpanzerin
             vertText = vertText.Replace("//#SYNCCODE#", syncRest + syncCode);
             fragText = fragText.Replace("//#SYNCCODE#", syncRest + syncCode);
 
-            vertText = vertText.Replace("CAMVARS", "uniform vec3 cp, fd, up;");
+            vertText = vertText.Replace("CAMVARS", "uniform vec3 cp, cr;");
             
             form.ShowLog("");
 

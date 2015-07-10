@@ -72,7 +72,7 @@ namespace kampfpanzerin {
                 return null;
             }
             shader = shader.Replace("//#SYNCCODE#", syncCode);
-            shader = shader.Replace("CAMVARS", (prodmode? "" : "uniform ") + "vec3 cp, fd, up;");
+            shader = shader.Replace("CAMVARS", (prodmode? "" : "uniform ") + "vec3 cp, cr;");
 
             if (!prodmode) {
                 shader = shader.Replace("\n", "\r\n");

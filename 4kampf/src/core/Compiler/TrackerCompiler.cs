@@ -65,6 +65,16 @@ namespace kampfpanzerin.src.core.Compiler {
             return current;
         }
 
+        public static string CompileCamTrackerCode(List<TimelineBar> bars) {
+            if (bars.Count == 0) {
+                return "";
+            }
+
+            var cp = "cp=" + CompileTrack(bars[0]);
+            var rot = "or=" + CompileTrack(bars[1]);
+            return cp + rot;
+        }
+
         public static string GetInterpolationCode(List<TimelineBar> bars0, List<TimelineBar> bars1) {
             List<TimelineBar>[] bars = { bars0, bars1 };
             IEnumerable<BarEventType> types = bars.SelectMany(b => b).SelectMany(b => b.events).GroupBy(e => e.type).Select(Enumerable.First).Select(e => e.type);

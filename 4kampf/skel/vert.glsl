@@ -21,6 +21,13 @@ uniform float ev[6];		// If 4klang envelopes are enabled, this gives envelopes f
 varying vec2 uv;		// uv coord
 varying vec3 rd;		// ray direction for RM
 
+vec3 ro(vec3 i,vec3 a){
+    vec3 h=cos(a),j=sin(a);
+         return mat3(h.x*h.y,j.x*h.y,-j.y,
+                    j.x*-h.z+h.x*j.y*j.z,h.x*h.z+j.x*j.y*j.z,h.y*j.z,
+                    j.x*j.z+h.x*j.y*h.z,h.x*-j.z+j.x*j.y*h.z,h.y*h.z)*i;
+}
+
 float scale = 0.41;
 void main(){
 	gl_Position=gl_Vertex;
@@ -29,6 +36,5 @@ void main(){
 	// If the Sync Tracker is enabled, sync code gets inserted in place of the below comment; available from any shader.
 	//#SYNCCODE#
 	
-	vec3 q=cross(fd,up);
-	rd=mat3(q,cross(q,fd),fd)*vec3(gl_Vertex.x*u.x/u.y*scale,gl_Vertex.y*scale,u.y/u.x);
+	rd=ro(vec3(gl_Vertex.x*u.x/u.y*scale,gl_Vertex.y*scale,u.y/u.x),cr);
 }

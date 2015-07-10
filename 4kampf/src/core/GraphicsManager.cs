@@ -292,12 +292,13 @@ namespace kampfpanzerin
 
                 camera.UpdateVectors();
 
-                float[] forward = { camera.Forward.x, camera.Forward.y, camera.Forward.z };
-                float[] up = { camera.Up.x, camera.Up.y, camera.Up.z };
+                //float[] forward = { camera.Forward.x, camera.Forward.y, camera.Forward.z };
+                float[] angles = { camera.Rotation.x, camera.Rotation.y, camera.Rotation.z };
+                //float[] up = { camera.Up.x, camera.Up.y, camera.Up.z };
                 float[] campos = { camera.Position.x, camera.Position.y, camera.Position.z };
                 Gl.glUniform3fv(Gl.glGetUniformLocation(shaderProg[0], "cp"), 1, campos);
-                Gl.glUniform3fv(Gl.glGetUniformLocation(shaderProg[0], "fd"), 1, forward);
-                Gl.glUniform3fv(Gl.glGetUniformLocation(shaderProg[0], "up"), 1, up);
+                Gl.glUniform3fv(Gl.glGetUniformLocation(shaderProg[0], "cr"), 1, angles);
+                //Gl.glUniform3fv(Gl.glGetUniformLocation(shaderProg[0], "up"), 1, up);
             }
 
             if (Properties.Settings.Default.enableStandardUniforms) {
