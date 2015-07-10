@@ -241,7 +241,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\DataSources\" />
-    <Folder Include="skeleton\" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="AxWMPLib">
