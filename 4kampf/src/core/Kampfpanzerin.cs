@@ -338,7 +338,7 @@ namespace kampfpanzerin
             }
 
             if (form.klangPlayer.LoadWAV(currentProjectDirectory + "/music.wav"))
-                form.ConcatLog("* 4klang tune rendered and loaded");
+                form.ConcatLog("* Tune rendered and loaded - happy days!");
             else
                 form.ConcatLog("! Couldn't read WAV :(");
         }
