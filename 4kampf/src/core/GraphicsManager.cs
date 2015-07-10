@@ -297,6 +297,7 @@ namespace kampfpanzerin
                 //float[] up = { camera.Up.x, camera.Up.y, camera.Up.z };
                 float[] campos = { camera.Position.x, camera.Position.y, camera.Position.z };
                 Gl.glUniform3fv(Gl.glGetUniformLocation(shaderProg[0], "cp"), 1, campos);
+                //AppForm.GetInstance().ConcatLog(angles.ToString());
                 Gl.glUniform3fv(Gl.glGetUniformLocation(shaderProg[0], "cr"), 1, angles);
                 //Gl.glUniform3fv(Gl.glGetUniformLocation(shaderProg[0], "up"), 1, up);
             }

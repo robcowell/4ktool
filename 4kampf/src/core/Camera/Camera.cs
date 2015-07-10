@@ -108,9 +108,9 @@ namespace kampfpanzerin
 
             Gl.glMatrixMode(Gl.GL_MODELVIEW);
             Gl.glLoadIdentity();
-            Gl.glRotatef(Rotation.x / PI_OVER_180, 1, 0, 0);
-            Gl.glRotatef(360 - Rotation.y / PI_OVER_180, 0, 1, 0);
             Gl.glRotatef(Rotation.z / PI_OVER_180, 0, 0, 1);
+            Gl.glRotatef(360 - Rotation.y / PI_OVER_180, 0, 1, 0);
+            Gl.glRotatef(Rotation.x / PI_OVER_180, 1, 0, 0);
 
             // Store orientation vectors!
             float[] model = new float[16];
@@ -124,8 +124,8 @@ namespace kampfpanzerin
             GraphicsManager gfx = GraphicsManager.GetInstance();
 
             if (mode == CameraMode.WALK || mode == CameraMode.LOCKFLY) {
-                position.x += (float)Math.Sin(rotation.y * PI_OVER_180) * amount;
-                position.z -= (float)Math.Cos(rotation.y * PI_OVER_180) * amount;
+                position.x += (float)Math.Sin(rotation.y) * amount;
+                position.z += (float)Math.Cos(rotation.y) * amount;
             } else if (mode == CameraMode.FREEFLY)
                 position -= (forward * amount);
 
@@ -136,10 +136,10 @@ namespace kampfpanzerin
             GraphicsManager gfx = GraphicsManager.GetInstance();
 
             if (mode == CameraMode.WALK || mode == CameraMode.LOCKFLY) {
-                position.x -= (float)Math.Sin((rotation.y + 90) * PI_OVER_180) * amount;
-                position.z -= (float)Math.Cos((rotation.y + 90) * PI_OVER_180) * amount;
+                position.x += (float)Math.Sin((rotation.y + Math.PI / 2)) * amount;
+                position.z += (float)Math.Cos((rotation.y + Math.PI / 2)) * amount;
             } else if (mode == CameraMode.FREEFLY)
-                position -= (right * amount);
+                position += (right * amount);
 
             dirty = true;
         }
@@ -169,7 +169,7 @@ namespace kampfpanzerin
         
         public void Pitch(float amount) {
             if (mode != CameraMode.AUTOMATED) {
-                rotation.x += amount * PI_OVER_180;
+                rotation.z = (rotation.z + amount * PI_OVER_180) % 360;
                 dirty = true;
             }
         }
