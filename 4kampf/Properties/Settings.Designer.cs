@@ -191,5 +191,29 @@ namespace kampfpanzerin.Properties {
                 this["snapBarEvents"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string gitAuthor {
+            get {
+                return ((string)(this["gitAuthor"]));
+            }
+            set {
+                this["gitAuthor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string gitEmail {
+            get {
+                return ((string)(this["gitEmail"]));
+            }
+            set {
+                this["gitEmail"] = value;
+            }
+        }
     }
 }
