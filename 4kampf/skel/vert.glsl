@@ -23,9 +23,9 @@ varying vec3 rd;		// ray direction for RM
 
 vec3 ro(vec3 i,vec3 a){
     vec3 h=cos(a),j=sin(a);
-         return mat3(h.x*h.y,j.x*h.y,-j.y,
-                    j.x*-h.z+h.x*j.y*j.z,h.x*h.z+j.x*j.y*j.z,h.y*j.z,
-                    j.x*j.z+h.x*j.y*h.z,h.x*-j.z+j.x*j.y*h.z,h.y*h.z)*i;
+         return mat3(h.y*h.z,-h.y*j.z,j.y,
+                    h.x*j.z+h.z*j.x*j.y,h.x*h.z-j.x*j.y*j.z,-h.y*j.x,
+                    j.x*j.z-h.x*h.z*j.y,h.z*j.x+h.x*j.y*j.z,h.x*h.y)*i;
 }
 
 float scale = 0.41;

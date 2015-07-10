@@ -164,6 +164,8 @@ namespace kampfpanzerin
             MessageBox.Show("Project created! Now drop your music.asm or 4klang.obj and 4klang.h in there and run Build->Render 4klang Music.\n\n(Or just run Build->Render 4klang Music now to render the example tune!)", "4kampf", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             LibGit2Sharp.Repository.Init(dest, dest);
+            var gitRepo = new LibGit2Sharp.Repository(dest);
+            gitRepo.Index.Add(".");
 
             OpenProject(dest, true);
         }

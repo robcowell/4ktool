@@ -169,7 +169,7 @@ namespace kampfpanzerin
         
         public void Pitch(float amount) {
             if (mode != CameraMode.AUTOMATED) {
-                rotation.z = (rotation.z + amount * PI_OVER_180) % 360;
+                rotation.x = (rotation.x + amount * PI_OVER_180) % 360;
                 dirty = true;
             }
         }
