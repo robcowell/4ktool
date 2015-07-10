@@ -94,7 +94,7 @@ namespace kampfpanzerin
         }
 
         public void Reset() {
-            rotation = new Vector3f(0, 180.0f, 0);
+            rotation = new Vector3f(0, (float)Math.PI, 0);
             position = new Vector3f(0, 0, 0);
             forward = new Vector3f();
             right = new Vector3f();
@@ -108,9 +108,9 @@ namespace kampfpanzerin
 
             Gl.glMatrixMode(Gl.GL_MODELVIEW);
             Gl.glLoadIdentity();
-            Gl.glRotatef(Rotation.x, 1, 0, 0);
-            Gl.glRotatef(360 - Rotation.y, 0, 1, 0);
-            Gl.glRotatef(Rotation.z, 0, 0, 1);
+            Gl.glRotatef(Rotation.x / PI_OVER_180, 1, 0, 0);
+            Gl.glRotatef(360 - Rotation.y / PI_OVER_180, 0, 1, 0);
+            Gl.glRotatef(Rotation.z / PI_OVER_180, 0, 0, 1);
 
             // Store orientation vectors!
             float[] model = new float[16];
@@ -124,7 +124,7 @@ namespace kampfpanzerin
             GraphicsManager gfx = GraphicsManager.GetInstance();
 
             if (mode == CameraMode.WALK || mode == CameraMode.LOCKFLY) {
-                position.x -= (float)Math.Sin(rotation.y * PI_OVER_180) * amount;
+                position.x += (float)Math.Sin(rotation.y * PI_OVER_180) * amount;
                 position.z -= (float)Math.Cos(rotation.y * PI_OVER_180) * amount;
             } else if (mode == CameraMode.FREEFLY)
                 position -= (forward * amount);
@@ -162,14 +162,14 @@ namespace kampfpanzerin
 
         public void Yaw(float amount) {
             if (mode != CameraMode.AUTOMATED) {
-                rotation.y = (rotation.y + amount) % 360;
+                rotation.y = (rotation.y + amount * PI_OVER_180) % 360;
                 dirty = true;
             }
         }
         
         public void Pitch(float amount) {
             if (mode != CameraMode.AUTOMATED) {
-                rotation.x += amount;
+                rotation.x += amount * PI_OVER_180;
                 dirty = true;
             }
         }
