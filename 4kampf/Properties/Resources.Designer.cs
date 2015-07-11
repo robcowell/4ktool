@@ -93,6 +93,26 @@ namespace kampfpanzerin.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap bitbucket_pull {
+            get {
+                object obj = ResourceManager.GetObject("bitbucket-pull", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap bitbucket_push {
+            get {
+                object obj = ResourceManager.GetObject("bitbucket-push", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap BuildAudio {
             get {
                 object obj = ResourceManager.GetObject("BuildAudio", resourceCulture);

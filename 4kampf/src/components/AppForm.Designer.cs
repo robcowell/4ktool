@@ -76,15 +76,6 @@
             this.splitMainLR = new System.Windows.Forms.SplitContainer();
             this.splitLHS = new System.Windows.Forms.SplitContainer();
             this.pnlCam = new System.Windows.Forms.Panel();
-            this.walkButton = new System.Windows.Forms.Button();
-            this.stepUpButton = new System.Windows.Forms.Button();
-            this.btnCamReset = new System.Windows.Forms.Button();
-            this.freeFlyButton = new System.Windows.Forms.Button();
-            this.camAutoButton = new System.Windows.Forms.Button();
-            this.stepDownButton = new System.Windows.Forms.Button();
-            this.lockFlyButton = new System.Windows.Forms.Button();
-            this.preview = new System.Windows.Forms.PictureBox();
-            this.btnClearLog = new System.Windows.Forms.Button();
             this.log = new kampfpanzerin.TextBoxWithScrollLeft();
             this.splitRHS = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new kampfpanzerin.TabControlFlat();
@@ -96,8 +87,11 @@
             this.edPost = new ScintillaNET.Scintilla();
             this.timeLine = new kampfpanzerin.TimeLine();
             this.pnlToolbar = new System.Windows.Forms.Panel();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.klangPlayer = new kampfpanzerin.KlangPlayer();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.pictureBox5 = new System.Windows.Forms.PictureBox();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnScreenshot = new System.Windows.Forms.Button();
@@ -105,6 +99,8 @@
             this.btnFind = new System.Windows.Forms.Button();
             this.btnRedo = new System.Windows.Forms.Button();
             this.btnUndo = new System.Windows.Forms.Button();
+            this.btnPull = new System.Windows.Forms.Button();
+            this.btnPush = new System.Windows.Forms.Button();
             this.btnCleanProj = new System.Windows.Forms.Button();
             this.btnGotoProjectFolder = new System.Windows.Forms.Button();
             this.btnExportProj = new System.Windows.Forms.Button();
@@ -123,8 +119,15 @@
             this.btnFullscreen = new System.Windows.Forms.Button();
             this.btnLoop = new System.Windows.Forms.Button();
             this.btnRefreshShaders = new System.Windows.Forms.Button();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.klangPlayer = new kampfpanzerin.KlangPlayer();
+            this.walkButton = new System.Windows.Forms.Button();
+            this.stepUpButton = new System.Windows.Forms.Button();
+            this.btnCamReset = new System.Windows.Forms.Button();
+            this.freeFlyButton = new System.Windows.Forms.Button();
+            this.camAutoButton = new System.Windows.Forms.Button();
+            this.stepDownButton = new System.Windows.Forms.Button();
+            this.lockFlyButton = new System.Windows.Forms.Button();
+            this.preview = new System.Windows.Forms.PictureBox();
+            this.btnClearLog = new System.Windows.Forms.Button();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitMainLR)).BeginInit();
             this.splitMainLR.Panel1.SuspendLayout();
@@ -135,7 +138,6 @@
             this.splitLHS.Panel2.SuspendLayout();
             this.splitLHS.SuspendLayout();
             this.pnlCam.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.preview)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitRHS)).BeginInit();
             this.splitRHS.Panel1.SuspendLayout();
             this.splitRHS.Panel2.SuspendLayout();
@@ -150,8 +152,10 @@
             this.pnlToolbar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.preview)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -166,7 +170,7 @@
             this.elpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(906, 24);
+            this.menuStrip.Size = new System.Drawing.Size(943, 24);
             this.menuStrip.TabIndex = 3;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -577,8 +581,8 @@
             this.splitMainLR.Panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.splitMainLR.Panel2.Controls.Add(this.splitRHS);
             this.splitMainLR.Panel2MinSize = 0;
-            this.splitMainLR.Size = new System.Drawing.Size(906, 437);
-            this.splitMainLR.SplitterDistance = 302;
+            this.splitMainLR.Size = new System.Drawing.Size(943, 437);
+            this.splitMainLR.SplitterDistance = 291;
             this.splitMainLR.SplitterWidth = 2;
             this.splitMainLR.TabIndex = 8;
             // 
@@ -602,7 +606,7 @@
             this.splitLHS.Panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.splitLHS.Panel2.Controls.Add(this.btnClearLog);
             this.splitLHS.Panel2.Controls.Add(this.log);
-            this.splitLHS.Size = new System.Drawing.Size(302, 437);
+            this.splitLHS.Size = new System.Drawing.Size(291, 437);
             this.splitLHS.SplitterDistance = 312;
             this.splitLHS.SplitterWidth = 7;
             this.splitLHS.TabIndex = 0;
@@ -619,10 +623,687 @@
             this.pnlCam.Controls.Add(this.camAutoButton);
             this.pnlCam.Controls.Add(this.stepDownButton);
             this.pnlCam.Controls.Add(this.lockFlyButton);
-            this.pnlCam.Location = new System.Drawing.Point(160, 292);
+            this.pnlCam.Location = new System.Drawing.Point(137, 292);
             this.pnlCam.Name = "pnlCam";
             this.pnlCam.Size = new System.Drawing.Size(142, 20);
             this.pnlCam.TabIndex = 2;
+            // 
+            // log
+            // 
+            this.log.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.log.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.log.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.log.Font = new System.Drawing.Font("Lucida Console", 9F);
+            this.log.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.log.Location = new System.Drawing.Point(0, 0);
+            this.log.Margin = new System.Windows.Forms.Padding(0);
+            this.log.Multiline = true;
+            this.log.Name = "log";
+            this.log.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.log.Size = new System.Drawing.Size(279, 111);
+            this.log.TabIndex = 4;
+            this.log.TextChanged += new System.EventHandler(this.log_TextChanged);
+            // 
+            // splitRHS
+            // 
+            this.splitRHS.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitRHS.Location = new System.Drawing.Point(0, 0);
+            this.splitRHS.Margin = new System.Windows.Forms.Padding(0);
+            this.splitRHS.Name = "splitRHS";
+            this.splitRHS.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitRHS.Panel1
+            // 
+            this.splitRHS.Panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.splitRHS.Panel1.Controls.Add(this.tabControl1);
+            this.splitRHS.Panel1MinSize = 0;
+            // 
+            // splitRHS.Panel2
+            // 
+            this.splitRHS.Panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.splitRHS.Panel2.Controls.Add(this.timeLine);
+            this.splitRHS.Panel2MinSize = 0;
+            this.splitRHS.Size = new System.Drawing.Size(650, 437);
+            this.splitRHS.SplitterDistance = 189;
+            this.splitRHS.SplitterWidth = 1;
+            this.splitRHS.TabIndex = 5;
+            this.splitRHS.TabStop = false;
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPP);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.Padding = new System.Drawing.Point(0, 0);
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(650, 189);
+            this.tabControl1.TabIndex = 4;
+            this.tabControl1.TabStop = false;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.tabPage1.Controls.Add(this.edVert);
+            this.tabPage1.ForeColor = System.Drawing.Color.White;
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Size = new System.Drawing.Size(642, 160);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Vertex shader";
+            // 
+            // edVert
+            // 
+            this.edVert.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.edVert.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.edVert.ConfigurationManager.Language = "cpp";
+            this.edVert.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.edVert.ForeColor = System.Drawing.Color.White;
+            this.edVert.Indentation.SmartIndentType = ScintillaNET.SmartIndent.Simple;
+            this.edVert.Indentation.TabWidth = 4;
+            this.edVert.IsBraceMatching = true;
+            this.edVert.Location = new System.Drawing.Point(0, 0);
+            this.edVert.Margin = new System.Windows.Forms.Padding(0);
+            this.edVert.Margins.Margin0.Width = 25;
+            this.edVert.Name = "edVert";
+            this.edVert.Size = new System.Drawing.Size(642, 160);
+            this.edVert.Styles.BraceBad.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edVert.Styles.BraceLight.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edVert.Styles.CallTip.FontName = "Segoe UI\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edVert.Styles.ControlChar.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edVert.Styles.Default.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.edVert.Styles.Default.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edVert.Styles.Default.ForeColor = System.Drawing.Color.White;
+            this.edVert.Styles.IndentGuide.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edVert.Styles.LastPredefined.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edVert.Styles.LineNumber.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.edVert.Styles.LineNumber.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edVert.Styles.LineNumber.ForeColor = System.Drawing.Color.DarkGray;
+            this.edVert.Styles.Max.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edVert.TabIndex = 0;
+            this.edVert.TextChanged += new System.EventHandler(this.edVert_TextChanged);
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.tabPage2.Controls.Add(this.edFrag);
+            this.tabPage2.ForeColor = System.Drawing.Color.White;
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(0);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Size = new System.Drawing.Size(642, 160);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Scene frag shader";
+            // 
+            // edFrag
+            // 
+            this.edFrag.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.edFrag.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.edFrag.ConfigurationManager.Language = "cpp";
+            this.edFrag.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.edFrag.ForeColor = System.Drawing.Color.White;
+            this.edFrag.Indentation.SmartIndentType = ScintillaNET.SmartIndent.Simple;
+            this.edFrag.Indentation.TabWidth = 4;
+            this.edFrag.IsBraceMatching = true;
+            this.edFrag.Location = new System.Drawing.Point(0, 0);
+            this.edFrag.Margin = new System.Windows.Forms.Padding(0);
+            this.edFrag.Margins.Margin0.Width = 25;
+            this.edFrag.Name = "edFrag";
+            this.edFrag.Size = new System.Drawing.Size(642, 160);
+            this.edFrag.Styles.BraceBad.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edFrag.Styles.BraceLight.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edFrag.Styles.CallTip.FontName = "Segoe UI\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edFrag.Styles.ControlChar.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edFrag.Styles.Default.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.edFrag.Styles.Default.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edFrag.Styles.Default.ForeColor = System.Drawing.Color.White;
+            this.edFrag.Styles.IndentGuide.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edFrag.Styles.LastPredefined.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edFrag.Styles.LineNumber.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.edFrag.Styles.LineNumber.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edFrag.Styles.LineNumber.ForeColor = System.Drawing.Color.Black;
+            this.edFrag.Styles.Max.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edFrag.TabIndex = 1;
+            this.edFrag.TextChanged += new System.EventHandler(this.edFrag_TextChanged);
+            // 
+            // tabPP
+            // 
+            this.tabPP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.tabPP.Controls.Add(this.edPost);
+            this.tabPP.ForeColor = System.Drawing.Color.White;
+            this.tabPP.Location = new System.Drawing.Point(4, 25);
+            this.tabPP.Margin = new System.Windows.Forms.Padding(0);
+            this.tabPP.Name = "tabPP";
+            this.tabPP.Size = new System.Drawing.Size(642, 160);
+            this.tabPP.TabIndex = 2;
+            this.tabPP.Text = "Postprocessing frag shader";
+            // 
+            // edPost
+            // 
+            this.edPost.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.edPost.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.edPost.ConfigurationManager.Language = "cpp";
+            this.edPost.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.edPost.ForeColor = System.Drawing.Color.White;
+            this.edPost.Indentation.SmartIndentType = ScintillaNET.SmartIndent.Simple;
+            this.edPost.Indentation.TabWidth = 4;
+            this.edPost.IsBraceMatching = true;
+            this.edPost.Location = new System.Drawing.Point(0, 0);
+            this.edPost.Margin = new System.Windows.Forms.Padding(0);
+            this.edPost.Margins.FoldMarginColor = System.Drawing.Color.Empty;
+            this.edPost.Margins.FoldMarginHighlightColor = System.Drawing.Color.Empty;
+            this.edPost.Margins.Margin0.Width = 25;
+            this.edPost.Name = "edPost";
+            this.edPost.Size = new System.Drawing.Size(642, 160);
+            this.edPost.Styles.BraceBad.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edPost.Styles.BraceLight.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edPost.Styles.CallTip.FontName = "Segoe UI\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edPost.Styles.ControlChar.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edPost.Styles.Default.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.edPost.Styles.Default.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edPost.Styles.Default.ForeColor = System.Drawing.Color.White;
+            this.edPost.Styles.IndentGuide.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edPost.Styles.LastPredefined.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edPost.Styles.LineNumber.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.edPost.Styles.LineNumber.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edPost.Styles.LineNumber.ForeColor = System.Drawing.Color.DarkGray;
+            this.edPost.Styles.Max.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.edPost.TabIndex = 0;
+            this.edPost.TextChanged += new System.EventHandler(this.edPost_TextChanged);
+            // 
+            // timeLine
+            // 
+            this.timeLine.AutoScroll = true;
+            this.timeLine.AutoScrollMinSize = new System.Drawing.Size(0, 70);
+            this.timeLine.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.timeLine.camMode = false;
+            this.timeLine.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.timeLine.Location = new System.Drawing.Point(0, 0);
+            this.timeLine.Name = "timeLine";
+            this.timeLine.Size = new System.Drawing.Size(650, 247);
+            this.timeLine.TabIndex = 2;
+            // 
+            // pnlToolbar
+            // 
+            this.pnlToolbar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlToolbar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pnlToolbar.Controls.Add(this.pictureBox3);
+            this.pnlToolbar.Controls.Add(this.pictureBox2);
+            this.pnlToolbar.Controls.Add(this.pictureBox5);
+            this.pnlToolbar.Controls.Add(this.pictureBox4);
+            this.pnlToolbar.Controls.Add(this.pictureBox1);
+            this.pnlToolbar.Controls.Add(this.btnScreenshot);
+            this.pnlToolbar.Controls.Add(this.btnColourHelper);
+            this.pnlToolbar.Controls.Add(this.btnFind);
+            this.pnlToolbar.Controls.Add(this.btnRedo);
+            this.pnlToolbar.Controls.Add(this.btnUndo);
+            this.pnlToolbar.Controls.Add(this.btnPull);
+            this.pnlToolbar.Controls.Add(this.btnPush);
+            this.pnlToolbar.Controls.Add(this.btnCleanProj);
+            this.pnlToolbar.Controls.Add(this.btnGotoProjectFolder);
+            this.pnlToolbar.Controls.Add(this.btnExportProj);
+            this.pnlToolbar.Controls.Add(this.btnSaveAll);
+            this.pnlToolbar.Controls.Add(this.btnOpenProj);
+            this.pnlToolbar.Controls.Add(this.btnNew);
+            this.pnlToolbar.Controls.Add(this.btnCleanBuild);
+            this.pnlToolbar.Controls.Add(this.btnRun);
+            this.pnlToolbar.Controls.Add(this.btnRenderMusic);
+            this.pnlToolbar.Controls.Add(this.btnBuild);
+            this.pnlToolbar.Controls.Add(this.btnLineNumbers);
+            this.pnlToolbar.Controls.Add(this.btnTracker);
+            this.pnlToolbar.Controls.Add(this.btnEnvelopes);
+            this.pnlToolbar.Controls.Add(this.btnStandardUniforms);
+            this.pnlToolbar.Controls.Add(this.btnCamToggle);
+            this.pnlToolbar.Controls.Add(this.btnFullscreen);
+            this.pnlToolbar.Controls.Add(this.btnLoop);
+            this.pnlToolbar.Controls.Add(this.btnRefreshShaders);
+            this.pnlToolbar.Location = new System.Drawing.Point(334, 2);
+            this.pnlToolbar.Name = "pnlToolbar";
+            this.pnlToolbar.Size = new System.Drawing.Size(603, 23);
+            this.pnlToolbar.TabIndex = 4;
+            // 
+            // klangPlayer
+            // 
+            this.klangPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.klangPlayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.klangPlayer.Location = new System.Drawing.Point(0, 464);
+            this.klangPlayer.Name = "klangPlayer";
+            this.klangPlayer.Size = new System.Drawing.Size(943, 62);
+            this.klangPlayer.TabIndex = 9;
+            // 
+            // pictureBox3
+            // 
+            this.pictureBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox3.Image = global::kampfpanzerin.Properties.Resources.Seperator;
+            this.pictureBox3.Location = new System.Drawing.Point(483, 0);
+            this.pictureBox3.Name = "pictureBox3";
+            this.pictureBox3.Size = new System.Drawing.Size(20, 20);
+            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox3.TabIndex = 5;
+            this.pictureBox3.TabStop = false;
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox2.Image = global::kampfpanzerin.Properties.Resources.Seperator;
+            this.pictureBox2.Location = new System.Drawing.Point(403, 0);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(20, 20);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox2.TabIndex = 5;
+            this.pictureBox2.TabStop = false;
+            // 
+            // pictureBox5
+            // 
+            this.pictureBox5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox5.Image = global::kampfpanzerin.Properties.Resources.Seperator;
+            this.pictureBox5.Location = new System.Drawing.Point(123, 0);
+            this.pictureBox5.Name = "pictureBox5";
+            this.pictureBox5.Size = new System.Drawing.Size(20, 20);
+            this.pictureBox5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox5.TabIndex = 5;
+            this.pictureBox5.TabStop = false;
+            // 
+            // pictureBox4
+            // 
+            this.pictureBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox4.Image = global::kampfpanzerin.Properties.Resources.Seperator;
+            this.pictureBox4.Location = new System.Drawing.Point(183, 0);
+            this.pictureBox4.Name = "pictureBox4";
+            this.pictureBox4.Size = new System.Drawing.Size(20, 20);
+            this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox4.TabIndex = 5;
+            this.pictureBox4.TabStop = false;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.Image = global::kampfpanzerin.Properties.Resources.Seperator;
+            this.pictureBox1.Location = new System.Drawing.Point(283, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(20, 20);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox1.TabIndex = 5;
+            this.pictureBox1.TabStop = false;
+            // 
+            // btnScreenshot
+            // 
+            this.btnScreenshot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnScreenshot.FlatAppearance.BorderSize = 0;
+            this.btnScreenshot.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnScreenshot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnScreenshot.Image = global::kampfpanzerin.Properties.Resources.Screenshot;
+            this.btnScreenshot.Location = new System.Drawing.Point(383, 0);
+            this.btnScreenshot.Name = "btnScreenshot";
+            this.btnScreenshot.Size = new System.Drawing.Size(20, 20);
+            this.btnScreenshot.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnScreenshot, "Screenshot");
+            this.btnScreenshot.UseVisualStyleBackColor = true;
+            this.btnScreenshot.Click += new System.EventHandler(this.btnScreenshot_Click);
+            // 
+            // btnColourHelper
+            // 
+            this.btnColourHelper.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnColourHelper.FlatAppearance.BorderSize = 0;
+            this.btnColourHelper.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnColourHelper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnColourHelper.Image = global::kampfpanzerin.Properties.Resources.ColourHelper;
+            this.btnColourHelper.Location = new System.Drawing.Point(363, 0);
+            this.btnColourHelper.Name = "btnColourHelper";
+            this.btnColourHelper.Size = new System.Drawing.Size(20, 20);
+            this.btnColourHelper.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnColourHelper, "Colour helper (Pro tip: try highlighting a vec3 first!)");
+            this.btnColourHelper.UseVisualStyleBackColor = true;
+            this.btnColourHelper.Click += new System.EventHandler(this.btnColourHelper_Click);
+            // 
+            // btnFind
+            // 
+            this.btnFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFind.FlatAppearance.BorderSize = 0;
+            this.btnFind.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnFind.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnFind.Image = global::kampfpanzerin.Properties.Resources.Find;
+            this.btnFind.Location = new System.Drawing.Point(343, 0);
+            this.btnFind.Name = "btnFind";
+            this.btnFind.Size = new System.Drawing.Size(20, 20);
+            this.btnFind.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnFind, "Find/replace");
+            this.btnFind.UseVisualStyleBackColor = true;
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            // 
+            // btnRedo
+            // 
+            this.btnRedo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRedo.FlatAppearance.BorderSize = 0;
+            this.btnRedo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRedo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnRedo.Image = global::kampfpanzerin.Properties.Resources.Redo;
+            this.btnRedo.Location = new System.Drawing.Point(323, 0);
+            this.btnRedo.Name = "btnRedo";
+            this.btnRedo.Size = new System.Drawing.Size(20, 20);
+            this.btnRedo.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnRedo, "Redo");
+            this.btnRedo.UseVisualStyleBackColor = true;
+            this.btnRedo.Click += new System.EventHandler(this.btnRedo_Click);
+            // 
+            // btnUndo
+            // 
+            this.btnUndo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUndo.FlatAppearance.BorderSize = 0;
+            this.btnUndo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnUndo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnUndo.Image = global::kampfpanzerin.Properties.Resources.Undo;
+            this.btnUndo.Location = new System.Drawing.Point(303, 0);
+            this.btnUndo.Name = "btnUndo";
+            this.btnUndo.Size = new System.Drawing.Size(20, 20);
+            this.btnUndo.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnUndo, "Undo");
+            this.btnUndo.UseVisualStyleBackColor = true;
+            this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
+            // 
+            // btnPull
+            // 
+            this.btnPull.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPull.FlatAppearance.BorderSize = 0;
+            this.btnPull.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPull.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnPull.Image = global::kampfpanzerin.Properties.Resources.bitbucket_pull;
+            this.btnPull.Location = new System.Drawing.Point(143, 0);
+            this.btnPull.Name = "btnPull";
+            this.btnPull.Size = new System.Drawing.Size(20, 20);
+            this.btnPull.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnPull, "Pull from BitBucket");
+            this.btnPull.UseVisualStyleBackColor = true;
+            this.btnPull.Click += new System.EventHandler(this.btnPull_Click);
+            // 
+            // btnPush
+            // 
+            this.btnPush.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPush.FlatAppearance.BorderSize = 0;
+            this.btnPush.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPush.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnPush.Image = global::kampfpanzerin.Properties.Resources.bitbucket_push;
+            this.btnPush.Location = new System.Drawing.Point(163, 0);
+            this.btnPush.Name = "btnPush";
+            this.btnPush.Size = new System.Drawing.Size(20, 20);
+            this.btnPush.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnPush, "Push to BitBucket");
+            this.btnPush.UseVisualStyleBackColor = true;
+            this.btnPush.Click += new System.EventHandler(this.btnPush_Click);
+            // 
+            // btnCleanProj
+            // 
+            this.btnCleanProj.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCleanProj.FlatAppearance.BorderSize = 0;
+            this.btnCleanProj.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCleanProj.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnCleanProj.Image = global::kampfpanzerin.Properties.Resources.CleanProject;
+            this.btnCleanProj.Location = new System.Drawing.Point(103, 0);
+            this.btnCleanProj.Name = "btnCleanProj";
+            this.btnCleanProj.Size = new System.Drawing.Size(20, 20);
+            this.btnCleanProj.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnCleanProj, "Clean project");
+            this.btnCleanProj.UseVisualStyleBackColor = true;
+            this.btnCleanProj.Click += new System.EventHandler(this.btnCleanProj_Click);
+            // 
+            // btnGotoProjectFolder
+            // 
+            this.btnGotoProjectFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnGotoProjectFolder.FlatAppearance.BorderSize = 0;
+            this.btnGotoProjectFolder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnGotoProjectFolder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnGotoProjectFolder.Image = global::kampfpanzerin.Properties.Resources.GotoFolder;
+            this.btnGotoProjectFolder.Location = new System.Drawing.Point(63, 0);
+            this.btnGotoProjectFolder.Name = "btnGotoProjectFolder";
+            this.btnGotoProjectFolder.Size = new System.Drawing.Size(20, 20);
+            this.btnGotoProjectFolder.TabIndex = 3;
+            this.btnGotoProjectFolder.UseVisualStyleBackColor = true;
+            this.btnGotoProjectFolder.Click += new System.EventHandler(this.btnGotoProjectFolder_Click);
+            // 
+            // btnExportProj
+            // 
+            this.btnExportProj.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExportProj.FlatAppearance.BorderSize = 0;
+            this.btnExportProj.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExportProj.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnExportProj.Image = global::kampfpanzerin.Properties.Resources.ExportProj;
+            this.btnExportProj.Location = new System.Drawing.Point(83, 0);
+            this.btnExportProj.Name = "btnExportProj";
+            this.btnExportProj.Size = new System.Drawing.Size(20, 20);
+            this.btnExportProj.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnExportProj, "Export project to Visual Studio");
+            this.btnExportProj.UseVisualStyleBackColor = true;
+            this.btnExportProj.Click += new System.EventHandler(this.btnExportProj_Click);
+            // 
+            // btnSaveAll
+            // 
+            this.btnSaveAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSaveAll.FlatAppearance.BorderSize = 0;
+            this.btnSaveAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSaveAll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnSaveAll.Image = global::kampfpanzerin.Properties.Resources.SaveAll;
+            this.btnSaveAll.Location = new System.Drawing.Point(43, 0);
+            this.btnSaveAll.Name = "btnSaveAll";
+            this.btnSaveAll.Size = new System.Drawing.Size(20, 20);
+            this.btnSaveAll.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnSaveAll, "Save all");
+            this.btnSaveAll.UseVisualStyleBackColor = true;
+            this.btnSaveAll.Click += new System.EventHandler(this.btnSaveAll_Click);
+            // 
+            // btnOpenProj
+            // 
+            this.btnOpenProj.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOpenProj.FlatAppearance.BorderSize = 0;
+            this.btnOpenProj.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnOpenProj.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnOpenProj.Image = global::kampfpanzerin.Properties.Resources.Open;
+            this.btnOpenProj.Location = new System.Drawing.Point(23, 0);
+            this.btnOpenProj.Name = "btnOpenProj";
+            this.btnOpenProj.Size = new System.Drawing.Size(20, 20);
+            this.btnOpenProj.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnOpenProj, "Open project");
+            this.btnOpenProj.UseVisualStyleBackColor = true;
+            this.btnOpenProj.Click += new System.EventHandler(this.btnOpenProj_Click);
+            // 
+            // btnNew
+            // 
+            this.btnNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnNew.FlatAppearance.BorderSize = 0;
+            this.btnNew.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnNew.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnNew.Image = global::kampfpanzerin.Properties.Resources.New;
+            this.btnNew.Location = new System.Drawing.Point(3, 0);
+            this.btnNew.Name = "btnNew";
+            this.btnNew.Size = new System.Drawing.Size(20, 20);
+            this.btnNew.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnNew, "Create project");
+            this.btnNew.UseVisualStyleBackColor = true;
+            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
+            // 
+            // btnCleanBuild
+            // 
+            this.btnCleanBuild.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCleanBuild.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCleanBuild.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnCleanBuild.Image = global::kampfpanzerin.Properties.Resources.CleanBuild;
+            this.btnCleanBuild.Location = new System.Drawing.Point(583, 0);
+            this.btnCleanBuild.Name = "btnCleanBuild";
+            this.btnCleanBuild.Size = new System.Drawing.Size(20, 20);
+            this.btnCleanBuild.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnCleanBuild, "Clean build files");
+            this.btnCleanBuild.UseVisualStyleBackColor = true;
+            this.btnCleanBuild.Click += new System.EventHandler(this.btnCleanBuild_Click);
+            // 
+            // btnRun
+            // 
+            this.btnRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRun.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRun.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnRun.Image = global::kampfpanzerin.Properties.Resources.Run;
+            this.btnRun.Location = new System.Drawing.Point(563, 0);
+            this.btnRun.Name = "btnRun";
+            this.btnRun.Size = new System.Drawing.Size(20, 20);
+            this.btnRun.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnRun, "Run last build");
+            this.btnRun.UseVisualStyleBackColor = true;
+            this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
+            // 
+            // btnRenderMusic
+            // 
+            this.btnRenderMusic.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRenderMusic.FlatAppearance.BorderSize = 0;
+            this.btnRenderMusic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRenderMusic.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnRenderMusic.Image = global::kampfpanzerin.Properties.Resources.BuildAudio;
+            this.btnRenderMusic.Location = new System.Drawing.Point(523, 0);
+            this.btnRenderMusic.Name = "btnRenderMusic";
+            this.btnRenderMusic.Size = new System.Drawing.Size(20, 20);
+            this.btnRenderMusic.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnRenderMusic, "Rebuild 4klang output");
+            this.btnRenderMusic.UseVisualStyleBackColor = true;
+            this.btnRenderMusic.Click += new System.EventHandler(this.btnRenderMusic_Click);
+            // 
+            // btnBuild
+            // 
+            this.btnBuild.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBuild.FlatAppearance.BorderSize = 0;
+            this.btnBuild.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnBuild.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnBuild.Image = global::kampfpanzerin.Properties.Resources.BuildProd;
+            this.btnBuild.Location = new System.Drawing.Point(543, 0);
+            this.btnBuild.Name = "btnBuild";
+            this.btnBuild.Size = new System.Drawing.Size(20, 20);
+            this.btnBuild.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnBuild, "Build prod (Debug build)");
+            this.btnBuild.UseVisualStyleBackColor = true;
+            this.btnBuild.Click += new System.EventHandler(this.btnBuild_Click);
+            // 
+            // btnLineNumbers
+            // 
+            this.btnLineNumbers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLineNumbers.FlatAppearance.BorderSize = 0;
+            this.btnLineNumbers.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnLineNumbers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnLineNumbers.Image = global::kampfpanzerin.Properties.Resources.LineNumbers;
+            this.btnLineNumbers.Location = new System.Drawing.Point(463, 0);
+            this.btnLineNumbers.Name = "btnLineNumbers";
+            this.btnLineNumbers.Size = new System.Drawing.Size(20, 20);
+            this.btnLineNumbers.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnLineNumbers, "Show line numbers");
+            this.btnLineNumbers.UseVisualStyleBackColor = true;
+            this.btnLineNumbers.Click += new System.EventHandler(this.btnLineNumbers_Click);
+            // 
+            // btnTracker
+            // 
+            this.btnTracker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnTracker.FlatAppearance.BorderSize = 0;
+            this.btnTracker.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnTracker.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnTracker.Image = global::kampfpanzerin.Properties.Resources.SyncTracker;
+            this.btnTracker.Location = new System.Drawing.Point(263, 0);
+            this.btnTracker.Name = "btnTracker";
+            this.btnTracker.Size = new System.Drawing.Size(20, 20);
+            this.btnTracker.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnTracker, "Enable sync tracker and uniforms");
+            this.btnTracker.UseVisualStyleBackColor = true;
+            this.btnTracker.Click += new System.EventHandler(this.btnTracker_Click);
+            // 
+            // btnEnvelopes
+            // 
+            this.btnEnvelopes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnEnvelopes.FlatAppearance.BorderSize = 0;
+            this.btnEnvelopes.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnEnvelopes.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnEnvelopes.Image = global::kampfpanzerin.Properties.Resources.Envelopes;
+            this.btnEnvelopes.Location = new System.Drawing.Point(243, 0);
+            this.btnEnvelopes.Name = "btnEnvelopes";
+            this.btnEnvelopes.Size = new System.Drawing.Size(20, 20);
+            this.btnEnvelopes.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnEnvelopes, "Enable 4klang envelopes in float array ev if available");
+            this.btnEnvelopes.UseVisualStyleBackColor = true;
+            this.btnEnvelopes.Click += new System.EventHandler(this.btnEnvelopes_Click);
+            // 
+            // btnStandardUniforms
+            // 
+            this.btnStandardUniforms.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnStandardUniforms.FlatAppearance.BorderSize = 0;
+            this.btnStandardUniforms.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnStandardUniforms.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnStandardUniforms.Image = global::kampfpanzerin.Properties.Resources.StandardUniforms;
+            this.btnStandardUniforms.Location = new System.Drawing.Point(203, 0);
+            this.btnStandardUniforms.Name = "btnStandardUniforms";
+            this.btnStandardUniforms.Size = new System.Drawing.Size(20, 20);
+            this.btnStandardUniforms.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnStandardUniforms, "Enable standard uniforms");
+            this.btnStandardUniforms.UseVisualStyleBackColor = true;
+            this.btnStandardUniforms.Click += new System.EventHandler(this.btnStandardUniforms_Click);
+            // 
+            // btnCamToggle
+            // 
+            this.btnCamToggle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCamToggle.FlatAppearance.BorderSize = 0;
+            this.btnCamToggle.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCamToggle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnCamToggle.Image = global::kampfpanzerin.Properties.Resources.Camera;
+            this.btnCamToggle.Location = new System.Drawing.Point(223, 0);
+            this.btnCamToggle.Name = "btnCamToggle";
+            this.btnCamToggle.Size = new System.Drawing.Size(20, 20);
+            this.btnCamToggle.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnCamToggle, "Enable camera system and uniforms");
+            this.btnCamToggle.UseVisualStyleBackColor = true;
+            this.btnCamToggle.Click += new System.EventHandler(this.btnCamToggle_Click);
+            // 
+            // btnFullscreen
+            // 
+            this.btnFullscreen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFullscreen.FlatAppearance.BorderSize = 0;
+            this.btnFullscreen.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnFullscreen.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnFullscreen.Image = ((System.Drawing.Image)(resources.GetObject("btnFullscreen.Image")));
+            this.btnFullscreen.Location = new System.Drawing.Point(423, 0);
+            this.btnFullscreen.Name = "btnFullscreen";
+            this.btnFullscreen.Size = new System.Drawing.Size(20, 20);
+            this.btnFullscreen.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnFullscreen, "Fullscreen");
+            this.btnFullscreen.UseVisualStyleBackColor = true;
+            this.btnFullscreen.Click += new System.EventHandler(this.btnFullscreen_Click);
+            // 
+            // btnLoop
+            // 
+            this.btnLoop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLoop.FlatAppearance.BorderSize = 0;
+            this.btnLoop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnLoop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnLoop.Image = global::kampfpanzerin.Properties.Resources.Loop;
+            this.btnLoop.Location = new System.Drawing.Point(443, 0);
+            this.btnLoop.Name = "btnLoop";
+            this.btnLoop.Size = new System.Drawing.Size(20, 20);
+            this.btnLoop.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnLoop, "Loop prod");
+            this.btnLoop.UseVisualStyleBackColor = true;
+            this.btnLoop.Click += new System.EventHandler(this.btnLoop_Click);
+            // 
+            // btnRefreshShaders
+            // 
+            this.btnRefreshShaders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefreshShaders.FlatAppearance.BorderSize = 0;
+            this.btnRefreshShaders.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRefreshShaders.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnRefreshShaders.Image = global::kampfpanzerin.Properties.Resources.Refresh;
+            this.btnRefreshShaders.Location = new System.Drawing.Point(503, 0);
+            this.btnRefreshShaders.Name = "btnRefreshShaders";
+            this.btnRefreshShaders.Size = new System.Drawing.Size(20, 20);
+            this.btnRefreshShaders.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnRefreshShaders, "Rebuild shaders");
+            this.btnRefreshShaders.UseVisualStyleBackColor = true;
+            this.btnRefreshShaders.Click += new System.EventHandler(this.btnRefreshShaders_Click);
             // 
             // walkButton
             // 
@@ -742,7 +1423,7 @@
             this.preview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.preview.Location = new System.Drawing.Point(0, 0);
             this.preview.Name = "preview";
-            this.preview.Size = new System.Drawing.Size(302, 312);
+            this.preview.Size = new System.Drawing.Size(291, 312);
             this.preview.TabIndex = 0;
             this.preview.TabStop = false;
             this.preview.MouseClick += new System.Windows.Forms.MouseEventHandler(this.preview_MouseClick);
@@ -755,7 +1436,7 @@
             this.btnClearLog.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClearLog.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.btnClearLog.Image = global::kampfpanzerin.Properties.Resources.Clear;
-            this.btnClearLog.Location = new System.Drawing.Point(280, -1);
+            this.btnClearLog.Location = new System.Drawing.Point(257, -1);
             this.btnClearLog.Name = "btnClearLog";
             this.btnClearLog.Size = new System.Drawing.Size(22, 22);
             this.btnClearLog.TabIndex = 3;
@@ -763,645 +1444,12 @@
             this.btnClearLog.UseVisualStyleBackColor = false;
             this.btnClearLog.Click += new System.EventHandler(this.btnClearLog_Click);
             // 
-            // log
-            // 
-            this.log.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.log.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.log.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.log.Font = new System.Drawing.Font("Lucida Console", 9F);
-            this.log.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.log.Location = new System.Drawing.Point(0, 0);
-            this.log.Margin = new System.Windows.Forms.Padding(0);
-            this.log.Multiline = true;
-            this.log.Name = "log";
-            this.log.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.log.Size = new System.Drawing.Size(302, 114);
-            this.log.TabIndex = 4;
-            this.log.TextChanged += new System.EventHandler(this.log_TextChanged);
-            // 
-            // splitRHS
-            // 
-            this.splitRHS.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitRHS.Location = new System.Drawing.Point(0, 0);
-            this.splitRHS.Margin = new System.Windows.Forms.Padding(0);
-            this.splitRHS.Name = "splitRHS";
-            this.splitRHS.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitRHS.Panel1
-            // 
-            this.splitRHS.Panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.splitRHS.Panel1.Controls.Add(this.tabControl1);
-            this.splitRHS.Panel1MinSize = 0;
-            // 
-            // splitRHS.Panel2
-            // 
-            this.splitRHS.Panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.splitRHS.Panel2.Controls.Add(this.timeLine);
-            this.splitRHS.Panel2MinSize = 0;
-            this.splitRHS.Size = new System.Drawing.Size(602, 437);
-            this.splitRHS.SplitterDistance = 189;
-            this.splitRHS.SplitterWidth = 1;
-            this.splitRHS.TabIndex = 5;
-            this.splitRHS.TabStop = false;
-            // 
-            // tabControl1
-            // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPP);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 0);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.Padding = new System.Drawing.Point(0, 0);
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(602, 189);
-            this.tabControl1.TabIndex = 4;
-            this.tabControl1.TabStop = false;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.tabPage1.Controls.Add(this.edVert);
-            this.tabPage1.ForeColor = System.Drawing.Color.White;
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(594, 160);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Vertex shader";
-            // 
-            // edVert
-            // 
-            this.edVert.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.edVert.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.edVert.ConfigurationManager.Language = "cpp";
-            this.edVert.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.edVert.ForeColor = System.Drawing.Color.White;
-            this.edVert.Indentation.SmartIndentType = ScintillaNET.SmartIndent.Simple;
-            this.edVert.Indentation.TabWidth = 4;
-            this.edVert.IsBraceMatching = true;
-            this.edVert.Location = new System.Drawing.Point(0, 0);
-            this.edVert.Margin = new System.Windows.Forms.Padding(0);
-            this.edVert.Margins.Margin0.Width = 25;
-            this.edVert.Name = "edVert";
-            this.edVert.Size = new System.Drawing.Size(594, 160);
-            this.edVert.Styles.BraceBad.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edVert.Styles.BraceLight.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edVert.Styles.CallTip.FontName = "Segoe UI\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edVert.Styles.ControlChar.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edVert.Styles.Default.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.edVert.Styles.Default.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edVert.Styles.Default.ForeColor = System.Drawing.Color.White;
-            this.edVert.Styles.IndentGuide.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edVert.Styles.LastPredefined.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edVert.Styles.LineNumber.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.edVert.Styles.LineNumber.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edVert.Styles.LineNumber.ForeColor = System.Drawing.Color.DarkGray;
-            this.edVert.Styles.Max.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edVert.TabIndex = 0;
-            this.edVert.TextChanged += new System.EventHandler(this.edVert_TextChanged);
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.tabPage2.Controls.Add(this.edFrag);
-            this.tabPage2.ForeColor = System.Drawing.Color.White;
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(0);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(594, 160);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Scene frag shader";
-            // 
-            // edFrag
-            // 
-            this.edFrag.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.edFrag.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.edFrag.ConfigurationManager.Language = "cpp";
-            this.edFrag.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.edFrag.ForeColor = System.Drawing.Color.White;
-            this.edFrag.Indentation.SmartIndentType = ScintillaNET.SmartIndent.Simple;
-            this.edFrag.Indentation.TabWidth = 4;
-            this.edFrag.IsBraceMatching = true;
-            this.edFrag.Location = new System.Drawing.Point(0, 0);
-            this.edFrag.Margin = new System.Windows.Forms.Padding(0);
-            this.edFrag.Margins.Margin0.Width = 25;
-            this.edFrag.Name = "edFrag";
-            this.edFrag.Size = new System.Drawing.Size(594, 160);
-            this.edFrag.Styles.BraceBad.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edFrag.Styles.BraceLight.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edFrag.Styles.CallTip.FontName = "Segoe UI\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edFrag.Styles.ControlChar.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edFrag.Styles.Default.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.edFrag.Styles.Default.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edFrag.Styles.Default.ForeColor = System.Drawing.Color.White;
-            this.edFrag.Styles.IndentGuide.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edFrag.Styles.LastPredefined.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edFrag.Styles.LineNumber.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.edFrag.Styles.LineNumber.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edFrag.Styles.LineNumber.ForeColor = System.Drawing.Color.Black;
-            this.edFrag.Styles.Max.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edFrag.TabIndex = 1;
-            this.edFrag.TextChanged += new System.EventHandler(this.edFrag_TextChanged);
-            // 
-            // tabPP
-            // 
-            this.tabPP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.tabPP.Controls.Add(this.edPost);
-            this.tabPP.ForeColor = System.Drawing.Color.White;
-            this.tabPP.Location = new System.Drawing.Point(4, 25);
-            this.tabPP.Margin = new System.Windows.Forms.Padding(0);
-            this.tabPP.Name = "tabPP";
-            this.tabPP.Size = new System.Drawing.Size(594, 160);
-            this.tabPP.TabIndex = 2;
-            this.tabPP.Text = "Postprocessing frag shader";
-            // 
-            // edPost
-            // 
-            this.edPost.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.edPost.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.edPost.ConfigurationManager.Language = "cpp";
-            this.edPost.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.edPost.ForeColor = System.Drawing.Color.White;
-            this.edPost.Indentation.SmartIndentType = ScintillaNET.SmartIndent.Simple;
-            this.edPost.Indentation.TabWidth = 4;
-            this.edPost.IsBraceMatching = true;
-            this.edPost.Location = new System.Drawing.Point(0, 0);
-            this.edPost.Margin = new System.Windows.Forms.Padding(0);
-            this.edPost.Margins.FoldMarginColor = System.Drawing.Color.Empty;
-            this.edPost.Margins.FoldMarginHighlightColor = System.Drawing.Color.Empty;
-            this.edPost.Margins.Margin0.Width = 25;
-            this.edPost.Name = "edPost";
-            this.edPost.Size = new System.Drawing.Size(594, 160);
-            this.edPost.Styles.BraceBad.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edPost.Styles.BraceLight.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edPost.Styles.CallTip.FontName = "Segoe UI\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edPost.Styles.ControlChar.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edPost.Styles.Default.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.edPost.Styles.Default.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edPost.Styles.Default.ForeColor = System.Drawing.Color.White;
-            this.edPost.Styles.IndentGuide.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edPost.Styles.LastPredefined.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edPost.Styles.LineNumber.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.edPost.Styles.LineNumber.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edPost.Styles.LineNumber.ForeColor = System.Drawing.Color.DarkGray;
-            this.edPost.Styles.Max.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            this.edPost.TabIndex = 0;
-            this.edPost.TextChanged += new System.EventHandler(this.edPost_TextChanged);
-            // 
-            // timeLine
-            // 
-            this.timeLine.AutoScroll = true;
-            this.timeLine.AutoScrollMinSize = new System.Drawing.Size(0, 70);
-            this.timeLine.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.timeLine.camMode = false;
-            this.timeLine.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.timeLine.Location = new System.Drawing.Point(0, 0);
-            this.timeLine.Name = "timeLine";
-            this.timeLine.Size = new System.Drawing.Size(602, 247);
-            this.timeLine.TabIndex = 2;
-            // 
-            // pnlToolbar
-            // 
-            this.pnlToolbar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlToolbar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.pnlToolbar.Controls.Add(this.pictureBox3);
-            this.pnlToolbar.Controls.Add(this.pictureBox2);
-            this.pnlToolbar.Controls.Add(this.pictureBox4);
-            this.pnlToolbar.Controls.Add(this.pictureBox1);
-            this.pnlToolbar.Controls.Add(this.btnScreenshot);
-            this.pnlToolbar.Controls.Add(this.btnColourHelper);
-            this.pnlToolbar.Controls.Add(this.btnFind);
-            this.pnlToolbar.Controls.Add(this.btnRedo);
-            this.pnlToolbar.Controls.Add(this.btnUndo);
-            this.pnlToolbar.Controls.Add(this.btnCleanProj);
-            this.pnlToolbar.Controls.Add(this.btnGotoProjectFolder);
-            this.pnlToolbar.Controls.Add(this.btnExportProj);
-            this.pnlToolbar.Controls.Add(this.btnSaveAll);
-            this.pnlToolbar.Controls.Add(this.btnOpenProj);
-            this.pnlToolbar.Controls.Add(this.btnNew);
-            this.pnlToolbar.Controls.Add(this.btnCleanBuild);
-            this.pnlToolbar.Controls.Add(this.btnRun);
-            this.pnlToolbar.Controls.Add(this.btnRenderMusic);
-            this.pnlToolbar.Controls.Add(this.btnBuild);
-            this.pnlToolbar.Controls.Add(this.btnLineNumbers);
-            this.pnlToolbar.Controls.Add(this.btnTracker);
-            this.pnlToolbar.Controls.Add(this.btnEnvelopes);
-            this.pnlToolbar.Controls.Add(this.btnStandardUniforms);
-            this.pnlToolbar.Controls.Add(this.btnCamToggle);
-            this.pnlToolbar.Controls.Add(this.btnFullscreen);
-            this.pnlToolbar.Controls.Add(this.btnLoop);
-            this.pnlToolbar.Controls.Add(this.btnRefreshShaders);
-            this.pnlToolbar.Location = new System.Drawing.Point(357, 2);
-            this.pnlToolbar.Name = "pnlToolbar";
-            this.pnlToolbar.Size = new System.Drawing.Size(543, 23);
-            this.pnlToolbar.TabIndex = 4;
-            // 
-            // pictureBox3
-            // 
-            this.pictureBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox3.Image = global::kampfpanzerin.Properties.Resources.Seperator;
-            this.pictureBox3.Location = new System.Drawing.Point(423, 0);
-            this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(20, 20);
-            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox3.TabIndex = 5;
-            this.pictureBox3.TabStop = false;
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox2.Image = global::kampfpanzerin.Properties.Resources.Seperator;
-            this.pictureBox2.Location = new System.Drawing.Point(343, 0);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(20, 20);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox2.TabIndex = 5;
-            this.pictureBox2.TabStop = false;
-            // 
-            // pictureBox4
-            // 
-            this.pictureBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox4.Image = global::kampfpanzerin.Properties.Resources.Seperator;
-            this.pictureBox4.Location = new System.Drawing.Point(123, 0);
-            this.pictureBox4.Name = "pictureBox4";
-            this.pictureBox4.Size = new System.Drawing.Size(20, 20);
-            this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox4.TabIndex = 5;
-            this.pictureBox4.TabStop = false;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.Image = global::kampfpanzerin.Properties.Resources.Seperator;
-            this.pictureBox1.Location = new System.Drawing.Point(223, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(20, 20);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox1.TabIndex = 5;
-            this.pictureBox1.TabStop = false;
-            // 
-            // btnScreenshot
-            // 
-            this.btnScreenshot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnScreenshot.FlatAppearance.BorderSize = 0;
-            this.btnScreenshot.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnScreenshot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnScreenshot.Image = global::kampfpanzerin.Properties.Resources.Screenshot;
-            this.btnScreenshot.Location = new System.Drawing.Point(323, 0);
-            this.btnScreenshot.Name = "btnScreenshot";
-            this.btnScreenshot.Size = new System.Drawing.Size(20, 20);
-            this.btnScreenshot.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnScreenshot, "Screenshot");
-            this.btnScreenshot.UseVisualStyleBackColor = true;
-            this.btnScreenshot.Click += new System.EventHandler(this.btnScreenshot_Click);
-            // 
-            // btnColourHelper
-            // 
-            this.btnColourHelper.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnColourHelper.FlatAppearance.BorderSize = 0;
-            this.btnColourHelper.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnColourHelper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnColourHelper.Image = global::kampfpanzerin.Properties.Resources.ColourHelper;
-            this.btnColourHelper.Location = new System.Drawing.Point(303, 0);
-            this.btnColourHelper.Name = "btnColourHelper";
-            this.btnColourHelper.Size = new System.Drawing.Size(20, 20);
-            this.btnColourHelper.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnColourHelper, "Colour helper (Pro tip: try highlighting a vec3 first!)");
-            this.btnColourHelper.UseVisualStyleBackColor = true;
-            this.btnColourHelper.Click += new System.EventHandler(this.btnColourHelper_Click);
-            // 
-            // btnFind
-            // 
-            this.btnFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnFind.FlatAppearance.BorderSize = 0;
-            this.btnFind.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnFind.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnFind.Image = global::kampfpanzerin.Properties.Resources.Find;
-            this.btnFind.Location = new System.Drawing.Point(283, 0);
-            this.btnFind.Name = "btnFind";
-            this.btnFind.Size = new System.Drawing.Size(20, 20);
-            this.btnFind.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnFind, "Find/replace");
-            this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
-            // 
-            // btnRedo
-            // 
-            this.btnRedo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRedo.FlatAppearance.BorderSize = 0;
-            this.btnRedo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRedo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnRedo.Image = global::kampfpanzerin.Properties.Resources.Redo;
-            this.btnRedo.Location = new System.Drawing.Point(263, 0);
-            this.btnRedo.Name = "btnRedo";
-            this.btnRedo.Size = new System.Drawing.Size(20, 20);
-            this.btnRedo.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnRedo, "Redo");
-            this.btnRedo.UseVisualStyleBackColor = true;
-            this.btnRedo.Click += new System.EventHandler(this.btnRedo_Click);
-            // 
-            // btnUndo
-            // 
-            this.btnUndo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUndo.FlatAppearance.BorderSize = 0;
-            this.btnUndo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUndo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnUndo.Image = global::kampfpanzerin.Properties.Resources.Undo;
-            this.btnUndo.Location = new System.Drawing.Point(243, 0);
-            this.btnUndo.Name = "btnUndo";
-            this.btnUndo.Size = new System.Drawing.Size(20, 20);
-            this.btnUndo.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnUndo, "Undo");
-            this.btnUndo.UseVisualStyleBackColor = true;
-            this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
-            // 
-            // btnCleanProj
-            // 
-            this.btnCleanProj.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCleanProj.FlatAppearance.BorderSize = 0;
-            this.btnCleanProj.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCleanProj.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnCleanProj.Image = global::kampfpanzerin.Properties.Resources.CleanProject;
-            this.btnCleanProj.Location = new System.Drawing.Point(103, 0);
-            this.btnCleanProj.Name = "btnCleanProj";
-            this.btnCleanProj.Size = new System.Drawing.Size(20, 20);
-            this.btnCleanProj.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnCleanProj, "Clean project");
-            this.btnCleanProj.UseVisualStyleBackColor = true;
-            this.btnCleanProj.Click += new System.EventHandler(this.btnCleanProj_Click);
-            // 
-            // btnGotoProjectFolder
-            // 
-            this.btnGotoProjectFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGotoProjectFolder.FlatAppearance.BorderSize = 0;
-            this.btnGotoProjectFolder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnGotoProjectFolder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnGotoProjectFolder.Image = global::kampfpanzerin.Properties.Resources.GotoFolder;
-            this.btnGotoProjectFolder.Location = new System.Drawing.Point(63, 0);
-            this.btnGotoProjectFolder.Name = "btnGotoProjectFolder";
-            this.btnGotoProjectFolder.Size = new System.Drawing.Size(20, 20);
-            this.btnGotoProjectFolder.TabIndex = 3;
-            this.btnGotoProjectFolder.UseVisualStyleBackColor = true;
-            this.btnGotoProjectFolder.Click += new System.EventHandler(this.btnGotoProjectFolder_Click);
-            // 
-            // btnExportProj
-            // 
-            this.btnExportProj.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExportProj.FlatAppearance.BorderSize = 0;
-            this.btnExportProj.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExportProj.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnExportProj.Image = global::kampfpanzerin.Properties.Resources.ExportProj;
-            this.btnExportProj.Location = new System.Drawing.Point(83, 0);
-            this.btnExportProj.Name = "btnExportProj";
-            this.btnExportProj.Size = new System.Drawing.Size(20, 20);
-            this.btnExportProj.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnExportProj, "Export project to Visual Studio");
-            this.btnExportProj.UseVisualStyleBackColor = true;
-            this.btnExportProj.Click += new System.EventHandler(this.btnExportProj_Click);
-            // 
-            // btnSaveAll
-            // 
-            this.btnSaveAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveAll.FlatAppearance.BorderSize = 0;
-            this.btnSaveAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSaveAll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnSaveAll.Image = global::kampfpanzerin.Properties.Resources.SaveAll;
-            this.btnSaveAll.Location = new System.Drawing.Point(43, 0);
-            this.btnSaveAll.Name = "btnSaveAll";
-            this.btnSaveAll.Size = new System.Drawing.Size(20, 20);
-            this.btnSaveAll.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnSaveAll, "Save all");
-            this.btnSaveAll.UseVisualStyleBackColor = true;
-            this.btnSaveAll.Click += new System.EventHandler(this.btnSaveAll_Click);
-            // 
-            // btnOpenProj
-            // 
-            this.btnOpenProj.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOpenProj.FlatAppearance.BorderSize = 0;
-            this.btnOpenProj.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnOpenProj.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnOpenProj.Image = global::kampfpanzerin.Properties.Resources.Open;
-            this.btnOpenProj.Location = new System.Drawing.Point(23, 0);
-            this.btnOpenProj.Name = "btnOpenProj";
-            this.btnOpenProj.Size = new System.Drawing.Size(20, 20);
-            this.btnOpenProj.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnOpenProj, "Open project");
-            this.btnOpenProj.UseVisualStyleBackColor = true;
-            this.btnOpenProj.Click += new System.EventHandler(this.btnOpenProj_Click);
-            // 
-            // btnNew
-            // 
-            this.btnNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnNew.FlatAppearance.BorderSize = 0;
-            this.btnNew.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnNew.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnNew.Image = global::kampfpanzerin.Properties.Resources.New;
-            this.btnNew.Location = new System.Drawing.Point(3, 0);
-            this.btnNew.Name = "btnNew";
-            this.btnNew.Size = new System.Drawing.Size(20, 20);
-            this.btnNew.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnNew, "Create project");
-            this.btnNew.UseVisualStyleBackColor = true;
-            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
-            // 
-            // btnCleanBuild
-            // 
-            this.btnCleanBuild.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCleanBuild.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCleanBuild.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnCleanBuild.Image = global::kampfpanzerin.Properties.Resources.CleanBuild;
-            this.btnCleanBuild.Location = new System.Drawing.Point(523, 0);
-            this.btnCleanBuild.Name = "btnCleanBuild";
-            this.btnCleanBuild.Size = new System.Drawing.Size(20, 20);
-            this.btnCleanBuild.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnCleanBuild, "Clean build files");
-            this.btnCleanBuild.UseVisualStyleBackColor = true;
-            this.btnCleanBuild.Click += new System.EventHandler(this.btnCleanBuild_Click);
-            // 
-            // btnRun
-            // 
-            this.btnRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRun.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRun.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnRun.Image = global::kampfpanzerin.Properties.Resources.Run;
-            this.btnRun.Location = new System.Drawing.Point(503, 0);
-            this.btnRun.Name = "btnRun";
-            this.btnRun.Size = new System.Drawing.Size(20, 20);
-            this.btnRun.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnRun, "Run last build");
-            this.btnRun.UseVisualStyleBackColor = true;
-            this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
-            // 
-            // btnRenderMusic
-            // 
-            this.btnRenderMusic.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRenderMusic.FlatAppearance.BorderSize = 0;
-            this.btnRenderMusic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRenderMusic.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnRenderMusic.Image = global::kampfpanzerin.Properties.Resources.BuildAudio;
-            this.btnRenderMusic.Location = new System.Drawing.Point(463, 0);
-            this.btnRenderMusic.Name = "btnRenderMusic";
-            this.btnRenderMusic.Size = new System.Drawing.Size(20, 20);
-            this.btnRenderMusic.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnRenderMusic, "Rebuild 4klang output");
-            this.btnRenderMusic.UseVisualStyleBackColor = true;
-            this.btnRenderMusic.Click += new System.EventHandler(this.btnRenderMusic_Click);
-            // 
-            // btnBuild
-            // 
-            this.btnBuild.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBuild.FlatAppearance.BorderSize = 0;
-            this.btnBuild.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnBuild.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnBuild.Image = global::kampfpanzerin.Properties.Resources.BuildProd;
-            this.btnBuild.Location = new System.Drawing.Point(483, 0);
-            this.btnBuild.Name = "btnBuild";
-            this.btnBuild.Size = new System.Drawing.Size(20, 20);
-            this.btnBuild.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnBuild, "Build prod (Debug build)");
-            this.btnBuild.UseVisualStyleBackColor = true;
-            this.btnBuild.Click += new System.EventHandler(this.btnBuild_Click);
-            // 
-            // btnLineNumbers
-            // 
-            this.btnLineNumbers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLineNumbers.FlatAppearance.BorderSize = 0;
-            this.btnLineNumbers.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLineNumbers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnLineNumbers.Image = global::kampfpanzerin.Properties.Resources.LineNumbers;
-            this.btnLineNumbers.Location = new System.Drawing.Point(403, 0);
-            this.btnLineNumbers.Name = "btnLineNumbers";
-            this.btnLineNumbers.Size = new System.Drawing.Size(20, 20);
-            this.btnLineNumbers.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnLineNumbers, "Show line numbers");
-            this.btnLineNumbers.UseVisualStyleBackColor = true;
-            this.btnLineNumbers.Click += new System.EventHandler(this.btnLineNumbers_Click);
-            // 
-            // btnTracker
-            // 
-            this.btnTracker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnTracker.FlatAppearance.BorderSize = 0;
-            this.btnTracker.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnTracker.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnTracker.Image = global::kampfpanzerin.Properties.Resources.SyncTracker;
-            this.btnTracker.Location = new System.Drawing.Point(203, 0);
-            this.btnTracker.Name = "btnTracker";
-            this.btnTracker.Size = new System.Drawing.Size(20, 20);
-            this.btnTracker.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnTracker, "Enable sync tracker and uniforms");
-            this.btnTracker.UseVisualStyleBackColor = true;
-            this.btnTracker.Click += new System.EventHandler(this.btnTracker_Click);
-            // 
-            // btnEnvelopes
-            // 
-            this.btnEnvelopes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEnvelopes.FlatAppearance.BorderSize = 0;
-            this.btnEnvelopes.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnEnvelopes.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnEnvelopes.Image = global::kampfpanzerin.Properties.Resources.Envelopes;
-            this.btnEnvelopes.Location = new System.Drawing.Point(183, 0);
-            this.btnEnvelopes.Name = "btnEnvelopes";
-            this.btnEnvelopes.Size = new System.Drawing.Size(20, 20);
-            this.btnEnvelopes.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnEnvelopes, "Enable 4klang envelopes in float array ev if available");
-            this.btnEnvelopes.UseVisualStyleBackColor = true;
-            this.btnEnvelopes.Click += new System.EventHandler(this.btnEnvelopes_Click);
-            // 
-            // btnStandardUniforms
-            // 
-            this.btnStandardUniforms.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnStandardUniforms.FlatAppearance.BorderSize = 0;
-            this.btnStandardUniforms.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnStandardUniforms.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnStandardUniforms.Image = global::kampfpanzerin.Properties.Resources.StandardUniforms;
-            this.btnStandardUniforms.Location = new System.Drawing.Point(143, 0);
-            this.btnStandardUniforms.Name = "btnStandardUniforms";
-            this.btnStandardUniforms.Size = new System.Drawing.Size(20, 20);
-            this.btnStandardUniforms.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnStandardUniforms, "Enable standard uniforms");
-            this.btnStandardUniforms.UseVisualStyleBackColor = true;
-            this.btnStandardUniforms.Click += new System.EventHandler(this.btnStandardUniforms_Click);
-            // 
-            // btnCamToggle
-            // 
-            this.btnCamToggle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCamToggle.FlatAppearance.BorderSize = 0;
-            this.btnCamToggle.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCamToggle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnCamToggle.Image = global::kampfpanzerin.Properties.Resources.Camera;
-            this.btnCamToggle.Location = new System.Drawing.Point(163, 0);
-            this.btnCamToggle.Name = "btnCamToggle";
-            this.btnCamToggle.Size = new System.Drawing.Size(20, 20);
-            this.btnCamToggle.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnCamToggle, "Enable camera system and uniforms");
-            this.btnCamToggle.UseVisualStyleBackColor = true;
-            this.btnCamToggle.Click += new System.EventHandler(this.btnCamToggle_Click);
-            // 
-            // btnFullscreen
-            // 
-            this.btnFullscreen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnFullscreen.FlatAppearance.BorderSize = 0;
-            this.btnFullscreen.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnFullscreen.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnFullscreen.Image = ((System.Drawing.Image)(resources.GetObject("btnFullscreen.Image")));
-            this.btnFullscreen.Location = new System.Drawing.Point(363, 0);
-            this.btnFullscreen.Name = "btnFullscreen";
-            this.btnFullscreen.Size = new System.Drawing.Size(20, 20);
-            this.btnFullscreen.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnFullscreen, "Fullscreen");
-            this.btnFullscreen.UseVisualStyleBackColor = true;
-            this.btnFullscreen.Click += new System.EventHandler(this.btnFullscreen_Click);
-            // 
-            // btnLoop
-            // 
-            this.btnLoop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLoop.FlatAppearance.BorderSize = 0;
-            this.btnLoop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLoop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnLoop.Image = global::kampfpanzerin.Properties.Resources.Loop;
-            this.btnLoop.Location = new System.Drawing.Point(383, 0);
-            this.btnLoop.Name = "btnLoop";
-            this.btnLoop.Size = new System.Drawing.Size(20, 20);
-            this.btnLoop.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnLoop, "Loop prod");
-            this.btnLoop.UseVisualStyleBackColor = true;
-            this.btnLoop.Click += new System.EventHandler(this.btnLoop_Click);
-            // 
-            // btnRefreshShaders
-            // 
-            this.btnRefreshShaders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefreshShaders.FlatAppearance.BorderSize = 0;
-            this.btnRefreshShaders.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRefreshShaders.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnRefreshShaders.Image = global::kampfpanzerin.Properties.Resources.Refresh;
-            this.btnRefreshShaders.Location = new System.Drawing.Point(443, 0);
-            this.btnRefreshShaders.Name = "btnRefreshShaders";
-            this.btnRefreshShaders.Size = new System.Drawing.Size(20, 20);
-            this.btnRefreshShaders.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnRefreshShaders, "Rebuild shaders");
-            this.btnRefreshShaders.UseVisualStyleBackColor = true;
-            this.btnRefreshShaders.Click += new System.EventHandler(this.btnRefreshShaders_Click);
-            // 
-            // klangPlayer
-            // 
-            this.klangPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.klangPlayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.klangPlayer.Location = new System.Drawing.Point(0, 464);
-            this.klangPlayer.Name = "klangPlayer";
-            this.klangPlayer.Size = new System.Drawing.Size(906, 62);
-            this.klangPlayer.TabIndex = 9;
-            // 
             // AppForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ClientSize = new System.Drawing.Size(906, 527);
+            this.ClientSize = new System.Drawing.Size(943, 527);
             this.Controls.Add(this.klangPlayer);
             this.Controls.Add(this.pnlToolbar);
             this.Controls.Add(this.menuStrip);
@@ -1423,7 +1471,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitLHS)).EndInit();
             this.splitLHS.ResumeLayout(false);
             this.pnlCam.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.preview)).EndInit();
             this.splitRHS.Panel1.ResumeLayout(false);
             this.splitRHS.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitRHS)).EndInit();
@@ -1438,8 +1485,10 @@
             this.pnlToolbar.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.preview)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1543,6 +1592,9 @@
         private System.Windows.Forms.ToolStripMenuItem openProjectLocationToolStripMenuItem;
         private System.Windows.Forms.Button btnGotoProjectFolder;
         public KlangPlayer klangPlayer;
+        private System.Windows.Forms.PictureBox pictureBox5;
+        private System.Windows.Forms.Button btnPush;
+        private System.Windows.Forms.Button btnPull;
     }
 }
 

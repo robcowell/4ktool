@@ -524,5 +524,15 @@ namespace kampfpanzerin {
         private void btnGotoProjectFolder_Click(object sender, EventArgs e) {
             Kampfpanzerin.GoToProjectFolder();
         }
+
+        private void btnPush_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnPull_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
