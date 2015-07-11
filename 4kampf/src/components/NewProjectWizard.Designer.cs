@@ -58,9 +58,9 @@
             this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.Location = new System.Drawing.Point(80, 12);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(269, 20);
+            this.label1.Size = new System.Drawing.Size(270, 20);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Crikey boss! Let\'s make an intro!";
+            this.label1.Text = "Crikey chief! Let\'s make an intro!";
             // 
             // label2
             // 
