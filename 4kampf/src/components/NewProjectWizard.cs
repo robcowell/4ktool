@@ -7,11 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using kampfpanzerin.core.Serialization;
+using kampfpanzerin.utils;
 
 namespace kampfpanzerin.components {
     public partial class NewProjectWizard : Form {
 
-        bool ValidationCalcels = false;
+        bool ValidationCancels = false;
+        public BitBucketData BitBucketConfig {
+            get;
+            private set;
+        }
 
         public NewProjectWizard() {
             InitializeComponent();
@@ -35,7 +41,7 @@ namespace kampfpanzerin.components {
             string error = null;
             if (nameTxt.Text.Length == 0) {
                 error = "Please enter a name";
-                e.Cancel = ValidationCalcels;
+                e.Cancel = ValidationCancels;
             }
             errorProvider1.SetError((Control)sender, error);
         }
@@ -44,25 +50,37 @@ namespace kampfpanzerin.components {
             string error = null;
             if (locationTxt.Text.Length == 0) {
                 error = "Please enter a location";
-                e.Cancel = ValidationCalcels;
+                e.Cancel = ValidationCancels;
             } else if (Directory.EnumerateFiles(locationTxt.Text).Any()) {
                 error = "Dude! I can't create a project in a non-empty folder, man!";
-                e.Cancel = ValidationCalcels;
+                e.Cancel = ValidationCancels;
             }
             errorProvider2.SetError((Control)sender, error);
         }
 
         private void btnSave_Click(object sender, EventArgs e) {
-            this.ValidationCalcels = true;
+            this.ValidationCancels = true;
             if (this.ValidateChildren()) {
                 this.DialogResult = DialogResult.OK;
             }
-            this.ValidationCalcels = false;
+            this.ValidationCancels = false;
         }
 
         public string ProjectLocation { get { return this.locationTxt.Text; } }
         public string ProjectName { get { return this.nameTxt.Text; } }
         public bool UseClinkster { get { return this.clinkster.Checked; } }
         public bool UseBitBucket { get { return this.checkBox1.Checked; } }
+
+        private void bitbucketSettingsButton_Click(object sender, EventArgs e) {
+            BitBucketSettings frm = new BitBucketSettings(nameTxt.Text);
+            frm.ShowDialog();
+            if (frm.DialogResult == DialogResult.OK) {
+                BitBucketConfig = frm.Data;
+            }
+        }
+
+        private void nameTxt_TextChanged(object sender, EventArgs e) {
+            slugTxt.Text = nameTxt.Text.GenerateSlug();
+        }
     }
 }

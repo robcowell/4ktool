@@ -87,6 +87,9 @@
     <Reference Include="SharpBucket">
       <HintPath>..\packages\SharpBucket.0.4.1.0\lib\net40\SharpBucket.dll</HintPath>
     </Reference>
+    <Reference Include="Simple.CredentialManager">
+      <HintPath>..\packages\Simple.CredentialManager.1.0.0\lib\net40\Simple.CredentialManager.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
@@ -108,11 +111,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\components\GitForm.cs">
+    <Compile Include="src\components\BitBucketSettings.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="src\components\GitForm.Designer.cs">
-      <DependentUpon>GitForm.cs</DependentUpon>
+    <Compile Include="src\components\BitBucketSettings.Designer.cs">
+      <DependentUpon>BitBucketSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="src\components\NewProjectWizard.cs">
       <SubType>Form</SubType>
@@ -120,6 +123,8 @@
     <Compile Include="src\components\NewProjectWizard.Designer.cs">
       <DependentUpon>NewProjectWizard.cs</DependentUpon>
     </Compile>
+    <Compile Include="src\core\Serialization\BitBucketData.cs" />
+    <Compile Include="src\core\UI\CredentialPrompt.cs" />
     <Compile Include="src\git\GitHandler.cs" />
     <Compile Include="src\components\AboutBox.cs">
       <SubType>Form</SubType>
@@ -136,7 +141,9 @@
     <Compile Include="src\core\Compiler\BuildUtils.cs" />
     <Compile Include="src\core\Camera\CamAutomationProxy.cs" />
     <Compile Include="src\core\Compiler\TrackerCompiler.cs" />
+    <Compile Include="src\git\SharpBucketRepoCreator.cs" />
     <Compile Include="src\log\Logger.cs" />
+    <Compile Include="src\utils\BitBucketUtils.cs" />
     <Compile Include="src\utils\NativeLoadHelper.cs" />
     <Compile Include="src\core\Serialization\Project.cs" />
     <Compile Include="src\components\EyedropColorPicker.cs">
@@ -204,8 +211,8 @@
       <DependentUpon>AppForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="src\components\GitForm.resx">
-      <DependentUpon>GitForm.cs</DependentUpon>
+    <EmbeddedResource Include="src\components\BitBucketSettings.resx">
+      <DependentUpon>BitBucketSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="src\components\NewProjectWizard.resx">
       <DependentUpon>NewProjectWizard.cs</DependentUpon>

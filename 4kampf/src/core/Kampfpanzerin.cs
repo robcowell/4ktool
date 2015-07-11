@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using kampfpanzerin.src.core.Compiler;
 using kampfpanzerin.git;
 using kampfpanzerin.components;
+using kampfpanzerin.core.Serialization;
 
 namespace kampfpanzerin
 {
@@ -127,7 +128,7 @@ namespace kampfpanzerin
 
                 string dest = wzd.ProjectLocation + "/" + wzd.ProjectName;
                 Project p = new Project();
-                p.useButBucket = wzd.UseBitBucket;
+                p.useBitBucket = wzd.UseBitBucket;
 
                 p.useClinkster = wzd.UseClinkster;
 
@@ -138,7 +139,7 @@ namespace kampfpanzerin
 
                 SaveProjectSettings(p, dest + "/");
 
-                GitHandler.Init(dest);
+                GitHandler.Init(dest, p);
                 form.ConcatLog("Project created! Now drop your music.asm or 4klang.obj and 4klang.h in there and run Build->Render 4klang Music.\n\n(Or just run Build->Render 4klang Music now to render the example tune!)");
 
                 OpenProject(dest, true);

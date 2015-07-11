@@ -9,6 +9,7 @@ using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using System.Globalization;
+using kampfpanzerin.core.Serialization;
 
 namespace kampfpanzerin {
     public partial class KlangPlayer : UserControl {

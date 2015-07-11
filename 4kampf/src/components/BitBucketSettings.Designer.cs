@@ -1,5 +1,5 @@
-﻿namespace kampfpanzerin.src.components {
-    partial class GitForm {
+﻿namespace kampfpanzerin.components {
+    partial class BitBucketSettings {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -28,8 +28,8 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.team = new System.Windows.Forms.TextBox();
+            this.userName = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -42,9 +42,9 @@
             this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.Location = new System.Drawing.Point(12, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(115, 24);
+            this.label1.Size = new System.Drawing.Size(176, 24);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Git Settings";
+            this.label1.Text = "BitBucket Settings";
             // 
             // btnCancel
             // 
@@ -56,7 +56,7 @@
             this.btnCancel.Location = new System.Drawing.Point(389, 138);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(77, 23);
-            this.btnCancel.TabIndex = 5;
+            this.btnCancel.TabIndex = 12;
             this.btnCancel.Text = "Geh Kacken";
             this.btnCancel.UseVisualStyleBackColor = false;
             // 
@@ -70,7 +70,7 @@
             this.btnSave.Location = new System.Drawing.Point(328, 138);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(55, 23);
-            this.btnSave.TabIndex = 6;
+            this.btnSave.TabIndex = 11;
             this.btnSave.Text = "Abfahrt";
             this.btnSave.UseVisualStyleBackColor = false;
             // 
@@ -94,33 +94,32 @@
             this.label3.TabIndex = 8;
             this.label3.Text = "Username";
             // 
-            // textBox1
+            // team
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(215, 49);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(251, 20);
-            this.textBox1.TabIndex = 9;
+            this.team.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.team.Location = new System.Drawing.Point(215, 49);
+            this.team.Name = "team";
+            this.team.Size = new System.Drawing.Size(251, 20);
+            this.team.TabIndex = 1;
             // 
-            // textBox2
+            // userName
             // 
-            this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox2.Location = new System.Drawing.Point(215, 75);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(251, 20);
-            this.textBox2.TabIndex = 10;
+            this.userName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.userName.Location = new System.Drawing.Point(215, 75);
+            this.userName.Name = "userName";
+            this.userName.Size = new System.Drawing.Size(251, 20);
+            this.userName.TabIndex = 2;
             // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(187)))), ((int)(((byte)(187)))), ((int)(((byte)(187)))));
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.button1.Location = new System.Drawing.Point(267, 138);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(55, 23);
-            this.button1.TabIndex = 11;
+            this.button1.TabIndex = 10;
             this.button1.Text = "Validate";
             this.button1.UseVisualStyleBackColor = false;
             // 
@@ -130,7 +129,7 @@
             this.textBox3.Location = new System.Drawing.Point(215, 101);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(251, 20);
-            this.textBox3.TabIndex = 13;
+            this.textBox3.TabIndex = 3;
             // 
             // label4
             // 
@@ -142,7 +141,7 @@
             this.label4.TabIndex = 12;
             this.label4.Text = "E-Mail";
             // 
-            // GitForm
+            // BitBucketSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -151,15 +150,15 @@
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.userName);
+            this.Controls.Add(this.team);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "GitForm";
+            this.Name = "BitBucketSettings";
             this.Text = "GitForm";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -173,8 +172,8 @@
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox team;
+        private System.Windows.Forms.TextBox userName;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Label label4;

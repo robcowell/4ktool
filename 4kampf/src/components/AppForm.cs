@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Tao.OpenGl;
+using kampfpanzerin.core.Serialization;
 
 namespace kampfpanzerin {
     public partial class AppForm : Form {

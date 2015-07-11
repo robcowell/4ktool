@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace kampfpanzerin {
+namespace kampfpanzerin.core.Serialization {
     [Serializable]
     public class Project {
         
@@ -16,6 +16,8 @@ namespace kampfpanzerin {
         public bool use4klangEnv = false;
         public bool usePP = false;
         public bool useSoundThread = false;
-        public bool useButBucket;
+        public bool useBitBucket;
+
+        public BitBucketData bitBucketSettings;
     }
 }

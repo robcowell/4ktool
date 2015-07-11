@@ -41,6 +41,8 @@
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.errorProvider2 = new System.Windows.Forms.ErrorProvider(this.components);
             this.errorProvider3 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.slugTxt = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider3)).BeginInit();
@@ -61,7 +63,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(13, 82);
+            this.label2.Location = new System.Drawing.Point(13, 108);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(48, 13);
             this.label2.TabIndex = 1;
@@ -71,7 +73,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.ForeColor = System.Drawing.Color.White;
-            this.label5.Location = new System.Drawing.Point(12, 110);
+            this.label5.Location = new System.Drawing.Point(12, 136);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(74, 13);
             this.label5.TabIndex = 4;
@@ -80,7 +82,7 @@
             // locationTxt
             // 
             this.locationTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.locationTxt.Location = new System.Drawing.Point(229, 79);
+            this.locationTxt.Location = new System.Drawing.Point(229, 105);
             this.locationTxt.Name = "locationTxt";
             this.locationTxt.Size = new System.Drawing.Size(277, 20);
             this.locationTxt.TabIndex = 2;
@@ -92,7 +94,7 @@
             this.btnSave.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(187)))), ((int)(((byte)(187)))), ((int)(((byte)(187)))));
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSave.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.btnSave.Location = new System.Drawing.Point(410, 186);
+            this.btnSave.Location = new System.Drawing.Point(410, 246);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(55, 23);
             this.btnSave.TabIndex = 10;
@@ -109,7 +111,7 @@
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.btnCancel.Location = new System.Drawing.Point(471, 186);
+            this.btnCancel.Location = new System.Drawing.Point(471, 246);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(77, 23);
             this.btnCancel.TabIndex = 11;
@@ -122,7 +124,7 @@
             this.chooseFolderButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(187)))), ((int)(((byte)(187)))), ((int)(((byte)(187)))));
             this.chooseFolderButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chooseFolderButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.chooseFolderButton.Location = new System.Drawing.Point(521, 77);
+            this.chooseFolderButton.Location = new System.Drawing.Point(521, 103);
             this.chooseFolderButton.Margin = new System.Windows.Forms.Padding(0);
             this.chooseFolderButton.Name = "chooseFolderButton";
             this.chooseFolderButton.Size = new System.Drawing.Size(27, 23);
@@ -138,6 +140,7 @@
             this.nameTxt.Name = "nameTxt";
             this.nameTxt.Size = new System.Drawing.Size(277, 20);
             this.nameTxt.TabIndex = 1;
+            this.nameTxt.TextChanged += new System.EventHandler(this.nameTxt_TextChanged);
             this.nameTxt.Validating += new System.ComponentModel.CancelEventHandler(this.nameTxt_Validating);
             // 
             // label6
@@ -155,7 +158,7 @@
             this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox1.AutoSize = true;
             this.checkBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.checkBox1.Location = new System.Drawing.Point(229, 111);
+            this.checkBox1.Location = new System.Drawing.Point(229, 137);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(12, 11);
             this.checkBox1.TabIndex = 3;
@@ -168,37 +171,38 @@
             this.bitbucketSettingsButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.bitbucketSettingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bitbucketSettingsButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.bitbucketSettingsButton.Location = new System.Drawing.Point(423, 105);
+            this.bitbucketSettingsButton.Location = new System.Drawing.Point(423, 131);
             this.bitbucketSettingsButton.Name = "bitbucketSettingsButton";
             this.bitbucketSettingsButton.Size = new System.Drawing.Size(125, 23);
             this.bitbucketSettingsButton.TabIndex = 13;
             this.bitbucketSettingsButton.Text = "Customize Settings...";
             this.bitbucketSettingsButton.UseVisualStyleBackColor = false;
+            this.bitbucketSettingsButton.Click += new System.EventHandler(this.bitbucketSettingsButton_Click);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(13, 137);
+            this.label3.Location = new System.Drawing.Point(13, 163);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(73, 13);
             this.label3.TabIndex = 2;
             this.label3.Text = "Choose Synth";
             // 
-            // radioButton1
+            // clinkster
             // 
             this.clinkster.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.clinkster.AutoSize = true;
             this.clinkster.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.clinkster.ForeColor = System.Drawing.Color.White;
-            this.clinkster.Location = new System.Drawing.Point(229, 135);
-            this.clinkster.Name = "radioButton1";
+            this.clinkster.Location = new System.Drawing.Point(229, 161);
+            this.clinkster.Name = "clinkster";
             this.clinkster.Size = new System.Drawing.Size(64, 17);
             this.clinkster.TabIndex = 4;
             this.clinkster.Text = "Clinkster";
             this.clinkster.UseVisualStyleBackColor = true;
             // 
-            // radioButton2
+            // _4klang
             // 
             this._4klang.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._4klang.AutoSize = true;
@@ -206,8 +210,8 @@
             this._4klang.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this._4klang.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this._4klang.ForeColor = System.Drawing.Color.White;
-            this._4klang.Location = new System.Drawing.Point(326, 135);
-            this._4klang.Name = "radioButton2";
+            this._4klang.Location = new System.Drawing.Point(326, 161);
+            this._4klang.Name = "_4klang";
             this._4klang.Size = new System.Drawing.Size(56, 17);
             this._4klang.TabIndex = 5;
             this._4klang.TabStop = true;
@@ -226,12 +230,32 @@
             // 
             this.errorProvider3.ContainerControl = this;
             // 
+            // slugTxt
+            // 
+            this.slugTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.slugTxt.Location = new System.Drawing.Point(229, 79);
+            this.slugTxt.Name = "slugTxt";
+            this.slugTxt.Size = new System.Drawing.Size(277, 20);
+            this.slugTxt.TabIndex = 14;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.ForeColor = System.Drawing.Color.White;
+            this.label4.Location = new System.Drawing.Point(13, 82);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(28, 13);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Slug";
+            // 
             // NewProjectWizard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
-            this.ClientSize = new System.Drawing.Size(566, 221);
+            this.ClientSize = new System.Drawing.Size(566, 281);
+            this.Controls.Add(this.slugTxt);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this._4klang);
             this.Controls.Add(this.clinkster);
             this.Controls.Add(this.bitbucketSettingsButton);
@@ -276,5 +300,7 @@
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private System.Windows.Forms.ErrorProvider errorProvider2;
         private System.Windows.Forms.ErrorProvider errorProvider3;
+        private System.Windows.Forms.TextBox slugTxt;
+        private System.Windows.Forms.Label label4;
     }
 }

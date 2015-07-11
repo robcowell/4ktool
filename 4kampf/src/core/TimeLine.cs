@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Globalization;
 using kampfpanzerin.src.core.Compiler;
+using kampfpanzerin.core.Serialization;
 
 namespace kampfpanzerin {
     public partial class TimeLine : UserControl {
