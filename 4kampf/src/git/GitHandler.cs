@@ -39,7 +39,7 @@ namespace kampfpanzerin.git {
 
             //Signature s = new Signature(Properties.Settings.Default.gitAuthor, Properties.Settings.Default.gitEmail, DateTime.Now);
             Commit c = gitRepo.Commit(@"Created a new intro \o/");
-            Logger.log("* Committed " + c.ToString() + "\n\n");
+            Logger.log("* Committed " + c.ToString() + "\r\n\r\n");
             GitHandler ret = new GitHandler(folder);
             if (p.gitRemote != null) {
                 if (credentials == null) {

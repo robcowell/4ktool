@@ -146,7 +146,7 @@ namespace kampfpanzerin
                 Repo = GitHandler.Init(dest, p);
                 string msg = "* Project created! Now drop your ";
                 msg += p.useClinkster?"music.asm":"4klang.obj and 4klang.h";
-                msg += " in there and run Build->Render Music.\n\n(Or just run Build->Render Music now to render the example tune!\n\n";
+                msg += " in there and run Build->Render Music.\r\n\r\n(Or just run Build->Render Music now to render the example tune!\r\n\r\n";
                 form.ConcatLog(msg);
 
                 OpenProject(dest, true);

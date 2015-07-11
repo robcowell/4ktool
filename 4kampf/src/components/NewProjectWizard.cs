@@ -55,6 +55,9 @@ namespace kampfpanzerin.components {
             if (locationTxt.Text.Length == 0) {
                 error = "Please enter a location";
                 e.Cancel = ValidationCancels;
+            } else if (!Directory.Exists(locationTxt.Text)) {
+                error = "Err that's not a folder mate ://";
+                e.Cancel = ValidationCancels;
             } else if (Directory.EnumerateFiles(locationTxt.Text).Any()) {
                 error = "Dude! I can't create a project in a non-empty folder, man!";
                 e.Cancel = ValidationCancels;
