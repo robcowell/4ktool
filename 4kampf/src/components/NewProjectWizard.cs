@@ -70,15 +70,7 @@ namespace kampfpanzerin.components {
             if (this.ValidateChildren()) {
                 Project p = new Project();
                 NetworkCredential credentials;
-                Credential cred = new Credential(BitBucketConfig.UserName, "", BitBucketConfig.Team + ".bitbucket");
-                if (!cred.Load()) {
-                        credentials = kampfpanzerin.core.UI.CredentialPrompt.GetCredentialsVistaAndUp(cred.Target);
-                        cred.Dispose();
-                } else {
-                    credentials = new NetworkCredential();
-                    credentials.UserName = cred.Username;
-                    credentials.Password = cred.Password;
-                }
+                credentials = BitBucketUtils.GetCredentials(BitBucketConfig);
                 if (credentials == null) {
                     MessageBox.Show("No Credentials given", "4krampf", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 } else {
@@ -91,6 +83,8 @@ namespace kampfpanzerin.components {
             }
             this.ValidationCancels = false;
         }
+
+
 
         public string ProjectLocation { get { return this.locationTxt.Text; } }
         public string ProjectName { get { return this.nameTxt.Text; } }

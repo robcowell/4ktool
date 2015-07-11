@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Net;
+using Simple.CredentialManager;
+using kampfpanzerin.core.Serialization;
 
 namespace kampfpanzerin.utils {
     public static class BitBucketUtils {
@@ -21,6 +24,20 @@ namespace kampfpanzerin.utils {
         public static string RemoveAccent(this string txt) {
             byte[] bytes = System.Text.Encoding.GetEncoding("Cyrillic").GetBytes(txt);
             return System.Text.Encoding.ASCII.GetString(bytes);
+        }
+
+        public static NetworkCredential GetCredentials(BitBucketData BitBucketConfig) {
+            NetworkCredential credentials;
+            Credential cred = new Credential(BitBucketConfig.UserName, "", BitBucketConfig.Team + ".bitbucket");
+            if (!cred.Load()) {
+                credentials = kampfpanzerin.core.UI.CredentialPrompt.GetCredentialsVistaAndUp(cred.Target);
+                cred.Dispose();
+            } else {
+                credentials = new NetworkCredential();
+                credentials.UserName = cred.Username;
+                credentials.Password = cred.Password;
+            }
+            return credentials;
         }
     }
 }
