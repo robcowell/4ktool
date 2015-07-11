@@ -21,10 +21,6 @@ namespace kampfpanzerin.git {
 
         public static GitHandler Init(string folder, Project p) {
 
-            if (p.useBitBucket) {
-                CreateRepo(p);
-            }
-
             Repository.Init(folder, folder);
             var gitRepo = new Repository(folder);
             // Call EnumerateFiles in a foreach-loop.
@@ -44,12 +40,6 @@ namespace kampfpanzerin.git {
             Commit c = gitRepo.Commit(@"Created a new intro \o/");
             Logger.log("commited " + c.ToString());
             return new GitHandler(folder);
-        }
-
-        private static void CreateRepo(Project p) {
-            SharpBucket.V2.SharpBucketV2 bucket = new SharpBucket.V2.SharpBucketV2();
-            SharpBucket.V2.EndPoints.SharpBucketRepoCreator c = new SharpBucket.V2.EndPoints.SharpBucketRepoCreator(bucket);
-            //c.CreateRepository()
         }
         
         public static String MakeRelativePath(String fromPath, String toPath) {

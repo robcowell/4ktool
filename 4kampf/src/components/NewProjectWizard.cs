@@ -64,6 +64,9 @@ namespace kampfpanzerin.components {
                 this.DialogResult = DialogResult.OK;
             }
             this.ValidationCancels = false;
+            if (checkBox1.Checked) {
+
+            }
         }
 
         public string ProjectLocation { get { return this.locationTxt.Text; } }
@@ -81,6 +84,17 @@ namespace kampfpanzerin.components {
 
         private void nameTxt_TextChanged(object sender, EventArgs e) {
             slugTxt.Text = nameTxt.Text.GenerateSlug();
+        }
+
+        private void checkBox1_Validating(object sender, CancelEventArgs e) {
+            this.ValidationCancels = true;
+            if (this.ValidateChildren()) {
+                this.DialogResult = DialogResult.OK;
+            }
+            this.ValidationCancels = false;
+            if (checkBox1.Checked) {
+
+            }
         }
     }
 }

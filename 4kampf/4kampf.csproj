@@ -60,9 +60,6 @@
   <PropertyGroup />
   <PropertyGroup />
   <ItemGroup>
-    <Reference Include="CredentialManagement">
-      <HintPath>..\packages\CredentialManagement.1.0.2\lib\net35\CredentialManagement.dll</HintPath>
-    </Reference>
     <Reference Include="LibGit2Sharp">
       <HintPath>..\packages\LibGit2Sharp.0.21.0.176\lib\net40\LibGit2Sharp.dll</HintPath>
     </Reference>
@@ -75,17 +72,11 @@
     <Reference Include="MetroFramework.Fonts">
       <HintPath>..\packages\MetroModernUI.1.3.0.0\lib\net\MetroFramework.Fonts.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="RestSharp">
       <HintPath>..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="ScintillaNET">
       <HintPath>bin\Release\ScintillaNET.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpBucket">
-      <HintPath>..\packages\SharpBucket.0.4.1.0\lib\net40\SharpBucket.dll</HintPath>
     </Reference>
     <Reference Include="Simple.CredentialManager">
       <HintPath>..\packages\Simple.CredentialManager.1.0.0\lib\net40\Simple.CredentialManager.dll</HintPath>
@@ -141,7 +132,6 @@
     <Compile Include="src\core\Compiler\BuildUtils.cs" />
     <Compile Include="src\core\Camera\CamAutomationProxy.cs" />
     <Compile Include="src\core\Compiler\TrackerCompiler.cs" />
-    <Compile Include="src\git\SharpBucketRepoCreator.cs" />
     <Compile Include="src\log\Logger.cs" />
     <Compile Include="src\utils\BitBucketUtils.cs" />
     <Compile Include="src\utils\NativeLoadHelper.cs" />

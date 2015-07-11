@@ -98,7 +98,7 @@
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(55, 23);
             this.btnSave.TabIndex = 10;
-            this.btnSave.Text = "Abfahrt";
+            this.btnSave.Text = "Scheisse";
             this.btnSave.UseVisualStyleBackColor = false;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             this.btnSave.Validating += new System.ComponentModel.CancelEventHandler(this.form_Validating);
@@ -163,6 +163,7 @@
             this.checkBox1.Size = new System.Drawing.Size(12, 11);
             this.checkBox1.TabIndex = 3;
             this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.Validating += new System.ComponentModel.CancelEventHandler(this.checkBox1_Validating);
             // 
             // bitbucketSettingsButton
             // 
