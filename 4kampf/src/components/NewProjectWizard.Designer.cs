@@ -85,7 +85,7 @@
             this.locationTxt.Location = new System.Drawing.Point(229, 105);
             this.locationTxt.Name = "locationTxt";
             this.locationTxt.Size = new System.Drawing.Size(277, 20);
-            this.locationTxt.TabIndex = 2;
+            this.locationTxt.TabIndex = 3;
             this.locationTxt.Validating += new System.ComponentModel.CancelEventHandler(this.locationTxt_Validating);
             // 
             // btnSave
@@ -94,9 +94,9 @@
             this.btnSave.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(187)))), ((int)(((byte)(187)))), ((int)(((byte)(187)))));
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSave.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.btnSave.Location = new System.Drawing.Point(410, 246);
+            this.btnSave.Location = new System.Drawing.Point(404, 246);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(55, 23);
+            this.btnSave.Size = new System.Drawing.Size(61, 23);
             this.btnSave.TabIndex = 10;
             this.btnSave.Text = "Scheisse";
             this.btnSave.UseVisualStyleBackColor = false;
@@ -161,7 +161,7 @@
             this.checkBox1.Location = new System.Drawing.Point(229, 137);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(12, 11);
-            this.checkBox1.TabIndex = 3;
+            this.checkBox1.TabIndex = 4;
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.Validating += new System.ComponentModel.CancelEventHandler(this.checkBox1_Validating);
             // 
@@ -199,7 +199,7 @@
             this.clinkster.Location = new System.Drawing.Point(229, 161);
             this.clinkster.Name = "clinkster";
             this.clinkster.Size = new System.Drawing.Size(64, 17);
-            this.clinkster.TabIndex = 4;
+            this.clinkster.TabIndex = 5;
             this.clinkster.Text = "Clinkster";
             this.clinkster.UseVisualStyleBackColor = true;
             // 
@@ -214,7 +214,7 @@
             this._4klang.Location = new System.Drawing.Point(326, 161);
             this._4klang.Name = "_4klang";
             this._4klang.Size = new System.Drawing.Size(56, 17);
-            this._4klang.TabIndex = 5;
+            this._4klang.TabIndex = 6;
             this._4klang.TabStop = true;
             this._4klang.Text = "4klang";
             this._4klang.UseVisualStyleBackColor = true;
@@ -237,7 +237,7 @@
             this.slugTxt.Location = new System.Drawing.Point(229, 79);
             this.slugTxt.Name = "slugTxt";
             this.slugTxt.Size = new System.Drawing.Size(277, 20);
-            this.slugTxt.TabIndex = 14;
+            this.slugTxt.TabIndex = 2;
             // 
             // label4
             // 
