@@ -21,6 +21,11 @@ namespace kampfpanzerin.components {
             private set;
         }
 
+        public Project Project {
+            get;
+            private set;
+        }
+
         public NewProjectWizard() {
             InitializeComponent();
         }
@@ -63,6 +68,7 @@ namespace kampfpanzerin.components {
             }
             this.ValidationCancels = true;
             if (this.ValidateChildren()) {
+                Project p = new Project();
                 NetworkCredential credentials;
                 Credential cred = new Credential(BitBucketConfig.UserName, "", BitBucketConfig.Team + ".bitbucket");
                 if (!cred.Load()) {
@@ -76,7 +82,10 @@ namespace kampfpanzerin.components {
                 if (credentials == null) {
                     MessageBox.Show("No Credentials given", "4krampf", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 } else {
-                    git.GitHandler.CreateBitBucketRepo(BitBucketConfig, credentials);
+                    string result = git.GitHandler.CreateBitBucketRepo(BitBucketConfig, credentials);
+                    p.bitBucketSettings = BitBucketConfig;
+                    p.gitRemote = result;
+                    this.Project = p;
                     this.DialogResult = DialogResult.OK;
                 }
             }
@@ -106,7 +115,7 @@ namespace kampfpanzerin.components {
                 return;
             }
             string error = null;
-            if (BitBucketConfig == null || ( BitBucketConfig.Team != null && BitBucketConfig.UserName != null  && BitBucketConfig.RepoSlug != null)) {
+            if (BitBucketConfig == null || ( BitBucketConfig.Team == null || BitBucketConfig.UserName == null  || BitBucketConfig.RepoSlug == null)) {
                 error = "Dude! If you want to use BitBucket, give me some information, man!";
                 e.Cancel = ValidationCancels;
             }

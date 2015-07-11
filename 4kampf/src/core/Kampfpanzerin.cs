@@ -127,7 +127,7 @@ namespace kampfpanzerin
                 form.klangPlayer.Unload();
 
                 string dest = wzd.ProjectLocation + "/" + wzd.ProjectName;
-                Project p = new Project();
+                Project p = wzd.Project;
                 p.useBitBucket = wzd.UseBitBucket;
 
                 p.useClinkster = wzd.UseClinkster;

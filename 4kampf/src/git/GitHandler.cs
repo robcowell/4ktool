@@ -69,24 +69,23 @@ namespace kampfpanzerin.git {
                 cred.Dispose();
             }
         }
-        
+
 
         public static string CreateBitBucketRepo(BitBucketData data, NetworkCredential credentials) {
-
-            {
-                RestClient r = new RestClient("https://bitbucket.org/");
-                r.Authenticator = new HttpBasicAuthenticator(credentials.UserName, credentials.Password);
-                RestRequest request = new RestRequest("api/2.0/repositories/" + data.Team + "/" + data.RepoSlug, Method.POST);
-                request.AddParameter("name", data.RepoSlug);
-                request.AddParameter("is_private", "true");
-                request.AddParameter("scm", "git");
-                string t = request.ToString();
-                IRestResponse response = r.Post(request);
-                if (response.StatusCode != HttpStatusCode.OK) {
-                    return response.StatusDescription;
-                }
+            RestClient r = new RestClient("https://bitbucket.org/");
+            r.Authenticator = new HttpBasicAuthenticator(credentials.UserName, credentials.Password);
+            RestRequest request = new RestRequest("api/2.0/repositories/" + data.Team + "/" + data.RepoSlug, Method.POST);
+            request.AddParameter("name", data.RepoSlug);
+            request.AddParameter("is_private", "true");
+            request.AddParameter("scm", "git");
+            string t = request.ToString();
+            IRestResponse response = r.Post(request);
+            if (response.StatusCode != HttpStatusCode.OK) {
+                return null;
+            } else {
+                return string.Format("https://{0}@bitbucket.org/{1}/{2}.git", data.UserName, data.Team, data.RepoSlug);
             }
-            return "Success";
+
         }
     }
 
