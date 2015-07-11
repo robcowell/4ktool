@@ -1,24 +1,11 @@
-[DONE] refactor the mediaplayer into like KlangMediaPlayer
-[DONE] refactor stuff from AppForm into Kampfpanzerin
-[DONE] refactor some stuff from TimeLine?
-[DONE] bpm display on graph edit
-[DONE] bpm snap on graph edit
-[DONE] drag values to edit on graph
-[DONE] aaand show free bytes when below 4096
-
-[TEST]actual passing of sync in such a way it'll work in build :P -- the smoothstep wtf!!	
-[TEST]the ctrl-dragging seems fucked
-
-ok the fast build needs to be faster! - don't list the shit!
-pass ALL uniforms in a single float array. <---- is it? :/
-possibly some more of iq's small-compile tricks need to be reinstated in basecode proj (see http://www.iquilezles.org/www/articles/compilingsmall/compilingsmall.htm)
-when overbyte, tell how many to lose!
-auto bpm shit in standards!!
-handle fail build properly
-choose res??
-errrr -- uniforms to be single letters!!!
-toggle for "do proper mode change"
-pick up fast/slow settings from scheegestöber
-handle the asm shit 
-click to goto line on glsl error
-uniforms are called u now, change skel1!
+- Build / basecode
+	- Use asm basecode instead?
+	- Handle failed build properly
+	- Choose resolution to build?? Batch build resolutions?? Something else?
+	- Toggle whether to do a proper mode change -- saves 10 bytes in final prod
+	- possibly some more of iq's small-compile tricks need to be reinstated in basecode proj (see http://www.iquilezles.org/www/articles/compilingsmall/compilingsmall.htm)	
+	- when overbyte, tell how many to lose!	
+	- Fast/slow build settings could be optimised -- check Schneegestober's, they're good
+	
+- General
+	- Click to goto line on glsl error

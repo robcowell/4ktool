@@ -94,6 +94,7 @@ namespace kampfpanzerin.components {
             if (frm.DialogResult == DialogResult.OK) {
                 BitBucketConfig = frm.Data;
             }
+            DialogResult = DialogResult.None;
         }
 
         private void nameTxt_TextChanged(object sender, EventArgs e) {
