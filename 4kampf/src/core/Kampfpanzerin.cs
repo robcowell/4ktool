@@ -20,8 +20,12 @@ namespace kampfpanzerin
         private static AppForm form;
         private static string currentProjectDirectory; 
         private static bool projectDirty;
-        private static Project project = new Project();
+        public static Project project = new Project();
         public static CultureInfo culture = CultureInfo.CreateSpecificCulture("en-GB");
+        public static GitHandler Repo {
+            get;
+            private set;
+        }
 
 
         [STAThread]
@@ -139,7 +143,7 @@ namespace kampfpanzerin
 
                 SaveProjectSettings(p, dest + "/");
 
-                GitHandler.Init(dest, p);
+                Repo = GitHandler.Init(dest, p);
                 string msg = "* Project created! Now drop your ";
                 msg += p.useClinkster?"music.asm":"4klang.obj and 4klang.h";
                 msg += " in there and run Build->Render Music.\n\n(Or just run Build->Render Music now to render the example tune!\n\n";
@@ -377,6 +381,9 @@ namespace kampfpanzerin
                     XmlSerializer serializer = new XmlSerializer(typeof(Project));
                     serializer.Serialize(stream, project);
                     stream.Close();
+                }
+                if (Repo != null) {
+                    Repo.Commit();
                 }
             } catch (IOException) {
                 MessageBox.Show("Something went wrong when saving.", "4kampfpanzerin", MessageBoxButtons.OK, MessageBoxIcon.Error);

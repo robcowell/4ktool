@@ -40,17 +40,18 @@ namespace kampfpanzerin.git {
             //Signature s = new Signature(Properties.Settings.Default.gitAuthor, Properties.Settings.Default.gitEmail, DateTime.Now);
             Commit c = gitRepo.Commit(@"Created a new intro \o/");
             Logger.log("* Committed " + c.ToString() + "\n\n");
+            GitHandler ret = new GitHandler(folder);
             if (p.gitRemote != null) {
                 if (credentials == null) {
                     credentials = BitBucketUtils.GetCredentials(p.bitBucketSettings);
                 }
                 gitRepo.Network.Remotes.Add("origin", p.gitRemote);
-                Push(p, gitRepo, credentials);
+                ret.Push(p, credentials);
             }
-            return new GitHandler(folder);
+            return ret;
         }
 
-        public static void Push(Project p, Repository repo, NetworkCredential credentials) {
+        public void Push(Project p, NetworkCredential credentials) {
             LibGit2Sharp.PushOptions options = new LibGit2Sharp.PushOptions();
             options.CredentialsProvider = new LibGit2Sharp.Handlers.CredentialsHandler(
                 (url, usernameFromUrl, types) =>
@@ -104,6 +105,34 @@ namespace kampfpanzerin.git {
                 return string.Format("https://{0}@bitbucket.org/{1}/{2}.git", data.UserName, data.Team, data.RepoSlug);
             }
 
+        }
+
+        internal void Pull(Project project, NetworkCredential credentials) {
+            LibGit2Sharp.PullOptions options = new LibGit2Sharp.PullOptions();
+            options.MergeOptions = new MergeOptions();
+            options.MergeOptions.CommitOnSuccess = true;
+            options.MergeOptions.FileConflictStrategy = CheckoutFileConflictStrategy.Diff3;
+            options.FetchOptions = new FetchOptions();
+            options.FetchOptions.CredentialsProvider
+            = new LibGit2Sharp.Handlers.CredentialsHandler(
+                (url, usernameFromUrl, types) =>
+                    new UsernamePasswordCredentials() {
+                        Username = credentials.UserName,
+                        Password = credentials.Password
+                    });
+            Signature s = new Signature(project.bitBucketSettings.UserName, "", DateTime.Now);
+            repo.Network.Pull(s, options);
+        }
+
+        internal void Commit() {
+            CommitOptions co = new CommitOptions();
+            co.AllowEmptyCommit = false;
+            foreach (StatusEntry e in repo.RetrieveStatus()) {
+                if(e.State == FileStatus.Modified) {
+                    repo.Stage(e.FilePath);
+                }
+            }
+            repo.Commit(DateTime.Now.ToString(), co);
         }
     }
 

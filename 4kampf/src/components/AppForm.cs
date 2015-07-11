@@ -525,14 +525,12 @@ namespace kampfpanzerin {
             Kampfpanzerin.GoToProjectFolder();
         }
 
-        private void btnPush_Click(object sender, EventArgs e)
-        {
-
+        private void btnPush_Click(object sender, EventArgs e) {
+            Kampfpanzerin.Repo.Push(Kampfpanzerin.project, utils.BitBucketUtils.GetCredentials(Kampfpanzerin.project.bitBucketSettings));
         }
 
-        private void btnPull_Click(object sender, EventArgs e)
-        {
-
+        private void btnPull_Click(object sender, EventArgs e) {
+            Kampfpanzerin.Repo.Pull(Kampfpanzerin.project, utils.BitBucketUtils.GetCredentials(Kampfpanzerin.project.bitBucketSettings));
         }
     }
 }
