@@ -140,7 +140,10 @@ namespace kampfpanzerin
                 SaveProjectSettings(p, dest + "/");
 
                 GitHandler.Init(dest, p);
-                form.ConcatLog("Project created! Now drop your music.asm or 4klang.obj and 4klang.h in there and run Build->Render 4klang Music.\n\n(Or just run Build->Render 4klang Music now to render the example tune!)");
+                string msg = "* Project created! Now drop your ";
+                msg += p.useClinkster?"music.asm":"4klang.obj and 4klang.h";
+                msg += " in there and run Build->Render Music.\n\n(Or just run Build->Render Music now to render the example tune!\n\n";
+                form.ConcatLog(msg);
 
                 OpenProject(dest, true);
 
