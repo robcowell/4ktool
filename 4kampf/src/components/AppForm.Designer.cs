@@ -88,7 +88,7 @@
             this.timeLine = new kampfpanzerin.TimeLine();
             this.pnlToolbar = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.klangPlayer = new kampfpanzerin.KlangPlayer();
+            this.klangPlayer = new kampfpanzerin.MusicPlayer();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox5 = new System.Windows.Forms.PictureBox();
@@ -1591,7 +1591,7 @@
         public System.Windows.Forms.Button btnStandardUniforms;
         private System.Windows.Forms.ToolStripMenuItem openProjectLocationToolStripMenuItem;
         private System.Windows.Forms.Button btnGotoProjectFolder;
-        public KlangPlayer klangPlayer;
+        public MusicPlayer klangPlayer;
         private System.Windows.Forms.PictureBox pictureBox5;
         private System.Windows.Forms.Button btnPush;
         private System.Windows.Forms.Button btnPull;

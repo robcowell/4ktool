@@ -85,6 +85,9 @@
             // locationTxt
             // 
             this.locationTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.locationTxt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.locationTxt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.locationTxt.ForeColor = System.Drawing.Color.White;
             this.locationTxt.Location = new System.Drawing.Point(146, 144);
             this.locationTxt.Name = "locationTxt";
             this.locationTxt.Size = new System.Drawing.Size(277, 20);
@@ -138,6 +141,9 @@
             // nameTxt
             // 
             this.nameTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.nameTxt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.nameTxt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.nameTxt.ForeColor = System.Drawing.Color.White;
             this.nameTxt.Location = new System.Drawing.Point(146, 92);
             this.nameTxt.Name = "nameTxt";
             this.nameTxt.Size = new System.Drawing.Size(277, 20);
@@ -236,6 +242,9 @@
             // slugTxt
             // 
             this.slugTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.slugTxt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.slugTxt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.slugTxt.ForeColor = System.Drawing.Color.White;
             this.slugTxt.Location = new System.Drawing.Point(146, 118);
             this.slugTxt.Name = "slugTxt";
             this.slugTxt.Size = new System.Drawing.Size(277, 20);

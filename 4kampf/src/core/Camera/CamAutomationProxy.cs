@@ -19,9 +19,9 @@ namespace kampfpanzerin {
         }
 
         private Dictionary<TimelineBar.TimeLineMode, TimelineBar> lanes;
-        private KlangPlayer p;
+        private MusicPlayer p;
 
-        public CamAutomationProxy(Dictionary<TimelineBar.TimeLineMode, TimelineBar> lanes, KlangPlayer p) {
+        public CamAutomationProxy(Dictionary<TimelineBar.TimeLineMode, TimelineBar> lanes, MusicPlayer p) {
             this.lanes = lanes;
             this.p = p;
         }

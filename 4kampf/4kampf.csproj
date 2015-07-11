@@ -160,11 +160,11 @@
     <Compile Include="src\core\UI\ColorHandler.cs" />
     <Compile Include="src\core\UI\ColorWheel.cs" />
     <Compile Include="src\core\GraphicsManager.cs" />
-    <Compile Include="src\components\KlangPlayer.cs">
+    <Compile Include="src\components\MusicPlayer.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="src\components\KlangPlayer.Designer.cs">
-      <DependentUpon>KlangPlayer.cs</DependentUpon>
+    <Compile Include="src\components\MusicPlayer.Designer.cs">
+      <DependentUpon>MusicPlayer.cs</DependentUpon>
     </Compile>
     <Compile Include="src\core\MenuColorTable.cs" />
     <Compile Include="src\utils\MessageBoxManager.cs" />
@@ -227,8 +227,8 @@
       <DependentUpon>ColorChooser.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="src\components\KlangPlayer.resx">
-      <DependentUpon>KlangPlayer.cs</DependentUpon>
+    <EmbeddedResource Include="src\components\MusicPlayer.resx">
+      <DependentUpon>MusicPlayer.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

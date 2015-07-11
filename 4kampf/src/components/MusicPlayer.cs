@@ -12,14 +12,14 @@ using System.Globalization;
 using kampfpanzerin.core.Serialization;
 
 namespace kampfpanzerin {
-    public partial class KlangPlayer : UserControl {
+    public partial class MusicPlayer : UserControl {
         private float[][] envSamples;
         private bool transportBusy = false;
         private int numInstruments = 0;
         public int bpm { get; private set; }
         private Project project;
 
-        public KlangPlayer() {
+        public MusicPlayer() {
             InitializeComponent();
 
             trkVolume.Value = mediaPlayer.settings.volume;

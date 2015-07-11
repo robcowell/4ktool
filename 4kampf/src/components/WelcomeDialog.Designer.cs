@@ -43,45 +43,53 @@
             // quitButton
             // 
             this.quitButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.quitButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(187)))), ((int)(((byte)(187)))), ((int)(((byte)(187)))));
             this.quitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.quitButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.quitButton.Location = new System.Drawing.Point(250, 185);
             this.quitButton.Name = "quitButton";
             this.quitButton.Size = new System.Drawing.Size(75, 23);
             this.quitButton.TabIndex = 4;
             this.quitButton.Text = "Quit";
-            this.quitButton.UseVisualStyleBackColor = true;
+            this.quitButton.UseVisualStyleBackColor = false;
             // 
             // newButton
             // 
+            this.newButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(187)))), ((int)(((byte)(187)))), ((int)(((byte)(187)))));
             this.newButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.newButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.newButton.Location = new System.Drawing.Point(17, 81);
             this.newButton.Name = "newButton";
             this.newButton.Size = new System.Drawing.Size(132, 23);
             this.newButton.TabIndex = 1;
             this.newButton.Text = "Create new project";
-            this.newButton.UseVisualStyleBackColor = true;
+            this.newButton.UseVisualStyleBackColor = false;
             // 
             // button2
             // 
+            this.button2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(187)))), ((int)(((byte)(187)))), ((int)(((byte)(187)))));
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.button2.Location = new System.Drawing.Point(17, 110);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(132, 23);
             this.button2.TabIndex = 2;
             this.button2.Text = "Import from BitBucket";
-            this.button2.UseVisualStyleBackColor = true;
+            this.button2.UseVisualStyleBackColor = false;
             // 
             // button3
             // 
+            this.button3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(187)))), ((int)(((byte)(187)))), ((int)(((byte)(187)))));
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.button3.Location = new System.Drawing.Point(17, 139);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(132, 23);
             this.button3.TabIndex = 3;
             this.button3.Text = "Open Local";
-            this.button3.UseVisualStyleBackColor = true;
+            this.button3.UseVisualStyleBackColor = false;
             // 
-            // Form1
+            // WelcomeDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -94,7 +102,7 @@
             this.Controls.Add(this.label1);
             this.ForeColor = System.Drawing.Color.White;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "Form1";
+            this.Name = "WelcomeDialog";
             this.Text = "Form1";
             this.ResumeLayout(false);
             this.PerformLayout();

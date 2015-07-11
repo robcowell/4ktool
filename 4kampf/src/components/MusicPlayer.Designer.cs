@@ -1,5 +1,5 @@
 ﻿namespace kampfpanzerin {
-    partial class KlangPlayer {
+    partial class MusicPlayer {
         /// <summary> 
         /// Required designer variable.
         /// </summary>
@@ -23,7 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(KlangPlayer));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MusicPlayer));
             this.trkVolume = new MetroFramework.Controls.MetroTrackBar();
             this.lblTime = new System.Windows.Forms.Label();
             this.lblCam = new System.Windows.Forms.Label();
