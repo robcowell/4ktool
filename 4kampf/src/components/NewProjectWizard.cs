@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 
 namespace kampfpanzerin.components {
     public partial class NewProjectWizard : Form {
@@ -41,8 +42,11 @@ namespace kampfpanzerin.components {
 
         private void locationTxt_Validating(object sender, CancelEventArgs e) {
             string error = null;
-            if (nameTxt.Text.Length == 0) {
+            if (locationTxt.Text.Length == 0) {
                 error = "Please enter a location";
+                e.Cancel = ValidationCalcels;
+            } else if (Directory.EnumerateFiles(locationTxt.Text).Any()) {
+                error = "Dude! I can't create a project in a non-empty folder, man!";
                 e.Cancel = ValidationCalcels;
             }
             errorProvider2.SetError((Control)sender, error);
@@ -55,5 +59,10 @@ namespace kampfpanzerin.components {
             }
             this.ValidationCalcels = false;
         }
+
+        public string ProjectLocation { get { return this.locationTxt.Text; } }
+        public string ProjectName { get { return this.nameTxt.Text; } }
+        public bool UseClinkster { get { return this.clinkster.Checked; } }
+        public bool UseBitBucket { get { return this.checkBox1.Checked; } }
     }
 }

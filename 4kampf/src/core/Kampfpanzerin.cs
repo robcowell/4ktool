@@ -122,56 +122,30 @@ namespace kampfpanzerin
             NewProjectWizard wzd = new NewProjectWizard();
             wzd.StartPosition = FormStartPosition.CenterParent;
             wzd.ShowDialog();
+            if (wzd.DialogResult == DialogResult.OK) {
+                form.klangPlayer.Unload();
 
-            MessageBoxManager.Cancel = "Cancel";
-            FolderBrowserDialog d = new FolderBrowserDialog();
-            d.ShowNewFolderButton = true;
-            d.Description = "Let's choose somewhere to build this bad boy!";
-            if (d.ShowDialog() == DialogResult.Cancel)
+                string dest = wzd.ProjectLocation + "/" + wzd.ProjectName;
+                Project p = new Project();
+                p.useButBucket = wzd.UseBitBucket;
+
+                p.useClinkster = wzd.UseClinkster;
+
+                string src = AppDomain.CurrentDomain.BaseDirectory + "skel";
+                Utils.CopyFolderContents(src, dest);
+                p.syncBars = form.timeLine.syncBars;
+                p.camBars = form.timeLine.camBars;
+
+                SaveProjectSettings(p, dest + "/");
+
+                GitHandler.Init(dest);
+                form.ConcatLog("Project created! Now drop your music.asm or 4klang.obj and 4klang.h in there and run Build->Render 4klang Music.\n\n(Or just run Build->Render 4klang Music now to render the example tune!)");
+
+                OpenProject(dest, true);
+
+            } else { 
                 return;
-
-            form.klangPlayer.Unload();
-
-            string dest = d.SelectedPath;
-            if (!Directory.Exists(dest))
-            {
-                DialogResult res = MessageBox.Show("Dude! Y u no gimme a directory? Should I create whatever you fiddled in there? ", "4kampf", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (res == DialogResult.Yes) {
-                    Directory.CreateDirectory(dest);
-                } else return;
             }
-            if (Directory.EnumerateFiles(dest).Any()) {
-                MessageBox.Show("Dude! I can't create a project in a non-empty folder, man!", "4kampf", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            MessageBoxManager.Yes = "Clinkster!";
-            MessageBoxManager.No = "4klang pls";
-
-
-            Project p = new Project();
-            form.ConcatLog(dest);
-            DialogResult musicDialogResult = MessageBox.Show("Who do you like more, Blueberry or Gopher?", "4kampf", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-            if (musicDialogResult == DialogResult.Yes) {
-                p.useClinkster = true;
-            }
-            MessageBoxManager.OK = "Bestätigt";
-            MessageBoxManager.Cancel = "Lieber nicht";
-            MessageBoxManager.Yes = "Abfahrt!";
-            MessageBoxManager.No = "Geh kacken...";
-
-            string src = AppDomain.CurrentDomain.BaseDirectory + "skel";
-            Utils.CopyFolderContents(src, dest);
-            p.syncBars = form.timeLine.syncBars;
-            p.camBars = form.timeLine.camBars;
-
-            SaveProjectSettings(p, dest + "/");
-
-            MessageBox.Show("Project created! Now drop your music.asm or 4klang.obj and 4klang.h in there and run Build->Render 4klang Music.\n\n(Or just run Build->Render 4klang Music now to render the example tune!)", "4kampf", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            GitHandler.Init(dest);
-
-            OpenProject(dest, true);
         }
 
         public static void OpenProject(string dir = null, bool inhibitMusicRenderPrompt = false) {

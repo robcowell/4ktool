@@ -16,5 +16,6 @@ namespace kampfpanzerin {
         public bool use4klangEnv = false;
         public bool usePP = false;
         public bool useSoundThread = false;
+        public bool useButBucket;
     }
 }

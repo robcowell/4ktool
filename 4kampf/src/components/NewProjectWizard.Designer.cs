@@ -36,8 +36,8 @@
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.bitbucketSettingsButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.clinkster = new System.Windows.Forms.RadioButton();
+            this._4klang = new System.Windows.Forms.RadioButton();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.errorProvider2 = new System.Windows.Forms.ErrorProvider(this.components);
             this.errorProvider3 = new System.Windows.Forms.ErrorProvider(this.components);
@@ -187,32 +187,32 @@
             // 
             // radioButton1
             // 
-            this.radioButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.radioButton1.ForeColor = System.Drawing.Color.White;
-            this.radioButton1.Location = new System.Drawing.Point(229, 135);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(64, 17);
-            this.radioButton1.TabIndex = 4;
-            this.radioButton1.Text = "Clinkster";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.clinkster.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.clinkster.AutoSize = true;
+            this.clinkster.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.clinkster.ForeColor = System.Drawing.Color.White;
+            this.clinkster.Location = new System.Drawing.Point(229, 135);
+            this.clinkster.Name = "radioButton1";
+            this.clinkster.Size = new System.Drawing.Size(64, 17);
+            this.clinkster.TabIndex = 4;
+            this.clinkster.Text = "Clinkster";
+            this.clinkster.UseVisualStyleBackColor = true;
             // 
             // radioButton2
             // 
-            this.radioButton2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Checked = true;
-            this.radioButton2.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.radioButton2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.radioButton2.ForeColor = System.Drawing.Color.White;
-            this.radioButton2.Location = new System.Drawing.Point(326, 135);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(56, 17);
-            this.radioButton2.TabIndex = 5;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "4klang";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this._4klang.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._4klang.AutoSize = true;
+            this._4klang.Checked = true;
+            this._4klang.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this._4klang.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this._4klang.ForeColor = System.Drawing.Color.White;
+            this._4klang.Location = new System.Drawing.Point(326, 135);
+            this._4klang.Name = "radioButton2";
+            this._4klang.Size = new System.Drawing.Size(56, 17);
+            this._4klang.TabIndex = 5;
+            this._4klang.TabStop = true;
+            this._4klang.Text = "4klang";
+            this._4klang.UseVisualStyleBackColor = true;
             // 
             // errorProvider1
             // 
@@ -232,8 +232,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
             this.ClientSize = new System.Drawing.Size(566, 221);
-            this.Controls.Add(this.radioButton2);
-            this.Controls.Add(this.radioButton1);
+            this.Controls.Add(this._4klang);
+            this.Controls.Add(this.clinkster);
             this.Controls.Add(this.bitbucketSettingsButton);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.nameTxt);
@@ -271,8 +271,8 @@
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Button bitbucketSettingsButton;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.RadioButton radioButton1;
-        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.RadioButton clinkster;
+        private System.Windows.Forms.RadioButton _4klang;
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private System.Windows.Forms.ErrorProvider errorProvider2;
         private System.Windows.Forms.ErrorProvider errorProvider3;
