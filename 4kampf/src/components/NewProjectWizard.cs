@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using System.IO;
 using kampfpanzerin.core.Serialization;
 using kampfpanzerin.utils;
+using System.Net;
+using Simple.CredentialManager;
 
 namespace kampfpanzerin.components {
     public partial class NewProjectWizard : Form {
@@ -34,9 +36,6 @@ namespace kampfpanzerin.components {
             locationTxt.Text = d.SelectedPath;
         }
 
-        private void form_Validating(object sender, CancelEventArgs e) {
-        }
-
         private void nameTxt_Validating(object sender, CancelEventArgs e) {
             string error = null;
             if (nameTxt.Text.Length == 0) {
@@ -59,14 +58,29 @@ namespace kampfpanzerin.components {
         }
 
         private void btnSave_Click(object sender, EventArgs e) {
+            if (BitBucketConfig != null) {
+                BitBucketConfig.RepoSlug = slugTxt.Text;
+            }
             this.ValidationCancels = true;
             if (this.ValidateChildren()) {
-                this.DialogResult = DialogResult.OK;
+                NetworkCredential credentials;
+                Credential cred = new Credential(BitBucketConfig.UserName, "", BitBucketConfig.Team + ".bitbucket");
+                if (!cred.Load()) {
+                        credentials = kampfpanzerin.core.UI.CredentialPrompt.GetCredentialsVistaAndUp(cred.Target);
+                        cred.Dispose();
+                } else {
+                    credentials = new NetworkCredential();
+                    credentials.UserName = cred.Username;
+                    credentials.Password = cred.Password;
+                }
+                if (credentials == null) {
+                    MessageBox.Show("No Credentials given", "4krampf", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                } else {
+                    git.GitHandler.CreateBitBucketRepo(BitBucketConfig, credentials);
+                    this.DialogResult = DialogResult.OK;
+                }
             }
             this.ValidationCancels = false;
-            if (checkBox1.Checked) {
-
-            }
         }
 
         public string ProjectLocation { get { return this.locationTxt.Text; } }
@@ -87,14 +101,15 @@ namespace kampfpanzerin.components {
         }
 
         private void checkBox1_Validating(object sender, CancelEventArgs e) {
-            this.ValidationCancels = true;
-            if (this.ValidateChildren()) {
-                this.DialogResult = DialogResult.OK;
+            if (!checkBox1.Checked) {
+                return;
             }
-            this.ValidationCancels = false;
-            if (checkBox1.Checked) {
-
+            string error = null;
+            if (BitBucketConfig == null || ( BitBucketConfig.Team != null && BitBucketConfig.UserName != null  && BitBucketConfig.RepoSlug != null)) {
+                error = "Dude! If you want to use BitBucket, give me some information, man!";
+                e.Cancel = ValidationCancels;
             }
+            errorProvider2.SetError((Control)sender, error);
         }
     }
 }
