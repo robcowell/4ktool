@@ -114,6 +114,12 @@
     <Compile Include="src\components\GitForm.Designer.cs">
       <DependentUpon>GitForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="src\components\NewProjectWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\components\NewProjectWizard.Designer.cs">
+      <DependentUpon>NewProjectWizard.cs</DependentUpon>
+    </Compile>
     <Compile Include="src\git\GitHandler.cs" />
     <Compile Include="src\components\AboutBox.cs">
       <SubType>Form</SubType>
@@ -200,6 +206,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="src\components\GitForm.resx">
       <DependentUpon>GitForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\components\NewProjectWizard.resx">
+      <DependentUpon>NewProjectWizard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="src\components\TimelineBarEventEditForm.resx">
       <DependentUpon>TimelineBarEventEditForm.cs</DependentUpon>

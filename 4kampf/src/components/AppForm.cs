@@ -279,6 +279,7 @@ namespace kampfpanzerin {
                     camStr = "cp={" + camPos.x.ToString("0.00") + " " + camPos.y.ToString("0.00") + " " + camPos.z.ToString("0.00") + "}";
                     camStr += " up={" + up.x.ToString("0.00") + " " + up.y.ToString("0.00") + " " + up.z.ToString("0.00") + "}";
                     camStr += " fd={" + forward.x.ToString("0.00") + " " + forward.y.ToString("0.00") + " " + forward.z.ToString("0.00") + "}";
+                    camStr += " right={" + c.Right.x.ToString("0.00") + " " + c.Right.y.ToString("0.00") + " " + c.Right.z.ToString("0.00") + "}";
                }
             }
 

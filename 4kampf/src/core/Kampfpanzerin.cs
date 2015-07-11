@@ -11,6 +11,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using kampfpanzerin.src.core.Compiler;
 using kampfpanzerin.git;
+using kampfpanzerin.components;
 
 namespace kampfpanzerin
 {
@@ -38,9 +39,9 @@ namespace kampfpanzerin
             do {
                 MessageBoxManager.Cancel = "Quit";
                 d = MessageBox.Show("Welcome to 4kampfpanzerin boss!\nShall we create a project or open one?", "4kampfpanzerin", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                if (d == DialogResult.Yes)
+                if (d == DialogResult.Yes) {
                     CreateProject();
-                else if (d == DialogResult.No)
+                } else if (d == DialogResult.No)
                     OpenProject();
                 else
                     Application.Exit();
@@ -117,6 +118,10 @@ namespace kampfpanzerin
 
         public static void CreateProject() {
             form.klangPlayer.Stop();
+
+            NewProjectWizard wzd = new NewProjectWizard();
+            wzd.StartPosition = FormStartPosition.CenterParent;
+            wzd.ShowDialog();
 
             MessageBoxManager.Cancel = "Cancel";
             FolderBrowserDialog d = new FolderBrowserDialog();

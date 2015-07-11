@@ -19,7 +19,7 @@ namespace kampfpanzerin
     public class Camera
     {
         private const float PI_OVER_180 = 0.0174532925f;
-
+        private static readonly Vector3f CAM_INVERT_X = new Vector3f(-1, 1, 1);
         private Vector3f position;
         private Vector3f rotation;
         private Vector3f forward, right, up;
@@ -31,6 +31,12 @@ namespace kampfpanzerin
         public Vector3f Up {
             get {
                 return up;
+            }
+        }
+
+        public Vector3f Right {
+            get {
+                return right;
             }
         }
 
@@ -94,7 +100,7 @@ namespace kampfpanzerin
         }
 
         public void Reset() {
-            rotation = new Vector3f(0, 0, 0);
+            rotation = new Vector3f(0, (float)Math.PI, 0);
             position = new Vector3f(0, 0, 0);
             forward = new Vector3f();
             right = new Vector3f();
@@ -127,7 +133,7 @@ namespace kampfpanzerin
                 position.x += (float)Math.Sin(rotation.y) * amount;
                 position.z += (float)Math.Cos(rotation.y) * amount;
             } else if (mode == CameraMode.FREEFLY)
-                position += (forward * amount);
+                position -= (forward * CAM_INVERT_X * amount);
 
             dirty = true;
         }
@@ -139,7 +145,7 @@ namespace kampfpanzerin
                 position.x += (float)Math.Sin((rotation.y + Math.PI / 2)) * amount;
                 position.z += (float)Math.Cos((rotation.y + Math.PI / 2)) * amount;
             } else if (mode == CameraMode.FREEFLY)
-                position += (right * amount);
+                position -= (right * CAM_INVERT_X * amount);
 
             dirty = true;
         }
