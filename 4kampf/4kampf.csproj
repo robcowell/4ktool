@@ -196,6 +196,7 @@
     </Compile>
     <EmbeddedResource Include="src\components\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="src\components\AppForm.resx">
       <DependentUpon>AppForm.cs</DependentUpon>
@@ -203,18 +204,23 @@
     </EmbeddedResource>
     <EmbeddedResource Include="src\components\BitBucketSettings.resx">
       <DependentUpon>BitBucketSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="src\components\NewProjectWizard.resx">
       <DependentUpon>NewProjectWizard.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="src\components\TimelineBarEventEditForm.resx">
       <DependentUpon>TimelineBarEventEditForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="src\components\ColorChooser.resx">
       <DependentUpon>ColorChooser.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="src\components\KlangPlayer.resx">
       <DependentUpon>KlangPlayer.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -223,9 +229,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="src\core\TimeLine.resx">
       <DependentUpon>TimeLine.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="src\components\VUMeter.resx">
       <DependentUpon>VUMeter.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
@@ -315,6 +323,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Resources\bareventeditbg.png" />
+    <None Include="Resources\clive.png" />
     <Content Include="skel\4klang.h" />
     <Content Include="skel\basecode\glext.h" />
     <Content Include="skel\basecode\intro.h" />
