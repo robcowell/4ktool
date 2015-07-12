@@ -30,12 +30,20 @@ namespace kampfpanzerin.utils {
             NetworkCredential credentials;
             Credential cred = new Credential(BitBucketConfig.UserName, "", BitBucketConfig.Team + ".bitbucket");
             if (!cred.Load()) {
-                credentials = kampfpanzerin.core.UI.CredentialPrompt.GetCredentialsVistaAndUp(cred.Target);
+                kampfpanzerin.core.UI.KampfCredentialDescriptor desc = kampfpanzerin.core.UI.CredentialPrompt.GetCredentialsVistaAndUp(cred.Target);
+                credentials = desc.Credentials;
+                if (desc.Remember) {
+                    cred.Username = credentials.UserName;
+                    cred.Password = credentials.Password;
+                    cred.PersistenceType = PersistenceType.Enterprise;
+                    cred.Save();
+                }
                 cred.Dispose();
             } else {
                 credentials = new NetworkCredential();
                 credentials.UserName = cred.Username;
                 credentials.Password = cred.Password;
+                cred.Dispose();
             }
             return credentials;
         }

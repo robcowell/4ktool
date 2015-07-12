@@ -526,11 +526,26 @@ namespace kampfpanzerin {
         }
 
         private void btnPush_Click(object sender, EventArgs e) {
+            if (!CheckRemote()) {
+                return;
+            }
             Kampfpanzerin.Repo.Push(Kampfpanzerin.project, utils.BitBucketUtils.GetCredentials(Kampfpanzerin.project.bitBucketSettings));
         }
 
         private void btnPull_Click(object sender, EventArgs e) {
+            if (!CheckRemote()) {
+                return;
+            }
             Kampfpanzerin.Repo.Pull(Kampfpanzerin.project, utils.BitBucketUtils.GetCredentials(Kampfpanzerin.project.bitBucketSettings));
         }
+
+        private bool CheckRemote() {
+            if (Kampfpanzerin.project.bitBucketSettings == null) {
+                MessageBox.Show("No remote configured, chief!", "4kampfpanzerin", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            return true;
+        }
+
     }
 }

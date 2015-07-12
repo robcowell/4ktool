@@ -7,6 +7,17 @@ using System.Net;
 
 namespace kampfpanzerin.core.UI {
     class CredentialPrompt {
+
+        public const int CREDUIWIN_GENERIC = 0x1;
+        public const int CREDUIWIN_CHECKBOX = 0x2;
+        public const int CREDUIWIN_AUTHPACKAGE_ONLY = 0x10;
+        public const int CREDUIWIN_IN_CRED_ONLY = 0x20;
+        public const int CREDUIWIN_ENUMERATE_ADMINS = 0x100;
+        public const int CREDUIWIN_ENUMERATE_CURRENT_USER = 0x200;
+        public const int CREDUIWIN_SECURE_PROMPT = 0x1000;
+        public const int CREDUIWIN_PREPROMPTING = 0x2000;
+        public const int CREDUIWIN_PACK_32_WOW = 0x10000000;
+
         [DllImport("ole32.dll")]
         public static extern void CoTaskMemFree(IntPtr ptr);
 
@@ -42,10 +53,10 @@ namespace kampfpanzerin.core.UI {
                                                                      ref bool fSave,
                                                                      int flags);
 
+        [DllImport("NativeHelpers.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr SecureZeroMem(IntPtr ptr, uint cnt);
 
-
-        public static NetworkCredential GetCredentialsVistaAndUp(string serverName) {
-            NetworkCredential networkCredential;
+        public static KampfCredentialDescriptor GetCredentialsVistaAndUp(string serverName) {
             CREDUI_INFO credui = new CREDUI_INFO();
             credui.pszCaptionText = "Please enter the credentails for " + serverName;
             credui.pszMessageText = "DisplayedMessage";
@@ -62,7 +73,7 @@ namespace kampfpanzerin.core.UI {
                                                            out outCredBuffer,
                                                            out outCredSize,
                                                            ref save,
-                                                           1 /* Generic */);
+                                                           CREDUIWIN_GENERIC | CREDUIWIN_CHECKBOX);
 
             var usernameBuf = new StringBuilder(100);
             var passwordBuf = new StringBuilder(100);
@@ -79,17 +90,30 @@ namespace kampfpanzerin.core.UI {
 
                     //clear the memory allocated by CredUIPromptForWindowsCredentials 
                     CoTaskMemFree(outCredBuffer);
-                    networkCredential = new NetworkCredential() {
+                    NetworkCredential networkCredential = new NetworkCredential() {
                         UserName = usernameBuf.ToString(),
                         Password = passwordBuf.ToString(),
                         Domain = domainBuf.ToString()
                     };
-                    return networkCredential;
+                    KampfCredentialDescriptor desc = new KampfCredentialDescriptor(networkCredential, save, true);
+                    return desc;
                 }
             }
 
-            networkCredential = null;
-            return networkCredential;
+            return new KampfCredentialDescriptor(null, save, false);
+        }
+    }
+
+    public class KampfCredentialDescriptor {
+
+        public readonly bool Remember;
+        public readonly bool Valid;
+        public readonly NetworkCredential Credentials;
+
+        internal KampfCredentialDescriptor(NetworkCredential credentials, bool remember, bool valid) {
+            this.Remember = remember;
+            this.Credentials = credentials;
+            this.Valid = valid;
         }
     }
 }
