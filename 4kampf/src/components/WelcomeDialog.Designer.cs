@@ -1,4 +1,4 @@
-﻿namespace kampfpanzerin.src.components {
+﻿namespace kampfpanzerin {
     partial class WelcomeDialog {
         /// <summary>
         /// Required designer variable.
@@ -45,6 +45,7 @@
             this.quitButton.TabIndex = 4;
             this.quitButton.Text = "Beat it Clive";
             this.quitButton.UseVisualStyleBackColor = false;
+            this.quitButton.Click += new System.EventHandler(this.quitButton_Click);
             // 
             // newButton
             // 
@@ -57,6 +58,7 @@
             this.newButton.TabIndex = 1;
             this.newButton.Text = "Create new project";
             this.newButton.UseVisualStyleBackColor = false;
+            this.newButton.Click += new System.EventHandler(this.newButton_Click);
             // 
             // button2
             // 
@@ -69,6 +71,7 @@
             this.button2.TabIndex = 2;
             this.button2.Text = "Import from BitBucket";
             this.button2.UseVisualStyleBackColor = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button3
             // 
@@ -81,6 +84,7 @@
             this.button3.TabIndex = 3;
             this.button3.Text = "Open Local";
             this.button3.UseVisualStyleBackColor = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // pictureBox1
             // 

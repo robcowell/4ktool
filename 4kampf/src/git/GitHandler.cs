@@ -80,7 +80,7 @@ namespace kampfpanzerin.git {
                 }
                 Logger.logf("pushed {0} to {1}", repo.Head.Name, repo.Head.Remote.Name);
 
-            } catch (NonFastForwardException e) {
+            } catch (NonFastForwardException) {
                 Logger.logf("Heavy Vibes Boss, someone edited the prod already, you need a pull here!");
             }
         }
@@ -166,9 +166,9 @@ namespace kampfpanzerin.git {
             try {
                 repo.Commit(DateTime.Now.ToString(), co);
                 Logger.logf("committed");
-            } catch (EmptyCommitException e) {
+            } catch (EmptyCommitException) {
                 Logger.logf("Nothing to commit");
-            } catch (UnmergedIndexEntriesException e) {
+            } catch (UnmergedIndexEntriesException) {
                 Logger.logf("Bad vibes boss, can't commit while not merged!");
             }
         }

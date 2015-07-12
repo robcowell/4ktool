@@ -37,21 +37,29 @@ namespace kampfpanzerin
             form.SetFullscreen();
             form.Show();    // Note: Not done in AppForm constructor to prevent SetFullscreen() etc causing ugly resizes
 
-            MessageBoxManager.Yes = "Create";
-            MessageBoxManager.No = "Open";
             MessageBoxManager.Register();
 
-            DialogResult d;
+            WelcomeDialog wd = new WelcomeDialog();
+            wd.StartPosition = FormStartPosition.CenterScreen;
+            WelcomeDialogResult d;
             do {
-                MessageBoxManager.Cancel = "Quit";
-                d = MessageBox.Show("Welcome to 4kampfpanzerin boss!\nShall we create a project or open one?", "4kampfpanzerin", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                if (d == DialogResult.Yes) {
-                    CreateProject();
-                } else if (d == DialogResult.No)
-                    OpenProject();
-                else
-                    Application.Exit();
-            } while (d != DialogResult.Cancel && currentProjectDirectory == null || currentProjectDirectory == "");
+                wd.ShowDialog();
+                d = wd.result;
+                switch (d) {
+                    case WelcomeDialogResult.CREATE:
+                        CreateProject();
+                        break;
+                    case WelcomeDialogResult.OPEN:
+                        OpenProject();
+                        break;
+                    case WelcomeDialogResult.IMPORT:
+                        // SKOMP: DO SOME SHIT HERE ;P
+                        break;
+                    case WelcomeDialogResult.QUIT:
+                        Environment.Exit(0);
+                        break; // C# is gay
+                }
+            } while (currentProjectDirectory == null || currentProjectDirectory == "");
 
             GraphicsManager gfx = GraphicsManager.GetInstance();
             Application.EnableVisualStyles();
