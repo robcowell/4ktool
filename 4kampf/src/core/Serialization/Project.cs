@@ -21,5 +21,7 @@ namespace kampfpanzerin.core.Serialization {
         public BitBucketData bitBucketSettings;
 
         public string gitRemote;
+
+        public string name;
     }
 }

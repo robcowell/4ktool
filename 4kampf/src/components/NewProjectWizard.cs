@@ -71,16 +71,22 @@ namespace kampfpanzerin.components {
             }
             this.ValidationCancels = true;
             if (this.ValidateChildren()) {
-                Project p = new Project();
-                NetworkCredential credentials;
-                credentials = BitBucketUtils.GetCredentials(BitBucketConfig);
-                if (credentials == null) {
-                    MessageBox.Show("No Credentials given", "4krampf", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Project = new Project();
+                Project.name = nameTxt.Text;
+                Project.useBitBucket = UseBitBucket;
+                if (UseBitBucket) {
+                    NetworkCredential credentials;
+                    credentials = BitBucketUtils.GetCredentials(BitBucketConfig);
+                    if (credentials == null) {
+                        MessageBox.Show("No Credentials given", "4krampf", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    } else {
+                        string result = git.GitHandler.CreateBitBucketRepo(BitBucketConfig, credentials);
+                        Project.bitBucketSettings = BitBucketConfig;
+                        Project.gitRemote = result;
+                        this.Project = Project;
+                        this.DialogResult = DialogResult.OK;
+                    }
                 } else {
-                    string result = git.GitHandler.CreateBitBucketRepo(BitBucketConfig, credentials);
-                    p.bitBucketSettings = BitBucketConfig;
-                    p.gitRemote = result;
-                    this.Project = p;
                     this.DialogResult = DialogResult.OK;
                 }
             }
