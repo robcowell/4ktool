@@ -13,6 +13,7 @@ using kampfpanzerin.src.core.Compiler;
 using kampfpanzerin.git;
 using kampfpanzerin.components;
 using kampfpanzerin.core.Serialization;
+using kampfpanzerin.log;
 
 namespace kampfpanzerin
 {
@@ -179,9 +180,14 @@ namespace kampfpanzerin
                     XmlSerializer serializer = new XmlSerializer(typeof(Project));
                     project = (Project) serializer.Deserialize(stream);
                     stream.Close();
+                    if (project.name == null) {
+                        project.name = dir.Substring(dir.LastIndexOf(@"\") + 1);
+                        SaveProjectSettings(project, dir);
+                    }
                 }
                 form.timeLine.SetProject(project);
                 GraphicsManager.GetInstance().updateProject(project);
+                Repo = new GitHandler(dir);
                 ApplySettings();
             }
 
@@ -223,20 +229,11 @@ namespace kampfpanzerin
         }
 
         private static void LoadShader() {
-            StreamReader sr = new StreamReader("vert.glsl");
-            form.edVert.Text = sr.ReadToEnd();
+            ReloadShaders();
+
             form.edVert.UndoRedo.EmptyUndoBuffer();
-            sr.Close();
-
-            sr = new StreamReader("frag.glsl");
-            form.edFrag.Text = sr.ReadToEnd();
             form.edFrag.UndoRedo.EmptyUndoBuffer();
-            sr.Close();
-
-            sr = new StreamReader("ppfrag.glsl");
-            form.edPost.Text = sr.ReadToEnd();
             form.edPost.UndoRedo.EmptyUndoBuffer();
-            sr.Close();
         }
 
         public static void MinifyShaders() {
@@ -383,7 +380,20 @@ namespace kampfpanzerin
                     stream.Close();
                 }
                 if (Repo != null) {
-                    Repo.Commit();
+                    if (Repo.Conflicts.Count() != 0) {
+                        ConflictsDialog dialog = new ConflictsDialog(Repo.Conflicts);
+                        dialog.ShowDialog();
+                        if (dialog.DialogResult == DialogResult.OK) {
+                            Repo.Resolve(dialog.Resolved);
+                            if (Repo.Conflicts.Count() > 0) {
+                                Logger.logf("Not all conflicts are resolved, boss.");
+                            } else {
+                                Repo.Commit();
+                            }
+                        }
+                    } else {
+                        Repo.Commit();
+                    }
                 }
             } catch (IOException) {
                 MessageBox.Show("Something went wrong when saving.", "4kampfpanzerin", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -500,6 +510,21 @@ namespace kampfpanzerin
                 Properties.Settings.Default.devCommandPromptLocation = d.FileName;
                 Properties.Settings.Default.Save();
             }
+        }
+
+        internal static void ReloadShaders() {
+
+            StreamReader sr = new StreamReader("vert.glsl");
+            form.edVert.Text = sr.ReadToEnd();
+            sr.Close();
+
+            sr = new StreamReader("frag.glsl");
+            form.edFrag.Text = sr.ReadToEnd();
+            sr.Close();
+
+            sr = new StreamReader("ppfrag.glsl");
+            form.edPost.Text = sr.ReadToEnd();
+            sr.Close();
         }
     }
 }

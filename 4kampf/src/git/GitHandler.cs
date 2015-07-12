@@ -15,6 +15,12 @@ namespace kampfpanzerin.git {
 
         private Repository repo;
 
+        public List<String> Conflicts {
+            get {
+                return new List<string>(repo.Index.Conflicts.Select(c => c.Ancestor.Path));
+            }
+        }
+
         public GitHandler(string folder) {
             repo = new Repository(folder);
         }
@@ -59,16 +65,23 @@ namespace kampfpanzerin.git {
                         Username = credentials.UserName,
                         Password = credentials.Password
                     });
-            if (!repo.Head.IsTracking) {
-                string refspec = string.Format("{0}:{1}",
-                         repo.Head.CanonicalName, repo.Head.CanonicalName);
-                repo.Network.Push(repo.Network.Remotes["origin"], refspec, options);
-                repo.Branches.Update(repo.Head, delegate(BranchUpdater updater) {
-                    updater.Remote = repo.Network.Remotes["origin"].Name;
-                    updater.UpstreamBranch = repo.Head.CanonicalName;
-                });
-            } else {
-                repo.Network.Push(repo.Head, options);
+
+            try {
+                if (!repo.Head.IsTracking) {
+                    string refspec = string.Format("{0}:{1}",
+                             repo.Head.CanonicalName, repo.Head.CanonicalName);
+                    repo.Network.Push(repo.Network.Remotes["origin"], refspec, options);
+                    repo.Branches.Update(repo.Head, delegate(BranchUpdater updater) {
+                        updater.Remote = repo.Network.Remotes["origin"].Name;
+                        updater.UpstreamBranch = repo.Head.CanonicalName;
+                    });
+                } else {
+                    repo.Network.Push(repo.Head, options);
+                }
+                Logger.logf("pushed {0} to {1}", repo.Head.Name, repo.Head.Remote.Name);
+
+            } catch (NonFastForwardException e) {
+                Logger.logf("Heavy Vibes Boss, someone edited the prod already, you need a pull here!");
             }
         }
 
@@ -111,17 +124,35 @@ namespace kampfpanzerin.git {
             LibGit2Sharp.PullOptions options = new LibGit2Sharp.PullOptions();
             options.MergeOptions = new MergeOptions();
             options.MergeOptions.CommitOnSuccess = true;
-            options.MergeOptions.FileConflictStrategy = CheckoutFileConflictStrategy.Diff3;
+            options.MergeOptions.FileConflictStrategy = CheckoutFileConflictStrategy.Merge;
             options.FetchOptions = new FetchOptions();
-            options.FetchOptions.CredentialsProvider
-            = new LibGit2Sharp.Handlers.CredentialsHandler(
+            options.FetchOptions.CredentialsProvider = new LibGit2Sharp.Handlers.CredentialsHandler(
                 (url, usernameFromUrl, types) =>
                     new UsernamePasswordCredentials() {
                         Username = credentials.UserName,
                         Password = credentials.Password
                     });
-            Signature s = new Signature(project.bitBucketSettings.UserName, "", DateTime.Now);
-            repo.Network.Pull(s, options);
+            Signature s = new Signature(project.bitBucketSettings.UserName, project.bitBucketSettings.UserName, DateTime.Now);
+            MergeResult r = repo.Network.Pull(s, options);
+            switch (r.Status) {
+                case MergeStatus.UpToDate:
+                    Logger.logf("up to date with {0}", repo.Head.Remote.Name);
+                    break;
+                case MergeStatus.FastForward:
+                    Logger.logf("pulled all changes from {0} (fast forward)", repo.Head.Remote.Name);
+                    break;
+                case MergeStatus.NonFastForward:
+                    Logger.logf("pulled all changes from {0} (merged, non fast forward)", repo.Head.Remote.Name);
+                    break;
+                case MergeStatus.Conflicts:
+                    Logger.logf("Conflict while pulling from {0}", repo.Head.Remote.Name);
+                    foreach (Conflict c in repo.Index.Conflicts) {
+                        Logger.logf(" * {0}", c.Ancestor.Path);
+                    }
+                    
+                    Logger.logf("Please resolve and commit", repo.Head.Remote.Name);
+                    break;
+            }
         }
 
         internal void Commit() {
@@ -132,7 +163,18 @@ namespace kampfpanzerin.git {
                     repo.Stage(e.FilePath);
                 }
             }
-            repo.Commit(DateTime.Now.ToString(), co);
+            try {
+                repo.Commit(DateTime.Now.ToString(), co);
+                Logger.logf("committed");
+            } catch (EmptyCommitException e) {
+                Logger.logf("Nothing to commit");
+            } catch (UnmergedIndexEntriesException e) {
+                Logger.logf("Bad vibes boss, can't commit while not merged!");
+            }
+        }
+
+        internal void Resolve(List<string> list) {
+            list.ForEach(repo.Stage);
         }
     }
 

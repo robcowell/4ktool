@@ -537,6 +537,7 @@ namespace kampfpanzerin {
                 return;
             }
             Kampfpanzerin.Repo.Pull(Kampfpanzerin.project, utils.BitBucketUtils.GetCredentials(Kampfpanzerin.project.bitBucketSettings));
+            Kampfpanzerin.ReloadShaders();
         }
 
         private bool CheckRemote() {

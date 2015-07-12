@@ -114,6 +114,12 @@
     <Compile Include="src\components\CredenditalPrompt.Designer.cs">
       <DependentUpon>CredenditalPrompt.cs</DependentUpon>
     </Compile>
+    <Compile Include="src\components\ConflictsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\components\ConflictsDialog.Designer.cs">
+      <DependentUpon>ConflictsDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="src\components\WelcomeDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -220,6 +226,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="src\components\CredenditalPrompt.resx">
       <DependentUpon>CredenditalPrompt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\components\ConflictsDialog.resx">
+      <DependentUpon>ConflictsDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="src\components\WelcomeDialog.resx">
       <DependentUpon>WelcomeDialog.cs</DependentUpon>
