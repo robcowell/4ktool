@@ -148,6 +148,7 @@
             this.nameTxt.Name = "nameTxt";
             this.nameTxt.Size = new System.Drawing.Size(277, 20);
             this.nameTxt.TabIndex = 1;
+            this.nameTxt.Text = "Kiss my bottom";
             this.nameTxt.TextChanged += new System.EventHandler(this.nameTxt_TextChanged);
             this.nameTxt.Validating += new System.ComponentModel.CancelEventHandler(this.nameTxt_Validating);
             // 
@@ -249,6 +250,7 @@
             this.slugTxt.Name = "slugTxt";
             this.slugTxt.Size = new System.Drawing.Size(277, 20);
             this.slugTxt.TabIndex = 2;
+            this.slugTxt.Text = "kiss-my-bottom";
             // 
             // label4
             // 
