@@ -100,7 +100,7 @@
             this.btnSave.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(187)))), ((int)(((byte)(187)))), ((int)(((byte)(187)))));
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSave.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.btnSave.Location = new System.Drawing.Point(321, 243);
+            this.btnSave.Location = new System.Drawing.Point(321, 245);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(61, 23);
             this.btnSave.TabIndex = 9;
@@ -116,7 +116,7 @@
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.btnCancel.Location = new System.Drawing.Point(388, 243);
+            this.btnCancel.Location = new System.Drawing.Point(388, 245);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(77, 23);
             this.btnCancel.TabIndex = 10;
@@ -287,7 +287,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
-            this.ClientSize = new System.Drawing.Size(480, 278);
+            this.ClientSize = new System.Drawing.Size(480, 280);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.slugTxt);
             this.Controls.Add(this.label4);
