@@ -115,7 +115,7 @@ namespace kampfpanzerin.git {
             if (response.StatusCode != HttpStatusCode.OK) {
                 return null;
             } else {
-                return string.Format("https://{0}@bitbucket.org/{1}/{2}.git", data.UserName, data.Team, data.RepoSlug);
+                return string.Format("https://bitbucket.org/{0}/{1}.git", data.Team, data.RepoSlug);
             }
 
         }

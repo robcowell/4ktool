@@ -16,9 +16,15 @@ namespace kampfpanzerin.components {
     public partial class NewProjectWizard : Form {
 
         bool ValidationCancels = false;
+        private BitBucketData bbd;
         public BitBucketData BitBucketConfig {
-            get;
-            private set;
+            get {
+                if (bbd != null) {
+                    return bbd;
+                } else {
+                    return new BitBucketSettings(this.slugTxt.Text).Data;
+                }
+            }
         }
 
         public Project Project {
@@ -58,7 +64,7 @@ namespace kampfpanzerin.components {
             } else if (!Directory.Exists(locationTxt.Text)) {
                 error = "Err that's not a folder mate ://";
                 e.Cancel = ValidationCancels;
-            } else if (Directory.EnumerateFiles(locationTxt.Text).Any()) {
+            } else if (Directory.Exists(locationTxt.Text + @"\" + nameTxt.Text)) {
                 error = "Dude! I can't create a project in a non-empty folder, man!";
                 e.Cancel = ValidationCancels;
             }
@@ -81,6 +87,12 @@ namespace kampfpanzerin.components {
                         MessageBox.Show("No Credentials given", "4krampf", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     } else {
                         string result = git.GitHandler.CreateBitBucketRepo(BitBucketConfig, credentials);
+                        if (result == null) {
+                            MessageBox.Show("Could not create repo, either it exists or credentials are wrong", "4krampf", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            DialogResult = DialogResult.None;
+                            BitBucketUtils.ClearCredentials(BitBucketConfig);
+                            return;
+                        }
                         Project.bitBucketSettings = BitBucketConfig;
                         Project.gitRemote = result;
                         this.Project = Project;
@@ -104,7 +116,7 @@ namespace kampfpanzerin.components {
             BitBucketSettings frm = new BitBucketSettings(nameTxt.Text);
             frm.ShowDialog();
             if (frm.DialogResult == DialogResult.OK) {
-                BitBucketConfig = frm.Data;
+                bbd = frm.Data;
             }
             DialogResult = DialogResult.None;
         }

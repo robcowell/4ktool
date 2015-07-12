@@ -16,6 +16,9 @@ namespace kampfpanzerin.components {
         public BitBucketSettings(string slug) {
             this.slug = slug;
             InitializeComponent();
+            this.userName.Text = Properties.Settings.Default.gitAuthor;
+            this.team.Text = Properties.Settings.Default.bbTeam;
+            this.textBox3.Text = Properties.Settings.Default.gitEmail;
         }
 
         public BitBucketData Data {
@@ -26,6 +29,13 @@ namespace kampfpanzerin.components {
                 bbd.UserName = this.userName.Text;
                 return bbd;
             }
+        }
+
+        private void btnSave_Click(object sender, EventArgs e) {
+            DialogResult = DialogResult.OK;
+            Properties.Settings.Default.gitAuthor = this.userName.Text;
+            Properties.Settings.Default.bbTeam = this.team.Text;
+            Properties.Settings.Default.gitEmail = this.textBox3.Text;
         }
     }
 }

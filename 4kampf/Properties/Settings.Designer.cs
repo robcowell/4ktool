@@ -215,5 +215,17 @@ namespace kampfpanzerin.Properties {
                 this["gitEmail"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string bbTeam {
+            get {
+                return ((string)(this["bbTeam"]));
+            }
+            set {
+                this["bbTeam"] = value;
+            }
+        }
     }
 }

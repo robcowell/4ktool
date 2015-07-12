@@ -73,6 +73,7 @@
             this.btnSave.TabIndex = 11;
             this.btnSave.Text = "Abfahrt";
             this.btnSave.UseVisualStyleBackColor = false;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // label2
             // 

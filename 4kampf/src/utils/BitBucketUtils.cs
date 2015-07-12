@@ -47,5 +47,12 @@ namespace kampfpanzerin.utils {
             }
             return credentials;
         }
+
+        internal static void ClearCredentials(BitBucketData BitBucketConfig) {
+            Credential cred = new Credential(BitBucketConfig.UserName, "", BitBucketConfig.Team + ".bitbucket");
+            if (cred.Load()) {
+                cred.Delete();
+            }
+        }
     }
 }
