@@ -55,6 +55,7 @@ namespace kampfpanzerin.components {
             var bbc = new BitBucketData();
             bbc.Team = teamTxt.Text;
             bbc.UserName = userNameTxt.Text;
+            repoList.Items.Clear();
             var repos = GitHandler.GetBitBucketRepos(teamTxt.Text, BitBucketUtils.GetCredentials(bbc));
             foreach (var item in repos) {
                 repoList.Items.Add(item);
