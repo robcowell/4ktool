@@ -14,6 +14,7 @@ using kampfpanzerin.git;
 using kampfpanzerin.components;
 using kampfpanzerin.core.Serialization;
 using kampfpanzerin.log;
+using kampfpanzerin.utils;
 
 namespace kampfpanzerin
 {
@@ -53,6 +54,7 @@ namespace kampfpanzerin
                         OpenProject();
                         break;
                     case WelcomeDialogResult.IMPORT:
+                        ImportProject();
                         // SKOMP: DO SOME SHIT HERE ;P
                         break;
                     case WelcomeDialogResult.QUIT:
@@ -69,6 +71,21 @@ namespace kampfpanzerin
                 form.FrameUpdate();
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
+            }
+        }
+
+        private static void ImportProject() {
+            ImportDialog d = new ImportDialog();
+            d.ShowDialog();
+            if (d.DialogResult == DialogResult.OK) {
+                var bbd = new kampfpanzerin.core.Serialization.BitBucketData();
+                bbd.RepoSlug = d.Repo.Slug;
+                bbd.Team = d.Team;
+                bbd.UserName = d.UserName;
+                var targetPath = d.ProjectLocation + @"\" + d.Repo.Slug;
+                GitHandler.Clone(d.Repo, targetPath, BitBucketUtils.GetCredentials(bbd));
+                OpenProject(targetPath);
+                
             }
         }
 

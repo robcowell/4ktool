@@ -54,5 +54,10 @@ namespace kampfpanzerin.utils {
                 cred.Delete();
             }
         }
+
+        public static string GetParentUriString(this string uri) {
+            var uriP = new Uri(uri);
+            return uriP.Segments.Last();
+        }
     }
 }

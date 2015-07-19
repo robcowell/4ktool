@@ -120,6 +120,12 @@
     <Compile Include="src\components\ConflictsDialog.Designer.cs">
       <DependentUpon>ConflictsDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="src\components\ImportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\components\ImportDialog.Designer.cs">
+      <DependentUpon>ImportDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="src\components\WelcomeDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -150,6 +156,7 @@
     <Compile Include="src\core\Compiler\BuildUtils.cs" />
     <Compile Include="src\core\Camera\CamAutomationProxy.cs" />
     <Compile Include="src\core\Compiler\TrackerCompiler.cs" />
+    <Compile Include="src\git\RepoDescriptor.cs" />
     <Compile Include="src\log\Logger.cs" />
     <Compile Include="src\utils\BitBucketUtils.cs" />
     <Compile Include="src\utils\NativeLoadHelper.cs" />
@@ -229,6 +236,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="src\components\ConflictsDialog.resx">
       <DependentUpon>ConflictsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\components\ImportDialog.resx">
+      <DependentUpon>ImportDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="src\components\WelcomeDialog.resx">
       <DependentUpon>WelcomeDialog.cs</DependentUpon>

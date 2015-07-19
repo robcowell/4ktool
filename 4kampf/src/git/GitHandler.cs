@@ -120,6 +120,48 @@ namespace kampfpanzerin.git {
 
         }
 
+        public static IEnumerable<RepoDescriptor> GetBitBucketRepos(string team, NetworkCredential credentials) {
+            RestClient r = new RestClient("https://bitbucket.org/");
+            r.Authenticator = new HttpBasicAuthenticator(credentials.UserName, credentials.Password);
+            RestRequest request = new RestRequest("api/2.0/repositories/" + team, Method.GET);
+            string t = request.ToString();
+            IRestResponse response = r.Get(request);
+            IDictionary<string, object> o = (IDictionary<string, object>)SimpleJson.DeserializeObject(response.Content);
+            if (response.StatusCode != HttpStatusCode.OK) {
+                return null;
+            } else {
+                IEnumerable<RepoDescriptor> ret = ((RestSharp.JsonArray)o["values"]).Select(e0 => {
+                    var e = (JsonObject)e0;
+                    var rD = new RepoDescriptor();
+                    rD.Name = e["name"].ToString();
+                    var links = ((IDictionary<string, object>)e["links"]);
+                    var self = ((JsonObject)links["self"]);
+                    rD.Slug = self["href"].ToString().GetParentUriString();
+                    rD.Clone = ((JsonObject)((JsonArray)links["clone"]).Find(
+                        cu => {
+                            return (((JsonObject)cu)["name"]).Equals("https");
+                        }))["href"].ToString();
+                    rD.Description = e["description"].ToString();
+                    return rD;
+                });
+                return ret;
+            }
+
+        }
+
+        public static string Clone(RepoDescriptor desc, string path, NetworkCredential credentials) {
+            var options = new CloneOptions();
+            options.CredentialsProvider = new LibGit2Sharp.Handlers.CredentialsHandler(
+                (url, usernameFromUrl, types) =>
+                    new UsernamePasswordCredentials() {
+                        Username = credentials.UserName,
+                        Password = credentials.Password
+                    });
+            var dir = Repository.Clone(desc.Clone, path, options);
+            return dir;
+        }
+        
+
         internal void Pull(Project project, NetworkCredential credentials) {
             LibGit2Sharp.PullOptions options = new LibGit2Sharp.PullOptions();
             options.MergeOptions = new MergeOptions();

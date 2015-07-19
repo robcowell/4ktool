@@ -34,6 +34,7 @@ namespace kampfpanzerin.components {
 
         public NewProjectWizard() {
             InitializeComponent();
+            this.locationTxt.Text = Properties.Settings.Default.lastProjectLocation;
         }
 
         private void button2_Click(object sender, EventArgs e) {
@@ -77,6 +78,8 @@ namespace kampfpanzerin.components {
             }
             this.ValidationCancels = true;
             if (this.ValidateChildren()) {
+
+                Cursor.Current = Cursors.WaitCursor;
                 Project = new Project();
                 Project.name = nameTxt.Text;
                 Project.useBitBucket = UseBitBucket;
@@ -91,6 +94,7 @@ namespace kampfpanzerin.components {
                             MessageBox.Show("Could not create repo, either it exists or credentials are wrong", "4krampf", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             DialogResult = DialogResult.None;
                             BitBucketUtils.ClearCredentials(BitBucketConfig);
+                            Cursor.Current = Cursors.Default;
                             return;
                         }
                         Project.bitBucketSettings = BitBucketConfig;
@@ -103,6 +107,7 @@ namespace kampfpanzerin.components {
                 }
             }
             this.ValidationCancels = false;
+            Cursor.Current = Cursors.Default;
         }
 
 
