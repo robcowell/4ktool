@@ -286,9 +286,12 @@ namespace kampfpanzerin
             string vertText = form.edVert.Text;
             string fragText = form.edFrag.Text;
             string syncCode = TrackerCompiler.CompileSyncTrackerCode(form.timeLine.syncBars);
+            string syncVars = TrackerCompiler.SyncVars(form.timeLine.syncBars);
             string syncRest = TrackerCompiler.GetInterpolationCode(form.timeLine.syncBars, form.timeLine.camBars);
             vertText = vertText.Replace("//#SYNCCODE#", syncRest + syncCode);
-            fragText = fragText.Replace("//#SYNCCODE#", syncRest + syncCode);
+            vertText = vertText.Replace("//#SYNCVARS#", syncRest + syncVars);
+            fragText = fragText.Replace("//#SYNCCODE#", syncCode);
+            fragText = fragText.Replace("//#SYNCVARS#", syncRest + syncVars);
 
             vertText = vertText.Replace("CAMVARS", "uniform vec3 cp, cr;");
             
@@ -387,6 +390,8 @@ namespace kampfpanzerin
             sw.Write(form.edPost.Text);
             sw.Close();
             form.timeLine.SaveData("sync.dat");
+
+            BuildShader();
 
             project.camBars = form.timeLine.camBars;
             project.syncBars = form.timeLine.syncBars;
@@ -502,7 +507,7 @@ namespace kampfpanzerin
             bmp.UnlockBits(data);
 
             bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
-            bmp.Save("screenshot.jpg");
+            bmp.Save(currentProjectDirectory + "/screenshot.png", System.Drawing.Imaging.ImageFormat.Png);
             form.ShowLog("Screenshot saved \\o/");
         }
 

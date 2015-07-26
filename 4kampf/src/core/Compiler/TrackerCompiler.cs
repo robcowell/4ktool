@@ -11,11 +11,6 @@ namespace kampfpanzerin.src.core.Compiler {
             }
 
             string res = "";
-            if (bars.Count == 1)
-                res += "vec3 sn;";
-            else
-                res += "vec3 sn[" + bars.Count + "];";
-
             int i = 0;
             foreach (TimelineBar bar in bars) {
                 if (bar.events.Count == 0)
@@ -30,6 +25,13 @@ namespace kampfpanzerin.src.core.Compiler {
                 res += current;
             }
             return res;
+        }
+
+        public static string SyncVars(List<TimelineBar> bars) {
+            if (bars.Count == 1)
+                return "\r\nvec3 sn;";
+            else
+                return "\r\nvec3 sn[" + bars.Count + "];";
         }
 
         public static string CompileTrack(TimelineBar bar) {
