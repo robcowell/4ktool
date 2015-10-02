@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Net;
 using Simple.CredentialManager;
 using kampfpanzerin.core.Serialization;
+using System.IO;
 
 namespace kampfpanzerin.utils {
     public static class BitBucketUtils {
@@ -19,6 +20,12 @@ namespace kampfpanzerin.utils {
             str = str.Substring(0, str.Length <= 45 ? str.Length : 45).Trim();
             str = Regex.Replace(str, @"\s", "-"); // hyphens   
             return str;
+        }
+
+        public static string NormalizePath(this string path) {
+            return Path.GetFullPath(new Uri(path).LocalPath)
+                       .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                       .ToUpperInvariant();
         }
 
         public static string RemoveAccent(this string txt) {

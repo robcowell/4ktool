@@ -27,7 +27,7 @@ namespace kampfpanzerin.git {
 
         public static GitHandler Init(string folder, Project p, NetworkCredential credentials = null) {
 
-
+            folder = folder.NormalizePath();
             Repository.Init(folder, folder);
             var gitRepo = new Repository(folder);
             // Call EnumerateFiles in a foreach-loop.
