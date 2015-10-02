@@ -57,6 +57,9 @@ namespace kampfpanzerin.components {
             if (nameTxt.Text.Length == 0) {
                 error = "Please enter a name";
                 e.Cancel = ValidationCancels;
+            } else if (Directory.Exists(locationTxt.Text + @"\" + nameTxt.Text)) {
+                error = "Dude! That project exists, you should finnish stuff before before starting a new one, man!";
+                e.Cancel = ValidationCancels;
             }
             errorProvider1.SetError((Control)sender, error);
         }
@@ -77,9 +80,6 @@ namespace kampfpanzerin.components {
                 e.Cancel = ValidationCancels;
             } else if (!Directory.Exists(locationTxt.Text)) {
                 error = "Err that's not a folder mate ://";
-                e.Cancel = ValidationCancels;
-            } else if (Directory.Exists(locationTxt.Text + @"\" + nameTxt.Text)) {
-                error = "Dude! I can't create a project in a non-empty folder, man!";
                 e.Cancel = ValidationCancels;
             }
             errorProvider2.SetError((Control)sender, error);
