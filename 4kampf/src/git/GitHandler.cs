@@ -218,21 +218,6 @@ namespace kampfpanzerin.git {
         internal void Resolve(List<string> list) {
             list.ForEach(repo.Stage);
         }
-
-        internal static string GetUsername() {
-            Configuration c = new Configuration();
-            if (c.Get<string>("user.name").Value.Equals("unknown")) {
-                return null;
-            } else {
-                return c.Get<string>("user.name").Value;
-            }
-        }
-
-        internal static void SetUsername(string name) {
-            Configuration c = new Configuration();
-            c.Set<string>("user.name", name, ConfigurationLevel.Global);
-            c.Dispose();
-        }
     }
 
 }
