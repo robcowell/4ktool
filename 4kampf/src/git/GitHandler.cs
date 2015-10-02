@@ -22,7 +22,7 @@ namespace kampfpanzerin.git {
         }
 
         public GitHandler(string folder) {
-            repo = new Repository(folder);
+            repo = new Repository(folder.NormalizePath());
         }
 
         public static GitHandler Init(string folder, Project p, NetworkCredential credentials = null) {
