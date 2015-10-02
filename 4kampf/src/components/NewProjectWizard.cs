@@ -76,6 +76,7 @@ namespace kampfpanzerin.components {
             if (BitBucketConfig != null) {
                 BitBucketConfig.RepoSlug = slugTxt.Text;
             }
+
             this.ValidationCancels = true;
             if (this.ValidateChildren()) {
 
@@ -83,12 +84,21 @@ namespace kampfpanzerin.components {
                 Project = new Project();
                 Project.name = nameTxt.Text;
                 Project.useBitBucket = UseBitBucket;
+                NetworkCredential credentials;
+                credentials = BitBucketUtils.GetCredentials(BitBucketConfig);
+                if (credentials == null) {
+                    MessageBox.Show("No Credentials given", "4krampf", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    this.DialogResult = DialogResult.None;
+                    return;
+                } 
+                string username = git.GitHandler.GetUsername();
+                if (username == null) {
+                    if (BitBucketConfig != null && BitBucketConfig.UserName != null && !BitBucketConfig.UserName.Equals("")) {
+                        git.GitHandler.SetUsername(BitBucketConfig.UserName);
+                    }
+                }
                 if (UseBitBucket) {
-                    NetworkCredential credentials;
-                    credentials = BitBucketUtils.GetCredentials(BitBucketConfig);
-                    if (credentials == null) {
-                        MessageBox.Show("No Credentials given", "4krampf", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    } else {
+                    
                         string result = git.GitHandler.CreateBitBucketRepo(BitBucketConfig, credentials);
                         if (result == null) {
                             MessageBox.Show("Could not create repo, either it exists or credentials are wrong", "4krampf", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -101,7 +111,7 @@ namespace kampfpanzerin.components {
                         Project.gitRemote = result;
                         this.Project = Project;
                         this.DialogResult = DialogResult.OK;
-                    }
+                    
                 } else {
                     this.DialogResult = DialogResult.OK;
                 }
