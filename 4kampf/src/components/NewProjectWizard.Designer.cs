@@ -45,6 +45,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.UserName = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider3)).BeginInit();
@@ -76,7 +78,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.ForeColor = System.Drawing.Color.White;
-            this.label5.Location = new System.Drawing.Point(12, 175);
+            this.label5.Location = new System.Drawing.Point(12, 201);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(74, 13);
             this.label5.TabIndex = 4;
@@ -88,7 +90,7 @@
             this.locationTxt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.locationTxt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.locationTxt.ForeColor = System.Drawing.Color.White;
-            this.locationTxt.Location = new System.Drawing.Point(146, 144);
+            this.locationTxt.Location = new System.Drawing.Point(121, 144);
             this.locationTxt.Name = "locationTxt";
             this.locationTxt.Size = new System.Drawing.Size(277, 20);
             this.locationTxt.TabIndex = 3;
@@ -100,10 +102,10 @@
             this.btnSave.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(187)))), ((int)(((byte)(187)))), ((int)(((byte)(187)))));
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSave.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.btnSave.Location = new System.Drawing.Point(323, 245);
+            this.btnSave.Location = new System.Drawing.Point(298, 259);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(61, 23);
-            this.btnSave.TabIndex = 9;
+            this.btnSave.TabIndex = 10;
             this.btnSave.Text = "Scheisse";
             this.btnSave.UseVisualStyleBackColor = false;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -116,10 +118,10 @@
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.btnCancel.Location = new System.Drawing.Point(390, 245);
+            this.btnCancel.Location = new System.Drawing.Point(365, 259);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(77, 23);
-            this.btnCancel.TabIndex = 10;
+            this.btnCancel.TabIndex = 11;
             this.btnCancel.Text = "Geh Kacken";
             this.btnCancel.UseVisualStyleBackColor = false;
             // 
@@ -129,7 +131,7 @@
             this.chooseFolderButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(187)))), ((int)(((byte)(187)))), ((int)(((byte)(187)))));
             this.chooseFolderButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chooseFolderButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.chooseFolderButton.Location = new System.Drawing.Point(438, 142);
+            this.chooseFolderButton.Location = new System.Drawing.Point(413, 142);
             this.chooseFolderButton.Margin = new System.Windows.Forms.Padding(0);
             this.chooseFolderButton.Name = "chooseFolderButton";
             this.chooseFolderButton.Size = new System.Drawing.Size(27, 23);
@@ -144,7 +146,7 @@
             this.nameTxt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.nameTxt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.nameTxt.ForeColor = System.Drawing.Color.White;
-            this.nameTxt.Location = new System.Drawing.Point(146, 92);
+            this.nameTxt.Location = new System.Drawing.Point(121, 92);
             this.nameTxt.Name = "nameTxt";
             this.nameTxt.Size = new System.Drawing.Size(277, 20);
             this.nameTxt.TabIndex = 1;
@@ -167,10 +169,10 @@
             this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox1.AutoSize = true;
             this.checkBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.checkBox1.Location = new System.Drawing.Point(146, 176);
+            this.checkBox1.Location = new System.Drawing.Point(121, 202);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(12, 11);
-            this.checkBox1.TabIndex = 5;
+            this.checkBox1.TabIndex = 6;
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.Validating += new System.ComponentModel.CancelEventHandler(this.checkBox1_Validating);
             // 
@@ -181,10 +183,10 @@
             this.bitbucketSettingsButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.bitbucketSettingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bitbucketSettingsButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.bitbucketSettingsButton.Location = new System.Drawing.Point(340, 170);
+            this.bitbucketSettingsButton.Location = new System.Drawing.Point(315, 196);
             this.bitbucketSettingsButton.Name = "bitbucketSettingsButton";
             this.bitbucketSettingsButton.Size = new System.Drawing.Size(125, 23);
-            this.bitbucketSettingsButton.TabIndex = 6;
+            this.bitbucketSettingsButton.TabIndex = 7;
             this.bitbucketSettingsButton.Text = "Customize Settings...";
             this.bitbucketSettingsButton.UseVisualStyleBackColor = false;
             this.bitbucketSettingsButton.Click += new System.EventHandler(this.bitbucketSettingsButton_Click);
@@ -193,7 +195,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(13, 202);
+            this.label3.Location = new System.Drawing.Point(13, 228);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(73, 13);
             this.label3.TabIndex = 2;
@@ -205,10 +207,10 @@
             this.clinkster.AutoSize = true;
             this.clinkster.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.clinkster.ForeColor = System.Drawing.Color.White;
-            this.clinkster.Location = new System.Drawing.Point(146, 200);
+            this.clinkster.Location = new System.Drawing.Point(121, 226);
             this.clinkster.Name = "clinkster";
             this.clinkster.Size = new System.Drawing.Size(64, 17);
-            this.clinkster.TabIndex = 7;
+            this.clinkster.TabIndex = 8;
             this.clinkster.Text = "Clinkster";
             this.clinkster.UseVisualStyleBackColor = true;
             // 
@@ -220,10 +222,10 @@
             this._4klang.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this._4klang.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this._4klang.ForeColor = System.Drawing.Color.White;
-            this._4klang.Location = new System.Drawing.Point(243, 200);
+            this._4klang.Location = new System.Drawing.Point(218, 226);
             this._4klang.Name = "_4klang";
             this._4klang.Size = new System.Drawing.Size(56, 17);
-            this._4klang.TabIndex = 8;
+            this._4klang.TabIndex = 9;
             this._4klang.TabStop = true;
             this._4klang.Text = "4klang";
             this._4klang.UseVisualStyleBackColor = true;
@@ -246,7 +248,7 @@
             this.slugTxt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.slugTxt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.slugTxt.ForeColor = System.Drawing.Color.White;
-            this.slugTxt.Location = new System.Drawing.Point(146, 118);
+            this.slugTxt.Location = new System.Drawing.Point(121, 118);
             this.slugTxt.Name = "slugTxt";
             this.slugTxt.Size = new System.Drawing.Size(277, 20);
             this.slugTxt.TabIndex = 2;
@@ -282,12 +284,36 @@
             this.pictureBox1.TabIndex = 16;
             this.pictureBox1.TabStop = false;
             // 
+            // UserName
+            // 
+            this.UserName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.UserName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.UserName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.UserName.ForeColor = System.Drawing.Color.White;
+            this.UserName.Location = new System.Drawing.Point(121, 170);
+            this.UserName.Name = "UserName";
+            this.UserName.Size = new System.Drawing.Size(277, 20);
+            this.UserName.TabIndex = 5;
+            this.UserName.Validating += new System.ComponentModel.CancelEventHandler(this.userName_Validating);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.ForeColor = System.Drawing.Color.White;
+            this.label8.Location = new System.Drawing.Point(13, 173);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(72, 13);
+            this.label8.TabIndex = 17;
+            this.label8.Text = "Git user name";
+            // 
             // NewProjectWizard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
-            this.ClientSize = new System.Drawing.Size(480, 280);
+            this.ClientSize = new System.Drawing.Size(455, 294);
+            this.Controls.Add(this.UserName);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.slugTxt);
             this.Controls.Add(this.label4);
@@ -342,5 +368,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox UserName;
+        private System.Windows.Forms.Label label8;
     }
 }

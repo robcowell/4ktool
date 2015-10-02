@@ -224,7 +224,8 @@ namespace kampfpanzerin
             currentProjectDirectory = dir;
             Directory.SetCurrentDirectory(currentProjectDirectory);
             form.Text = "4kampf | TRSI" + " " + currentProjectDirectory;
-            Properties.Settings.Default.lastProjectLocation = currentProjectDirectory;
+            DirectoryInfo parentDir = Directory.GetParent(currentProjectDirectory);
+            Properties.Settings.Default.lastProjectLocation = parentDir.FullName;
             Properties.Settings.Default.Save();
 
             LoadShader();

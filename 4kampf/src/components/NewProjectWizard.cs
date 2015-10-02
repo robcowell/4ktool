@@ -35,6 +35,10 @@ namespace kampfpanzerin.components {
         public NewProjectWizard() {
             InitializeComponent();
             this.locationTxt.Text = Properties.Settings.Default.lastProjectLocation;
+            this.UserName.Text = Properties.Settings.Default.UserName;
+            if (this.UserName.Text == null || this.UserName.Text.Length == 0) {
+                this.UserName.Text = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+            }
         }
 
         private void button2_Click(object sender, EventArgs e) {
@@ -52,6 +56,15 @@ namespace kampfpanzerin.components {
             string error = null;
             if (nameTxt.Text.Length == 0) {
                 error = "Please enter a name";
+                e.Cancel = ValidationCancels;
+            }
+            errorProvider1.SetError((Control)sender, error);
+        }
+
+        private void userName_Validating(object sender, CancelEventArgs e) {
+            string error = null;
+            if (UserName.Text.Length == 0) {
+                error = "Please enter a user name";
                 e.Cancel = ValidationCancels;
             }
             errorProvider1.SetError((Control)sender, error);
@@ -108,6 +121,8 @@ namespace kampfpanzerin.components {
             }
             this.ValidationCancels = false;
             Cursor.Current = Cursors.Default;
+            Properties.Settings.Default.UserName = this.UserName.Text;
+            git.GitHandler.SetUsername(this.UserName.Text);
         }
 
 
@@ -141,5 +156,6 @@ namespace kampfpanzerin.components {
             }
             errorProvider2.SetError((Control)sender, error);
         }
+
     }
 }

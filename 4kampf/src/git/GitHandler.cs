@@ -218,6 +218,12 @@ namespace kampfpanzerin.git {
         internal void Resolve(List<string> list) {
             list.ForEach(repo.Stage);
         }
+
+        internal static void SetUsername(string name) {
+            Configuration c = new Configuration();
+            c.Set<string>("user.name", name, ConfigurationLevel.Global);
+            c.Dispose();
+        }
     }
 
 }
