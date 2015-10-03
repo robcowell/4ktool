@@ -76,8 +76,8 @@ namespace kampfpanzerin
                             automation = new CamAutomationProxy(d, AppForm.GetInstance().klangPlayer);
                         } else if(mode == CameraMode.AUTOMATED) {
 
-                            this.position = automation.Pos;
-                            this.rotation = automation.Rot;
+                            this.position = automation.Pos.Clone();
+                            this.rotation = automation.Rot.Clone();
                             UpdateVectors();
                         }
                         mode = value;

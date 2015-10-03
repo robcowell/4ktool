@@ -15,7 +15,16 @@ namespace kampfpanzerin {
     [Serializable]
     public class TimelineBarEvent : IComparable {
         public float time;
-        public Vector3f value;
+
+        private Vector3f Value;
+        public Vector3f value {
+            get{
+                return Value;
+            }
+            set {
+                this.Value = value;
+            }
+        }
         public BarEventType type;
 
         public int CompareTo(Object obj) {
