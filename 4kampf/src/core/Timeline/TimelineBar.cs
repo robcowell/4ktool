@@ -54,14 +54,17 @@ namespace kampfpanzerin {
                     be1 = be;
             }
 
-            if (be1 == null)
+            if (be1 == null) {
+                if (be2 != null) {
+                    return be2.value;
+                }
                 return Vector3f.INVALID;
-
+            }
             if (be1.type == BarEventType.HOLD)
                 return be1.value;
 
             if (be2 == null)
-                return Vector3f.INVALID;
+                return be1.value;
 
             float amount = (t - be1.time) / (be2.time - be1.time);
             if (be1.type == BarEventType.SMOOTH)
