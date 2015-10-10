@@ -235,6 +235,9 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>.\bin/Release/i4k_OGLShader_vc2010.bsc</OutputFile>
     </Bscmake>
+    <YASM>
+      <IncludePaths>../;../clinksterwriter/</IncludePaths>
+    </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Packed Release (Fast)|Win32'">
     <Midl>
@@ -297,6 +300,9 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>.\bin/Release/i4k_OGLShader_vc2010.bsc</OutputFile>
     </Bscmake>
+    <YASM>
+      <IncludePaths>../;../clinksterwriter/</IncludePaths>
+    </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Unpacked release|Win32'">
     <Midl>
