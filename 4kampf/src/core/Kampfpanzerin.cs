@@ -432,6 +432,15 @@ namespace kampfpanzerin
 
         private static void ExportHeader() {
             string syncCode = TrackerCompiler.CompileSyncTrackerCode(form.timeLine.syncBars);
+            string vertText = form.edVert.Text;
+            string fragText = form.edFrag.Text;
+            //string syncCode = TrackerCompiler.CompileSyncTrackerCode(form.timeLine.syncBars);
+            string syncVars = TrackerCompiler.SyncVars(form.timeLine.syncBars);
+            string syncRest = TrackerCompiler.GetInterpolationCode(form.timeLine.syncBars, form.timeLine.camBars);
+            vertText = vertText.Replace("//#SYNCCODE#", syncRest + syncCode);
+            vertText = vertText.Replace("//#SYNCVARS#", syncRest + syncVars);
+            fragText = fragText.Replace("//#SYNCCODE#", syncCode);
+            fragText = fragText.Replace("//#SYNCVARS#", syncRest + syncVars);
             if (Properties.Settings.Default.usePP) {
                 BuildUtils.DoExportHeader(
                     project,
@@ -441,7 +450,7 @@ namespace kampfpanzerin
                     form.edFrag.Text,
                     form.edPost.Text);
             } else {
-                BuildUtils.DoExportHeader(project, form.klangPlayer.GetDuration(), form.timeLine.syncBars, form.edVert.Text, form.edFrag.Text);
+                BuildUtils.DoExportHeader(project, form.klangPlayer.GetDuration(), form.timeLine.syncBars, vertText, fragText);
             }
         }
 
