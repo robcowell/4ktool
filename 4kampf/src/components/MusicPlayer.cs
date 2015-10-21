@@ -144,17 +144,14 @@ namespace kampfpanzerin {
             pbBeat.Visible = (f % (1.0f / ((float)bpm / 60.0f)) < 0.1f);
         }
 
-        public void SetLabels(string fps, string time, string cam) {
+        public void SetLabels(string fps, string time) {
             lblFPS.Text = fps;
             lblTime.Text = time;
-            if (cam != "")
-                lblCam.Text = cam;
         }
 
         public void ApplySettings(Project p) {
             this.project = p;
             vu.Visible = p.use4klangEnv;
-            lblCam.Visible = Properties.Settings.Default.enableCamControls;
             mediaPlayer.settings.setMode("Loop", Properties.Settings.Default.enableLooping);
         }
 

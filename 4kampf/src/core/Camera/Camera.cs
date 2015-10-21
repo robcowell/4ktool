@@ -10,8 +10,6 @@ namespace kampfpanzerin
 {
     public enum CameraMode
     {
-        WALK,
-        LOCKFLY,
         FREEFLY,
         AUTOMATED
     }
@@ -90,7 +88,7 @@ namespace kampfpanzerin
 
         public Camera() {
             Reset();
-            mode = CameraMode.FREEFLY ;
+            mode = CameraMode.FREEFLY;
         }
 
         public bool CheckAndResetDirty() {
@@ -109,8 +107,8 @@ namespace kampfpanzerin
         }
 
         public void UpdateVectors() {
-            if (Rotation.x < -90) Rotation.x = -90;
-            if (Rotation.x > 90) Rotation.x = 90;
+            if (Rotation.x < -Math.PI / 2.0) Rotation.x = (float)-Math.PI / 2.0f;
+            if (Rotation.x > Math.PI / 2.0) Rotation.x = (float)Math.PI / 2.0f;
 
             Gl.glMatrixMode(Gl.GL_MODELVIEW);
             Gl.glLoadIdentity();
@@ -128,34 +126,19 @@ namespace kampfpanzerin
 
         public void Move(float amount) {
             GraphicsManager gfx = GraphicsManager.GetInstance();
-
-            if (mode == CameraMode.WALK || mode == CameraMode.LOCKFLY) {
-                position.x += (float)Math.Sin(rotation.y) * amount;
-                position.z += (float)Math.Cos(rotation.y) * amount;
-            } else if (mode == CameraMode.FREEFLY)
-                position -= (forward * CAM_INVERT_X * amount);
-
+            position -= (forward * CAM_INVERT_X * amount);
             dirty = true;
         }
 
         public void Strafe(float amount) {
             GraphicsManager gfx = GraphicsManager.GetInstance();
-
-            if (mode == CameraMode.WALK || mode == CameraMode.LOCKFLY) {
-                position.x += (float)Math.Sin((rotation.y + Math.PI / 2)) * amount;
-                position.z += (float)Math.Cos((rotation.y + Math.PI / 2)) * amount;
-            } else if (mode == CameraMode.FREEFLY)
-                position -= (right * CAM_INVERT_X * amount);
-
+            position -= (right * CAM_INVERT_X * amount);
             dirty = true;
         }
 
         public void Crane(float amount) {
             GraphicsManager gfx = GraphicsManager.GetInstance();
-
-            if (mode == CameraMode.LOCKFLY || mode == CameraMode.FREEFLY)
-                position.y += amount;
-
+            position.y += amount;
             dirty = true;
         }
 

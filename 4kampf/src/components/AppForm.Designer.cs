@@ -34,6 +34,10 @@
             this.createToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.pullFromBitBucketToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pushToBitbucketToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.openProjectLocationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToVSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cleanToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -76,13 +80,11 @@
             this.splitMainLR = new System.Windows.Forms.SplitContainer();
             this.splitLHS = new System.Windows.Forms.SplitContainer();
             this.pnlCam = new System.Windows.Forms.Panel();
-            this.walkButton = new System.Windows.Forms.Button();
             this.stepUpButton = new System.Windows.Forms.Button();
             this.btnCamReset = new System.Windows.Forms.Button();
             this.freeFlyButton = new System.Windows.Forms.Button();
             this.camAutoButton = new System.Windows.Forms.Button();
             this.stepDownButton = new System.Windows.Forms.Button();
-            this.lockFlyButton = new System.Windows.Forms.Button();
             this.preview = new System.Windows.Forms.PictureBox();
             this.btnClearLog = new System.Windows.Forms.Button();
             this.splitRHS = new System.Windows.Forms.SplitContainer();
@@ -118,9 +120,7 @@
             this.btnLoop = new System.Windows.Forms.Button();
             this.btnRefreshShaders = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.pullFromBitBucketToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pushToBitbucketToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.lblCam = new System.Windows.Forms.Label();
             this.musicPlayer = new kampfpanzerin.MusicPlayer();
             this.log = new kampfpanzerin.TextBoxWithScrollLeft();
             this.tabControl1 = new kampfpanzerin.TabControlFlat();
@@ -131,7 +131,6 @@
             this.tabPP = new System.Windows.Forms.TabPage();
             this.edPost = new ScintillaNET.Scintilla();
             this.timeLine = new kampfpanzerin.TimeLine();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitMainLR)).BeginInit();
             this.splitMainLR.Panel1.SuspendLayout();
@@ -224,6 +223,32 @@
             this.saveAllToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.saveAllToolStripMenuItem.Text = "&Save all";
             this.saveAllToolStripMenuItem.Click += new System.EventHandler(this.saveAllToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(189, 6);
+            // 
+            // pullFromBitBucketToolStripMenuItem
+            // 
+            this.pullFromBitBucketToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.pullFromBitBucketToolStripMenuItem.Name = "pullFromBitBucketToolStripMenuItem";
+            this.pullFromBitBucketToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.pullFromBitBucketToolStripMenuItem.Text = "Pull from Bitbucket";
+            this.pullFromBitBucketToolStripMenuItem.Click += new System.EventHandler(this.pullFromBitBucketToolStripMenuItem_Click);
+            // 
+            // pushToBitbucketToolStripMenuItem
+            // 
+            this.pushToBitbucketToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.pushToBitbucketToolStripMenuItem.Name = "pushToBitbucketToolStripMenuItem";
+            this.pushToBitbucketToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.pushToBitbucketToolStripMenuItem.Text = "Push to Bitbucket";
+            this.pushToBitbucketToolStripMenuItem.Click += new System.EventHandler(this.pushToBitbucketToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(189, 6);
             // 
             // openProjectLocationToolStripMenuItem
             // 
@@ -605,6 +630,7 @@
             // 
             // splitLHS.Panel1
             // 
+            this.splitLHS.Panel1.Controls.Add(this.lblCam);
             this.splitLHS.Panel1.Controls.Add(this.pnlCam);
             this.splitLHS.Panel1.Controls.Add(this.preview);
             this.splitLHS.Panel1.Text = "CustomTrackBar Enabled";
@@ -624,42 +650,25 @@
             // 
             this.pnlCam.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlCam.BackColor = System.Drawing.Color.Transparent;
-            this.pnlCam.Controls.Add(this.walkButton);
             this.pnlCam.Controls.Add(this.stepUpButton);
             this.pnlCam.Controls.Add(this.btnCamReset);
             this.pnlCam.Controls.Add(this.freeFlyButton);
             this.pnlCam.Controls.Add(this.camAutoButton);
             this.pnlCam.Controls.Add(this.stepDownButton);
-            this.pnlCam.Controls.Add(this.lockFlyButton);
-            this.pnlCam.Location = new System.Drawing.Point(149, 292);
+            this.pnlCam.Location = new System.Drawing.Point(190, 292);
             this.pnlCam.Name = "pnlCam";
-            this.pnlCam.Size = new System.Drawing.Size(142, 20);
+            this.pnlCam.Size = new System.Drawing.Size(101, 22);
             this.pnlCam.TabIndex = 2;
-            // 
-            // walkButton
-            // 
-            this.walkButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.walkButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.walkButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
-            this.walkButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.walkButton.Image = global::kampfpanzerin.Properties.Resources.Walk;
-            this.walkButton.Location = new System.Drawing.Point(0, 0);
-            this.walkButton.Name = "walkButton";
-            this.walkButton.Size = new System.Drawing.Size(20, 20);
-            this.walkButton.TabIndex = 0;
-            this.walkButton.TabStop = false;
-            this.toolTip1.SetToolTip(this.walkButton, "Walk");
-            this.walkButton.UseVisualStyleBackColor = false;
-            this.walkButton.Click += new System.EventHandler(this.walkButton_Click);
             // 
             // stepUpButton
             // 
+            this.stepUpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.stepUpButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.stepUpButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.stepUpButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
             this.stepUpButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.stepUpButton.Image = global::kampfpanzerin.Properties.Resources.Faster;
-            this.stepUpButton.Location = new System.Drawing.Point(120, 0);
+            this.stepUpButton.Location = new System.Drawing.Point(80, 0);
             this.stepUpButton.Name = "stepUpButton";
             this.stepUpButton.Size = new System.Drawing.Size(22, 20);
             this.stepUpButton.TabIndex = 0;
@@ -670,12 +679,13 @@
             // 
             // btnCamReset
             // 
+            this.btnCamReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCamReset.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.btnCamReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCamReset.Font = new System.Drawing.Font("Microsoft Sans Serif", 3.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCamReset.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.btnCamReset.Image = global::kampfpanzerin.Properties.Resources.Home;
-            this.btnCamReset.Location = new System.Drawing.Point(100, 0);
+            this.btnCamReset.Location = new System.Drawing.Point(60, 0);
             this.btnCamReset.Name = "btnCamReset";
             this.btnCamReset.Size = new System.Drawing.Size(20, 20);
             this.btnCamReset.TabIndex = 0;
@@ -686,12 +696,13 @@
             // 
             // freeFlyButton
             // 
+            this.freeFlyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.freeFlyButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
             this.freeFlyButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.freeFlyButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
             this.freeFlyButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.freeFlyButton.Image = global::kampfpanzerin.Properties.Resources.Freefly;
-            this.freeFlyButton.Location = new System.Drawing.Point(40, 0);
+            this.freeFlyButton.Location = new System.Drawing.Point(0, 0);
             this.freeFlyButton.Name = "freeFlyButton";
             this.freeFlyButton.Size = new System.Drawing.Size(20, 20);
             this.freeFlyButton.TabIndex = 0;
@@ -702,12 +713,13 @@
             // 
             // camAutoButton
             // 
+            this.camAutoButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.camAutoButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.camAutoButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.camAutoButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
             this.camAutoButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.camAutoButton.Image = global::kampfpanzerin.Properties.Resources.SyncTracker;
-            this.camAutoButton.Location = new System.Drawing.Point(60, 0);
+            this.camAutoButton.Location = new System.Drawing.Point(20, 0);
             this.camAutoButton.Name = "camAutoButton";
             this.camAutoButton.Size = new System.Drawing.Size(20, 20);
             this.camAutoButton.TabIndex = 0;
@@ -718,12 +730,13 @@
             // 
             // stepDownButton
             // 
+            this.stepDownButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.stepDownButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.stepDownButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.stepDownButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
             this.stepDownButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.stepDownButton.Image = global::kampfpanzerin.Properties.Resources.Slower;
-            this.stepDownButton.Location = new System.Drawing.Point(80, 0);
+            this.stepDownButton.Location = new System.Drawing.Point(40, 0);
             this.stepDownButton.Name = "stepDownButton";
             this.stepDownButton.Size = new System.Drawing.Size(20, 20);
             this.stepDownButton.TabIndex = 0;
@@ -731,22 +744,6 @@
             this.toolTip1.SetToolTip(this.stepDownButton, "Slower");
             this.stepDownButton.UseVisualStyleBackColor = false;
             this.stepDownButton.Click += new System.EventHandler(this.stepDownButton_Click);
-            // 
-            // lockFlyButton
-            // 
-            this.lockFlyButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.lockFlyButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.lockFlyButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
-            this.lockFlyButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.lockFlyButton.Image = global::kampfpanzerin.Properties.Resources.Lockfly;
-            this.lockFlyButton.Location = new System.Drawing.Point(20, 0);
-            this.lockFlyButton.Name = "lockFlyButton";
-            this.lockFlyButton.Size = new System.Drawing.Size(20, 20);
-            this.lockFlyButton.TabIndex = 0;
-            this.lockFlyButton.TabStop = false;
-            this.toolTip1.SetToolTip(this.lockFlyButton, "Fly (Locked y)");
-            this.lockFlyButton.UseVisualStyleBackColor = false;
-            this.lockFlyButton.Click += new System.EventHandler(this.lockFlyButton_Click);
             // 
             // preview
             // 
@@ -1267,34 +1264,25 @@
             this.btnRefreshShaders.UseVisualStyleBackColor = true;
             this.btnRefreshShaders.Click += new System.EventHandler(this.btnRefreshShaders_Click);
             // 
-            // pullFromBitBucketToolStripMenuItem
+            // lblCam
             // 
-            this.pullFromBitBucketToolStripMenuItem.ForeColor = System.Drawing.Color.White;
-            this.pullFromBitBucketToolStripMenuItem.Name = "pullFromBitBucketToolStripMenuItem";
-            this.pullFromBitBucketToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.pullFromBitBucketToolStripMenuItem.Text = "Pull from Bitbucket";
-            this.pullFromBitBucketToolStripMenuItem.Click += new System.EventHandler(this.pullFromBitBucketToolStripMenuItem_Click);
+            this.lblCam.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblCam.AutoSize = true;
+            this.lblCam.BackColor = System.Drawing.Color.Black;
+            this.lblCam.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCam.ForeColor = System.Drawing.Color.White;
+            this.lblCam.Location = new System.Drawing.Point(0, 292);
+            this.lblCam.Name = "lblCam";
+            this.lblCam.Size = new System.Drawing.Size(0, 9);
+            this.lblCam.TabIndex = 3;
             // 
-            // pushToBitbucketToolStripMenuItem
-            // 
-            this.pushToBitbucketToolStripMenuItem.ForeColor = System.Drawing.Color.White;
-            this.pushToBitbucketToolStripMenuItem.Name = "pushToBitbucketToolStripMenuItem";
-            this.pushToBitbucketToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.pushToBitbucketToolStripMenuItem.Text = "Push to Bitbucket";
-            this.pushToBitbucketToolStripMenuItem.Click += new System.EventHandler(this.pushToBitbucketToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(189, 6);
-            // 
-            // klangPlayer
+            // musicPlayer
             // 
             this.musicPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.musicPlayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.musicPlayer.Location = new System.Drawing.Point(0, 464);
-            this.musicPlayer.Name = "klangPlayer";
+            this.musicPlayer.Name = "musicPlayer";
             this.musicPlayer.Size = new System.Drawing.Size(943, 62);
             this.musicPlayer.TabIndex = 9;
             // 
@@ -1312,7 +1300,7 @@
             this.log.Multiline = true;
             this.log.Name = "log";
             this.log.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.log.Size = new System.Drawing.Size(291, 116);
+            this.log.Size = new System.Drawing.Size(291, 113);
             this.log.TabIndex = 4;
             this.log.TextChanged += new System.EventHandler(this.log_TextChanged);
             // 
@@ -1474,11 +1462,6 @@
             this.timeLine.Size = new System.Drawing.Size(650, 247);
             this.timeLine.TabIndex = 2;
             // 
-            // toolStripSeparator6
-            // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(189, 6);
-            // 
             // AppForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1501,6 +1484,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitMainLR)).EndInit();
             this.splitMainLR.ResumeLayout(false);
             this.splitLHS.Panel1.ResumeLayout(false);
+            this.splitLHS.Panel1.PerformLayout();
             this.splitLHS.Panel2.ResumeLayout(false);
             this.splitLHS.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitLHS)).EndInit();
@@ -1581,12 +1565,10 @@
         public System.Windows.Forms.ToolStripMenuItem enableSyncTrackerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem screenshotToolStripMenuItem;
         public System.Windows.Forms.Panel pnlCam;
-        private System.Windows.Forms.Button walkButton;
         private System.Windows.Forms.Button stepUpButton;
         private System.Windows.Forms.Button btnCamReset;
         private System.Windows.Forms.Button freeFlyButton;
         private System.Windows.Forms.Button stepDownButton;
-        private System.Windows.Forms.Button lockFlyButton;
         private System.Windows.Forms.Button camAutoButton;
         public System.Windows.Forms.PictureBox preview;
         public TimeLine timeLine;
@@ -1634,6 +1616,7 @@
         private System.Windows.Forms.ToolStripMenuItem pushToBitbucketToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.Label lblCam;
     }
 }
 

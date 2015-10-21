@@ -26,7 +26,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MusicPlayer));
             this.trkVolume = new MetroFramework.Controls.MetroTrackBar();
             this.lblTime = new System.Windows.Forms.Label();
-            this.lblCam = new System.Windows.Forms.Label();
             this.lblTrackLength = new System.Windows.Forms.Label();
             this.lblFPS = new System.Windows.Forms.Label();
             this.trkTransport = new MetroFramework.Controls.MetroTrackBar();
@@ -69,16 +68,6 @@
             this.lblTime.Size = new System.Drawing.Size(97, 31);
             this.lblTime.TabIndex = 15;
             this.lblTime.Text = "000.00";
-            // 
-            // lblCam
-            // 
-            this.lblCam.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblCam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(187)))), ((int)(((byte)(187)))), ((int)(((byte)(187)))));
-            this.lblCam.Location = new System.Drawing.Point(185, 13);
-            this.lblCam.Name = "lblCam";
-            this.lblCam.Size = new System.Drawing.Size(549, 15);
-            this.lblCam.TabIndex = 16;
-            this.lblCam.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblTrackLength
             // 
@@ -203,7 +192,7 @@
             this.vu.Size = new System.Drawing.Size(151, 24);
             this.vu.TabIndex = 11;
             // 
-            // KlangPlayer
+            // MusicPlayer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -213,7 +202,6 @@
             this.Controls.Add(this.vu);
             this.Controls.Add(this.trkVolume);
             this.Controls.Add(this.lblTime);
-            this.Controls.Add(this.lblCam);
             this.Controls.Add(this.lblTrackLength);
             this.Controls.Add(this.lblBPM);
             this.Controls.Add(this.lblFPS);
@@ -221,7 +209,7 @@
             this.Controls.Add(this.btnRewind);
             this.Controls.Add(this.trkTransport);
             this.Controls.Add(this.btnPlay);
-            this.Name = "KlangPlayer";
+            this.Name = "MusicPlayer";
             this.Size = new System.Drawing.Size(906, 62);
             ((System.ComponentModel.ISupportInitialize)(this.mediaPlayer)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbBeat)).EndInit();
@@ -236,7 +224,6 @@
         private VUMeter vu;
         private MetroFramework.Controls.MetroTrackBar trkVolume;
         private System.Windows.Forms.Label lblTime;
-        private System.Windows.Forms.Label lblCam;
         private System.Windows.Forms.Label lblTrackLength;
         private System.Windows.Forms.Label lblFPS;
         private System.Windows.Forms.Button btnMute;

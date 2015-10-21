@@ -50,32 +50,10 @@ namespace kampfpanzerin {
         private void quitToolStripMenuItem_Click(object sender, EventArgs e) {
             this.Close();
         }
-
-        private void walkButton_Click(object sender, EventArgs e) {
-            GraphicsManager gfx = GraphicsManager.GetInstance();
-            gfx.SetCameraMode(CameraMode.WALK);
-            walkButton.BackColor = Color.FromArgb(100, 100, 100);
-            lockFlyButton.BackColor = Color.FromArgb(32, 32, 32);
-            freeFlyButton.BackColor = Color.FromArgb(32, 32, 32);
-            camAutoButton.BackColor = Color.FromArgb(32, 32, 32);
-            preview.Focus();
-        }
-
-        private void lockFlyButton_Click(object sender, EventArgs e) {
-            GraphicsManager gfx = GraphicsManager.GetInstance();
-            gfx.SetCameraMode(CameraMode.LOCKFLY);
-            walkButton.BackColor = Color.FromArgb(32, 32, 32);
-            lockFlyButton.BackColor = Color.FromArgb(100, 100, 100);
-            freeFlyButton.BackColor = Color.FromArgb(32, 32, 32);
-            camAutoButton.BackColor = Color.FromArgb(32, 32, 32);
-            preview.Focus();
-        }
-
+        
         private void freeFlyButton_Click(object sender, EventArgs e) {
             GraphicsManager gfx = GraphicsManager.GetInstance();
             gfx.SetCameraMode(CameraMode.FREEFLY);
-            walkButton.BackColor = Color.FromArgb(32, 32, 32);
-            lockFlyButton.BackColor = Color.FromArgb(32, 32, 32);
             freeFlyButton.BackColor = Color.FromArgb(100, 100, 100);
             camAutoButton.BackColor = Color.FromArgb(32, 32, 32);
             preview.Focus();
@@ -84,8 +62,6 @@ namespace kampfpanzerin {
         private void camAutoButton_Click(object sender, EventArgs e) {
             GraphicsManager gfx = GraphicsManager.GetInstance();
             gfx.SetCameraMode(CameraMode.AUTOMATED);
-            walkButton.BackColor = Color.FromArgb(32, 32, 32);
-            lockFlyButton.BackColor = Color.FromArgb(32, 32, 32);
             freeFlyButton.BackColor = Color.FromArgb(32, 32, 32);
             camAutoButton.BackColor = Color.FromArgb(100, 100, 100);
             preview.Focus();
@@ -271,19 +247,18 @@ namespace kampfpanzerin {
             string fps = (int)gfx.GetFPS() + " fps";
             string timeStr = time.ToString("000.00");
 
-            string camStr = "";
             if (Properties.Settings.Default.enableCamControls) {
                 Camera c = gfx.GetCamera();
                 if (c.CheckAndResetDirty()) {
-                    Vector3f camPos = c.Position, up = c.Up, forward = c.Forward;
-                    camStr = "cp={" + camPos.x.ToString("0.00") + " " + camPos.y.ToString("0.00") + " " + camPos.z.ToString("0.00") + "}";
-                    camStr += " up={" + up.x.ToString("0.00") + " " + up.y.ToString("0.00") + " " + up.z.ToString("0.00") + "}";
-                    camStr += " fd={" + forward.x.ToString("0.00") + " " + forward.y.ToString("0.00") + " " + forward.z.ToString("0.00") + "}";
-                    camStr += " right={" + c.Right.x.ToString("0.00") + " " + c.Right.y.ToString("0.00") + " " + c.Right.z.ToString("0.00") + "}";
+                    Vector3f camPos = c.Position, camRot = c.Rotation;
+                    string camStr = camPos.x.ToString("0.00") + " " + camPos.y.ToString("0.00") + " " + camPos.z.ToString("0.00") + "\r\n";
+                    camStr += camRot.x.ToString("0.00") + " " + camRot.y.ToString("0.00") + " " + camRot.z.ToString("0.00");
+                    lblCam.Text = camStr;
                }
-            }
+            } else
+                lblCam.Text = camStr;
 
-            musicPlayer.SetLabels(fps, timeStr, camStr);
+            musicPlayer.SetLabels(fps, timeStr);
             musicPlayer.UpdateStuff();
 
             if (Properties.Settings.Default.useSyncTracker) {
