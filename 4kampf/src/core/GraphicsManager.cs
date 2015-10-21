@@ -309,7 +309,7 @@ namespace kampfpanzerin
             }
 
             if (project.use4klangEnv) {
-                float[] syncVals = AppForm.GetInstance().klangPlayer.Get4klangSync();
+                float[] syncVals = AppForm.GetInstance().musicPlayer.Get4klangSync();
                 if (syncVals!=null)
                     Gl.glUniform1fv(Gl.glGetUniformLocation(shaderProg[0], "ev"), syncVals.Length, syncVals);
             }
@@ -468,7 +468,7 @@ namespace kampfpanzerin
             AppForm af = AppForm.GetInstance();
             float t = 0;
             try {
-                t = (float)af.klangPlayer.GetPosition();
+                t = (float)af.musicPlayer.GetPosition();
             } catch (Exception) { }
             return t;
         }

@@ -121,7 +121,7 @@
             this.pullFromBitBucketToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pushToBitbucketToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.klangPlayer = new kampfpanzerin.MusicPlayer();
+            this.musicPlayer = new kampfpanzerin.MusicPlayer();
             this.log = new kampfpanzerin.TextBoxWithScrollLeft();
             this.tabControl1 = new kampfpanzerin.TabControlFlat();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -1290,13 +1290,13 @@
             // 
             // klangPlayer
             // 
-            this.klangPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.musicPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.klangPlayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.klangPlayer.Location = new System.Drawing.Point(0, 464);
-            this.klangPlayer.Name = "klangPlayer";
-            this.klangPlayer.Size = new System.Drawing.Size(943, 62);
-            this.klangPlayer.TabIndex = 9;
+            this.musicPlayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.musicPlayer.Location = new System.Drawing.Point(0, 464);
+            this.musicPlayer.Name = "klangPlayer";
+            this.musicPlayer.Size = new System.Drawing.Size(943, 62);
+            this.musicPlayer.TabIndex = 9;
             // 
             // log
             // 
@@ -1485,7 +1485,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(943, 527);
-            this.Controls.Add(this.klangPlayer);
+            this.Controls.Add(this.musicPlayer);
             this.Controls.Add(this.pnlToolbar);
             this.Controls.Add(this.menuStrip);
             this.Controls.Add(this.splitMainLR);
@@ -1626,7 +1626,7 @@
         public System.Windows.Forms.Button btnStandardUniforms;
         private System.Windows.Forms.ToolStripMenuItem openProjectLocationToolStripMenuItem;
         private System.Windows.Forms.Button btnGotoProjectFolder;
-        public MusicPlayer klangPlayer;
+        public MusicPlayer musicPlayer;
         private System.Windows.Forms.PictureBox pictureBox5;
         private System.Windows.Forms.Button btnPush;
         private System.Windows.Forms.Button btnPull;

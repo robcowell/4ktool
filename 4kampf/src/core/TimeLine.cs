@@ -410,7 +410,7 @@ namespace kampfpanzerin {
                 if (mea.X > BAR_LEFT_MARGIN)
                     t = XCoordToTime(clickPos.X);
 
-                AppForm.GetInstance().klangPlayer.SetPosition(t);
+                AppForm.GetInstance().musicPlayer.SetPosition(t);
             }
 
             // Add/edit/del event
@@ -586,7 +586,7 @@ namespace kampfpanzerin {
         }
 
         private float NearestBeat(float f) {
-            int bpm = AppForm.GetInstance().klangPlayer.bpm;
+            int bpm = AppForm.GetInstance().musicPlayer.bpm;
             float oneBeatLength = 1.0f / ((float)bpm / 60.0f);   // secs
             float rem = f % oneBeatLength;
             f -= rem;

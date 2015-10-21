@@ -59,7 +59,6 @@ namespace kampfpanzerin {
         }
 
         private void LoadFrom4Klang() {
-
             if (!File.Exists("4klang.h"))
                 return;
 
@@ -79,10 +78,6 @@ namespace kampfpanzerin {
                 return;
             }
         }
-
-        //public int GetBPM() {
-        //    return bpm;
-        //}
 
         private void LoadEnvelopes() {
             envSamples = new float[16][];
@@ -203,22 +198,22 @@ namespace kampfpanzerin {
             mediaPlayer.Ctlcontrols.currentPosition = t;
         }
 
-        public void TogglePlayPause() {
+        private void mediaPlayer_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e) {
             if (mediaPlayer.playState == WMPLib.WMPPlayState.wmppsPlaying)
                 btnPlay.Image = Properties.Resources.Pause;
             else
                 btnPlay.Image = Properties.Resources.Play;
         }
 
-        private void mediaPlayer_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e) {
-            TogglePlayPause();
-        }
-
-        private void btnPlay_Click(object sender, EventArgs e) {
+        public void PlayPause() {
             if (mediaPlayer.playState == WMPLib.WMPPlayState.wmppsPlaying)
                 mediaPlayer.Ctlcontrols.pause();
             else
                 mediaPlayer.Ctlcontrols.play();
+        }
+
+        private void btnPlay_Click(object sender, EventArgs e) {
+            PlayPause();
         }
 
         private void btnRewind_Click(object sender, EventArgs e) {
@@ -230,7 +225,7 @@ namespace kampfpanzerin {
                 return;
 
             try {   // Neccessary to prevent crash on exit
-                AppForm.GetInstance().klangPlayer.SetPosition(trkTransport.Value);
+                AppForm.GetInstance().musicPlayer.SetPosition(trkTransport.Value);
             } catch (Exception) { }
         }
 

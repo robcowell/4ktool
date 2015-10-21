@@ -136,7 +136,7 @@ namespace kampfpanzerin
             form.btnEnvelopes.BackColor = project.use4klangEnv ? Color.FromArgb(100, 100, 100) : form.BackColor;
             form.btnStandardUniforms.BackColor = Properties.Settings.Default.enableStandardUniforms ? Color.FromArgb(100, 100, 100) : form.BackColor;
 
-            form.klangPlayer.ApplySettings(project);
+            form.musicPlayer.ApplySettings(project);
             form.timeLine.ApplySettings();
 
             Properties.Settings.Default.Save();
@@ -147,13 +147,14 @@ namespace kampfpanzerin
         }
 
         public static void CreateProject() {
-            form.klangPlayer.Stop();
+            Logger.clear();
+            form.musicPlayer.Stop();
 
             NewProjectWizard wzd = new NewProjectWizard();
             wzd.StartPosition = FormStartPosition.CenterParent;
             wzd.ShowDialog();
             if (wzd.DialogResult == DialogResult.OK) {
-                form.klangPlayer.Unload();
+                form.musicPlayer.Unload();
 
                 string dest = wzd.ProjectLocation + "/" + wzd.ProjectName;
                 Project p = wzd.Project;
@@ -182,7 +183,7 @@ namespace kampfpanzerin
         }
 
         public static void OpenProject(string dir = null, bool inhibitMusicRenderPrompt = false) {
-            form.klangPlayer.Stop();
+            form.musicPlayer.Stop();
             if (dir == null) {
                 MessageBoxManager.Cancel = "Cancel";
                 FolderBrowserDialog d = new FolderBrowserDialog();
@@ -195,6 +196,8 @@ namespace kampfpanzerin
 
             if (dir == "" || dir == null)
                 return;
+
+            Logger.clear();
 
             if (!File.Exists(dir + "/project.kml")) {
                 MessageBox.Show("Wow, you are quite old fashioned trying to open such an old project.\nI will convert it to the new format on save.", "4kampfpanzerin", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -230,7 +233,7 @@ namespace kampfpanzerin
             BuildShader();
             
             if (File.Exists("music.wav"))
-                form.klangPlayer.LoadWAV(currentProjectDirectory + "\\music.wav");
+                form.musicPlayer.LoadWAV(currentProjectDirectory + "\\music.wav");
             else if (!inhibitMusicRenderPrompt) {
                 MessageBoxManager.Yes = "Yes";
                 MessageBoxManager.No = "No";
@@ -239,8 +242,8 @@ namespace kampfpanzerin
                     RenderMusic();
             }
 
+            form.musicPlayer.PlayPause();   // Required to set prod length; AxWindowsMediaPlayer doesn't fully load it it till we play it, and we need duration...
             projectDirty = false;
-            //mediaPlayer.Ctlcontrols.stop();
         }
 
         private static bool CheckDCP() {
@@ -280,7 +283,6 @@ namespace kampfpanzerin
 
         // TODO: extract shader constant replacement stuff
         public static void BuildShader() {
-            Logger.clear();
             Logger.log("* Building shaders...");
 
             GraphicsManager gfx = GraphicsManager.GetInstance();
@@ -322,11 +324,10 @@ namespace kampfpanzerin
             if (!CheckDCP())
                 return;
 
-            Logger.clear();
             Logger.log("* Building wavwriter and rendering music...");
 
             ExportHeader();
-            form.klangPlayer.Unload();
+            form.musicPlayer.Unload();
 
             string[] files = { "wavwriter.exe", "music.wav" };
             foreach (string s in files)
@@ -349,14 +350,13 @@ namespace kampfpanzerin
                 return;
             }
 
-            if (form.klangPlayer.LoadWAV(currentProjectDirectory + "/music.wav"))
+            if (form.musicPlayer.LoadWAV(currentProjectDirectory + "/music.wav"))
                 Logger.log("Tune rendered and loaded - happy days!\r\n");
             else
                 Logger.log("! Couldn't read the WAV :(\r\n");
         }
 
         public static void DoBuildClean() {
-            Logger.clear(); 
             Logger.log("* Cleaning build files...");
 
             string[] paths = { "basecode/bin", "basecode/exe", "wavwriter/bin" };
@@ -445,18 +445,18 @@ namespace kampfpanzerin
             if (Properties.Settings.Default.usePP) {
                 BuildUtils.DoExportHeader(
                     project,
-                    form.klangPlayer.GetDuration(),
+                    form.musicPlayer.GetDuration(),
                     form.timeLine.syncBars,
                     form.edVert.Text,
                     form.edFrag.Text,
                     form.edPost.Text);
             } else {
-                BuildUtils.DoExportHeader(project, form.klangPlayer.GetDuration(), form.timeLine.syncBars, vertText, fragText);
+                BuildUtils.DoExportHeader(project, form.musicPlayer.GetDuration(), form.timeLine.syncBars, vertText, fragText);
             }
         }
 
         public static void DoRun() {
-            form.klangPlayer.Stop();
+            form.musicPlayer.Stop();
             if (Properties.Settings.Default.lastBuildName != "" && File.Exists(Properties.Settings.Default.lastBuildName))
                 Process.Start(Properties.Settings.Default.lastBuildName);
             else
@@ -467,10 +467,9 @@ namespace kampfpanzerin
             if (!CheckDCP())
                 return;
 
-            form.klangPlayer.Stop();
+            form.musicPlayer.Stop();
             ExportHeader();
 
-            Logger.clear();
             Logger.log("* Building prod in " + buildtype + " mode...");
             Utils.LaunchAndLog("cmd.exe", "/k \"\"" + Properties.Settings.Default.devCommandPromptLocation + "\" & cd \"" + currentProjectDirectory + "\\basecode\" & msbuild -p:configuration=\"" + buildtype + "\"\"");
 
@@ -500,7 +499,7 @@ namespace kampfpanzerin
             if (MessageBox.Show("This will clean ALL generated project files\napart from prod executables!", "4kampf", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
                 DoBuildClean();  // Do a build clean
 
-                form.klangPlayer.Unload();
+                form.musicPlayer.Unload();
 
                 Logger.log("* Cleaning runtime files...");
 

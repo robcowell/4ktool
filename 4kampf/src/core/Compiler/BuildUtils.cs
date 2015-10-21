@@ -19,16 +19,13 @@ namespace kampfpanzerin {
                 s += "#define USE_SOUND_THREAD\n";
             if (p.useClinkster)
                 s += "#define USE_CLINKSTER\n";
-            float prodLength = 100.0f;
-            if (File.Exists("music.wav")) // Music must be rendered; should be cool to query length
-                prodLength = length;
-
+            
             //vertexShader = ReplaceShaderMacros(vertexShader, syncCode, camCode, true);
             //fragmentShader = ReplaceShaderMacros(fragmentShader, syncCode, camCode, true);
             //ppShader = ReplaceShaderMacros(ppShader, syncCode, camCode, true);
             vertexShader = vertexShader.Replace("CAMVARS", "vec3 cp, fd, up;");
 
-            s += "#define PROD_LENGTH " + ((int)prodLength) + "\n\n";
+            s += "#define PROD_LENGTH " + ((int)length) + "\n\n";
             s += "#pragma data_seg(\".vertShader\")\nstatic const char *vertShader[] = {\"";
             s += CleanShader(vertexShader);
             s += "\"};\n\n#pragma data_seg(\".fragShader\")\nstatic const char *fragShader[] = {\"";

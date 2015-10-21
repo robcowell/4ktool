@@ -283,8 +283,8 @@ namespace kampfpanzerin {
                }
             }
 
-            klangPlayer.SetLabels(fps, timeStr, camStr);
-            klangPlayer.UpdateStuff();
+            musicPlayer.SetLabels(fps, timeStr, camStr);
+            musicPlayer.UpdateStuff();
 
             if (Properties.Settings.Default.useSyncTracker) {
                 timeLine.SetTime(time);
@@ -309,7 +309,7 @@ namespace kampfpanzerin {
         }
 
         private void btnClearLog_Click(object sender, EventArgs e) {
-            log.Clear();
+            ClearLog();
         }
 
         private void btnOpenProj_Click(object sender, EventArgs e) {

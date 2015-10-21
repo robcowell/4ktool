@@ -73,7 +73,7 @@ namespace kampfpanzerin
                             d.Add(TimelineBar.TimeLineMode.CAMERA_POS, bars[0]);
                             d.Add(TimelineBar.TimeLineMode.CAMERA_ROT, bars[1]);
 
-                            automation = new CamAutomationProxy(d, AppForm.GetInstance().klangPlayer);
+                            automation = new CamAutomationProxy(d, AppForm.GetInstance().musicPlayer);
                         } else if(mode == CameraMode.AUTOMATED) {
 
                             this.position = automation.Pos.Clone();
