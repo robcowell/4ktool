@@ -5,7 +5,6 @@ using System.Text;
 
 namespace kampfpanzerin.git {
     class RepoDescriptor {
-
         public string Name {
             get;
             set;
@@ -23,7 +22,7 @@ namespace kampfpanzerin.git {
             set;
         }
 
-        public string ToString() {
+        public override string ToString() {
             return Name;
         }
     }

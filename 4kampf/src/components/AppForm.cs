@@ -17,8 +17,6 @@ namespace kampfpanzerin {
         private static AppForm formInstance;
         private bool logBusy = false;
 
-        private Project project;
-
         public static AppForm GetInstance() {
             if (formInstance == null)
                 formInstance = new AppForm();
@@ -36,6 +34,7 @@ namespace kampfpanzerin {
             InitScintillaCustomisations(edPost);
 
             log.Text = " ";  // Force a textchanged to fire
+            log.Text = "";
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
         }
 
@@ -130,7 +129,7 @@ namespace kampfpanzerin {
         }
 
         private void enableTrack02EnvsInUniformSvrequiresCorrect4klangExportToolStripMenuItem_Click(object sender, EventArgs e) {
-            project.use4klangEnv = !project.use4klangEnv;
+            Kampfpanzerin.project.use4klangEnv = !Kampfpanzerin.project.use4klangEnv;
             Kampfpanzerin.ApplySettings();
         }
 
@@ -460,7 +459,7 @@ namespace kampfpanzerin {
         }
 
         private void btnEnvelopes_Click(object sender, EventArgs e) {
-            project.use4klangEnv = !project.use4klangEnv;
+            Kampfpanzerin.project.use4klangEnv = !Kampfpanzerin.project.use4klangEnv;
             Kampfpanzerin.ApplySettings();
         }
 
@@ -508,8 +507,8 @@ namespace kampfpanzerin {
             logBusy = false;
         }
 
-        public void ShowLog(string what) {
-            log.Text = what + "\r\n";
+        public void ClearLog() {
+            log.Text = "";
         }
 
         public void ConcatLog(string what) {

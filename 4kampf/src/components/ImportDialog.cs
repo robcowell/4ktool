@@ -15,7 +15,6 @@ namespace kampfpanzerin.components {
     public partial class ImportDialog : Form {
         private bool ValidationCancels = false;
 
-
         internal RepoDescriptor Repo {
             get {
                 return (RepoDescriptor)repoList.SelectedItem;
@@ -50,7 +49,6 @@ namespace kampfpanzerin.components {
         }
 
         private void teamBtn_Click(object sender, EventArgs e) {
-
             Cursor.Current = Cursors.WaitCursor;
             var bbc = new BitBucketData();
             bbc.Team = teamTxt.Text;
@@ -81,14 +79,9 @@ namespace kampfpanzerin.components {
             }
         }
 
-
         private void btnImport_Click(object sender, EventArgs e) {
-            ValidationCancels = true;
-            if(ValidateChildren())
-                ;
-            ValidationCancels = false;
+            ValidationCancels = !ValidateChildren();
         }
-
 
         private void chooseFolderButton_Click(object sender, EventArgs e) {
             MessageBoxManager.Cancel = "Cancel";

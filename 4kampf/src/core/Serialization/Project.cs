@@ -16,12 +16,11 @@ namespace kampfpanzerin.core.Serialization {
         public bool use4klangEnv = false;
         public bool usePP = false;
         public bool useSoundThread = false;
-        public bool useBitBucket;
+        public bool useBitBucket = false;
 
         public BitBucketData bitBucketSettings;
 
         public string gitRemote;
-
         public string name;
     }
 }

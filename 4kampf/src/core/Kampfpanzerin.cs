@@ -29,7 +29,6 @@ namespace kampfpanzerin
             private set;
         }
 
-
         [STAThread]
         static void Main() {
             NativeLoadHelper.SetupDllPath();
@@ -144,7 +143,7 @@ namespace kampfpanzerin
         }
 
         public static void ProcessStreamHandler(object sender, DataReceivedEventArgs e) {
-            form.ConcatLog(e.Data);
+            Logger.log(e.Data);
         }
 
         public static void CreateProject() {
@@ -170,13 +169,13 @@ namespace kampfpanzerin
                 SaveProjectSettings(p, dest + "/");
 
                 Repo = GitHandler.Init(dest, p);
-                string msg = "* Project created! Now drop your ";
+                
+                string msg = "* Project created. Now drop your ";
                 msg += p.useClinkster?"music.asm":"4klang.obj and 4klang.h";
-                msg += " in there and run Build->Render Music.\r\n\r\n(Or just run Build->Render Music now to render the example tune!\r\n\r\n";
-                form.ConcatLog(msg);
+                msg += " in there and run Build->Render Music.\r\n\r\n(Or just run Build->Render Music now to render the example tune!)\r\n";
+                Logger.logf(msg);
 
                 OpenProject(dest, true);
-
             } else { 
                 return;
             }
@@ -263,25 +262,27 @@ namespace kampfpanzerin
 
         public static void MinifyShaders() {
             SaveProject();
-            form.ShowLog("* Using shader_minify on yer shaders...\r\n");
+            Logger.log("* Using shader_minify on yer shaders...");
             MinifyShader("frag.glsl");
             MinifyShader("vert.glsl");
             MinifyShader("ppfrag.glsl");
             LoadShader();
-            form.ConcatLog("* Done");
+            Logger.log("Done");
         }
 
         private static void MinifyShader(string filename) {
-            form.ConcatLog("* Minifying " + filename + "...");
+            Logger.log("* Minifying " + filename + "...");
             string cmd = AppDomain.CurrentDomain.BaseDirectory + "shader_minifier.exe";
             string args = "--preserve-externals --format none \"" + currentProjectDirectory + "\\" + filename + "\" -o \"" + currentProjectDirectory + "\\" + filename + "\"";
 
             Utils.LaunchAndLog(cmd, args);
         }
 
-
         // TODO: extract shader constant replacement stuff
         public static void BuildShader() {
+            Logger.clear();
+            Logger.log("* Building shaders...");
+
             GraphicsManager gfx = GraphicsManager.GetInstance();
             string vertText = form.edVert.Text;
             string fragText = form.edFrag.Text;
@@ -294,28 +295,26 @@ namespace kampfpanzerin
             fragText = fragText.Replace("SYNCVARS", syncRest + syncVars);
 
             //vertText = vertText.Replace("CAMVARS", "uniform vec3 cp, cr;");
-            
-            form.ShowLog("");
 
             if (syncCode != "" && Properties.Settings.Default.useSyncTracker)
-                form.ConcatLog("* Generated sync code:\r\n\r\n" + syncCode + "\r\n");
+                Logger.log("Generated sync code:\r\n" + syncCode);
 
-            string msg = "* Scene shader compilation:\r\n\r\n" + gfx.BuildShader(
+            string msg = "Scene shader compilation:\r\n" + gfx.BuildShader(
                 0, 
                 vertText.Replace("\n", "\r\n"),
                 fragText.Replace("\n", "\r\n")
             ).Replace("\n", "\r\n");
-            form.ConcatLog(msg);
+            Logger.log(msg);
 
             if (Properties.Settings.Default.usePP) {
                 string postText = form.edPost.Text;
                 postText = postText.Replace("//#SYNCCODE#", syncCode);
                 
-                msg = "* Postprocessing shader compilation:\r\n\r\n" + gfx.BuildShader(
+                msg = "Postprocessing shader compilation:\r\n" + gfx.BuildShader(
                     1, 
                     vertText.Replace("\n", "\r\n"), 
                     postText.Replace("\n", "\r\n")).Replace("\n", "\r\n");
-                form.ConcatLog(msg);
+                Logger.log(msg);
             }
         }
 
@@ -323,7 +322,8 @@ namespace kampfpanzerin
             if (!CheckDCP())
                 return;
 
-            form.ShowLog("* Building wavwriter and rendering music...\r\n");
+            Logger.clear();
+            Logger.log("* Building wavwriter and rendering music...");
 
             ExportHeader();
             form.klangPlayer.Unload();
@@ -341,21 +341,24 @@ namespace kampfpanzerin
                 project.useClinkster ? "clinksterwriter" : "wavwriter");
             
             string command = "/k \"\"" + Properties.Settings.Default.devCommandPromptLocation + "\" & cd \"" + currentProjectDirectory + "\\wavwriter\" & msbuild -p:configuration=\"Release\" & cd .. & wavwriter.exe\"";
-            form.ShowLog("Executing 'cmd.exe " + command + "'");
+            Logger.log("Executing 'cmd.exe " + command + "'");
             Utils.LaunchAndLog("cmd.exe", commandFormat);
 
             if (!File.Exists("music.wav")) {
-                form.ConcatLog("! The WAV didn't get written :O");
+                Logger.log("! The WAV didn't get written :O");
                 return;
             }
 
             if (form.klangPlayer.LoadWAV(currentProjectDirectory + "/music.wav"))
-                form.ConcatLog("* Tune rendered and loaded - happy days!");
+                Logger.log("Tune rendered and loaded - happy days!\r\n");
             else
-                form.ConcatLog("! Couldn't read WAV :(");
+                Logger.log("! Couldn't read the WAV :(\r\n");
         }
 
         public static void DoBuildClean() {
+            Logger.clear(); 
+            Logger.log("* Cleaning build files...");
+
             string[] paths = { "basecode/bin", "basecode/exe", "wavwriter/bin" };
             foreach (string s in paths)
                 if (Directory.Exists(s))
@@ -366,7 +369,7 @@ namespace kampfpanzerin
                 if (File.Exists(s))
                     File.Delete(s);
 
-            form.ShowLog("Build files cleaned");
+            Logger.log("Build files cleaned\r\n");
         }
         
         public static void DoExport() {
@@ -379,7 +382,6 @@ namespace kampfpanzerin
         }
 
         public static void SaveProject(string directory = "") {
-            
             StreamWriter sw = new StreamWriter("frag.glsl");
             sw.Write(form.edFrag.Text);
             sw.Close();
@@ -398,7 +400,6 @@ namespace kampfpanzerin
             //project.settings = kampfpanzerin.Properties.Settings.Default;
             SaveProjectSettings(project);
 
-            form.ShowLog("Saved all project assets");
             projectDirty = false;
         }
 
@@ -416,7 +417,7 @@ namespace kampfpanzerin
                         if (dialog.DialogResult == DialogResult.OK) {
                             Repo.Resolve(dialog.Resolved);
                             if (Repo.Conflicts.Count() > 0) {
-                                Logger.logf("Not all conflicts are resolved, boss.");
+                                Logger.logf("! Not all conflicts are resolved, boss...");
                             } else {
                                 Repo.Commit();
                             }
@@ -426,8 +427,8 @@ namespace kampfpanzerin
                     }
                 }
             } catch (IOException) {
-                MessageBox.Show("Something went wrong when saving.", "4kampfpanzerin", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+                Logger.log("! Something went wrong when saving!");
+            } 
         }
 
         private static void ExportHeader() {
@@ -437,10 +438,10 @@ namespace kampfpanzerin
             //string syncCode = TrackerCompiler.CompileSyncTrackerCode(form.timeLine.syncBars);
             string syncVars = TrackerCompiler.SyncVars(form.timeLine.syncBars);
             string syncRest = TrackerCompiler.GetInterpolationCode(form.timeLine.syncBars, form.timeLine.camBars);
-            vertText = vertText.Replace("//#SYNCCODE#", syncRest + syncCode);
-            vertText = vertText.Replace("//#SYNCVARS#", syncRest + syncVars);
-            fragText = fragText.Replace("//#SYNCCODE#", syncCode);
-            fragText = fragText.Replace("//#SYNCVARS#", syncRest + syncVars);
+            vertText = vertText.Replace("SYNCCODE", syncRest + syncCode);
+            vertText = vertText.Replace("SYNCVARS", syncRest + syncVars);
+            fragText = fragText.Replace("SYNCCODE", syncCode);
+            fragText = fragText.Replace("SYNCVARS", syncRest + syncVars);
             if (Properties.Settings.Default.usePP) {
                 BuildUtils.DoExportHeader(
                     project,
@@ -453,8 +454,6 @@ namespace kampfpanzerin
                 BuildUtils.DoExportHeader(project, form.klangPlayer.GetDuration(), form.timeLine.syncBars, vertText, fragText);
             }
         }
-
-
 
         public static void DoRun() {
             form.klangPlayer.Stop();
@@ -471,7 +470,8 @@ namespace kampfpanzerin
             form.klangPlayer.Stop();
             ExportHeader();
 
-            form.ShowLog("* Building prod in " + buildtype + " mode...\r\n");
+            Logger.clear();
+            Logger.log("* Building prod in " + buildtype + " mode...");
             Utils.LaunchAndLog("cmd.exe", "/k \"\"" + Properties.Settings.Default.devCommandPromptLocation + "\" & cd \"" + currentProjectDirectory + "\\basecode\" & msbuild -p:configuration=\"" + buildtype + "\"\"");
 
             string src = "basecode\\exe\\prod.exe";
@@ -484,13 +484,13 @@ namespace kampfpanzerin
                 FileStream fs = new FileStream(dest, FileMode.Open, FileAccess.Read);
                 long byteCount = fs.Length;
                 fs.Close();
-                form.ConcatLog("* Prod built! Written " + dest + ": " + byteCount + " bytes");
+                Logger.log("* Prod built! Written " + dest + ": " + byteCount + " bytes");
                 if (byteCount <= 4096)
-                    form.ConcatLog("NOW GO AND WIN THE COMPO! (" + (4096 - byteCount) + " bytes free)");
-                else
-                    form.ConcatLog("TIME FOR A SHAVE... (" + (byteCount - 4096) + " bytes to lose)");
+                    Logger.log("NOW GO AND WIN THE COMPO! (" + (4096 - byteCount) + " bytes free)");
+                else if (buildtype!="Debug")
+                    Logger.log("TIME FOR A SHAVE... (" + (byteCount - 4096) + " bytes to lose)");
             } else
-                form.ConcatLog("! No .exe written :(");
+                Logger.log("! No .exe written :(");
         }
 
         public static void DoProjClean() {
@@ -502,12 +502,13 @@ namespace kampfpanzerin
 
                 form.klangPlayer.Unload();
 
+                Logger.log("* Cleaning runtime files...");
+
                 string[] files = { "music.wav", "4kampfpanzerin.h" };
                 files.ToList().FindAll(File.Exists).ForEach(File.Delete);
                 new DirectoryInfo(currentProjectDirectory).GetFiles("envelope-*.dat").ToList().ForEach(f => f.Delete());
 
-
-                form.ShowLog("Project cleaned");
+                Logger.log("Runtime files cleaned");
             }
         }
 
@@ -519,7 +520,7 @@ namespace kampfpanzerin
 
             bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
             bmp.Save(currentProjectDirectory + "/screenshot.png", System.Drawing.Imaging.ImageFormat.Png);
-            form.ShowLog("Screenshot saved \\o/");
+            Logger.log("* Screenshot saved \\o/");
         }
 
         public static void SetDirty(bool d = true) {

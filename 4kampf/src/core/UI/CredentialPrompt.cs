@@ -58,8 +58,8 @@ namespace kampfpanzerin.core.UI {
 
         public static KampfCredentialDescriptor GetCredentialsVistaAndUp(string serverName) {
             CREDUI_INFO credui = new CREDUI_INFO();
-            credui.pszCaptionText = "Please enter the credentails for " + serverName;
-            credui.pszMessageText = "DisplayedMessage";
+            credui.pszCaptionText = "Please enter your credentials for " + serverName;
+            credui.pszMessageText = "Ve have ways of making you talk";
             credui.cbSize = Marshal.SizeOf(credui);
             uint authPackage = 0;
             IntPtr outCredBuffer = new IntPtr();
