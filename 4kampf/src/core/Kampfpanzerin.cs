@@ -54,7 +54,6 @@ namespace kampfpanzerin
                         break;
                     case WelcomeDialogResult.IMPORT:
                         ImportProject();
-                        // SKOMP: DO SOME SHIT HERE ;P
                         break;
                     case WelcomeDialogResult.QUIT:
                         Environment.Exit(0);
@@ -73,7 +72,7 @@ namespace kampfpanzerin
             }
         }
 
-        private static void ImportProject() {
+        public static void ImportProject() {
             ImportDialog d = new ImportDialog();
             d.ShowDialog();
             if (d.DialogResult == DialogResult.OK) {

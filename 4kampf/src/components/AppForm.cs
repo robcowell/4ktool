@@ -256,7 +256,7 @@ namespace kampfpanzerin {
                     lblCam.Text = camStr;
                }
             } else
-                lblCam.Text = camStr;
+                lblCam.Text = "";
 
             musicPlayer.SetLabels(fps, timeStr);
             musicPlayer.UpdateStuff();
@@ -299,6 +299,11 @@ namespace kampfpanzerin {
         private void DoNew() {
             if (Kampfpanzerin.ReallyScratch())
                 Kampfpanzerin.CreateProject();
+        }
+
+        private void DoImport() {
+            if (Kampfpanzerin.ReallyScratch())
+                Kampfpanzerin.ImportProject();
         }
 
         private void btnSaveAll_Click(object sender, EventArgs e) {
@@ -536,6 +541,10 @@ namespace kampfpanzerin {
 
         private void pushToBitbucketToolStripMenuItem_Click(object sender, EventArgs e) {
             PushProject();
+        }
+
+        private void importToolStripMenuItem_Click(object sender, EventArgs e) {
+            DoImport();
         }
     }
 }
