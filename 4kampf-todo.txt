@@ -23,3 +23,6 @@
 	- Inconsistent substitutions
 		//#SYNCCODE# vs CAMVARS
 	- Cam track needs a button icon alongside sync vars toggle
+	!! 4klang mode basecode is a little broken; USE_CLINKSTER should be defined (or not defined) in 4kampfpanzerin.h, not intro.h and/or main_deb.cpp as currently.
+	Also there's a missing return from MusicFrame if in 4klang mode.
+	- When loading a project, the prod length doesn't get picked up properly by the transport control until you hit Play
