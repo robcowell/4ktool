@@ -358,6 +358,9 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>.\bin/Release/i4k_OGLShader_vc2010.bsc</OutputFile>
     </Bscmake>
+    <YASM>
+      <IncludePaths>../;../clinksterwriter/</IncludePaths>
+    </YASM>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

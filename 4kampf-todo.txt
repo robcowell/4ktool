@@ -4,7 +4,6 @@
 - General
 !!	- Only free fly mode cam works, pls to fix the other 2 :)
 !	- Would be nice to just be able to paste 4klang .inc and .h and have it build the .obj instead of manually pre-building it
-!	- Unpacked Release is broken (or maybe just doesn't toggle Clinkster/4klang correctly)
 	- Project creation is still quite fragile
 	- Trying to load proj from wrong directories etc gives nonsensical message
 !	- Click to goto line on glsl error
@@ -20,5 +19,3 @@
 	- Toggle whether to do a proper mode change -- saves 10 bytes in final prod
 	- Toggle whether to do an initial swapbuffers() to clear a screen for precalc (or derive this automagically: if 4klang and no extra sound thread, do it; if clinkster, always do it....
 	
-	
-[FIXED]- When loading a project, the prod length doesn't get picked up properly by the transport control until you hit Play. This means if you just start the tool, open a proj and try to Build it, you'll get PROD_LENGTH 0 in the header file dogg
