@@ -89,9 +89,9 @@
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(90, 13);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(294, 24);
+            this.label1.Size = new System.Drawing.Size(293, 24);
             this.label1.TabIndex = 14;
-            this.label1.Text = "Import a project from BitBucket";
+            this.label1.Text = "Import a project from Bitbucket";
             // 
             // label2
             // 
@@ -241,7 +241,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "ImportDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "ImportDialog";
+            this.Text = "Import a project from Bitbucket";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);

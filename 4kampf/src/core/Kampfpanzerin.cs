@@ -288,12 +288,12 @@ namespace kampfpanzerin
             string syncCode = TrackerCompiler.CompileSyncTrackerCode(form.timeLine.syncBars);
             string syncVars = TrackerCompiler.SyncVars(form.timeLine.syncBars);
             string syncRest = TrackerCompiler.GetInterpolationCode(form.timeLine.syncBars, form.timeLine.camBars);
-            vertText = vertText.Replace("//#SYNCCODE#", syncRest + syncCode);
-            vertText = vertText.Replace("//#SYNCVARS#", syncRest + syncVars);
-            fragText = fragText.Replace("//#SYNCCODE#", syncCode);
-            fragText = fragText.Replace("//#SYNCVARS#", syncRest + syncVars);
+            vertText = vertText.Replace("SYNCCODE", syncRest + syncCode);
+            vertText = vertText.Replace("SYNCVARS", syncRest + syncVars);
+            fragText = fragText.Replace("SYNCCODE", syncCode);
+            fragText = fragText.Replace("SYNCVARS", syncRest + syncVars);
 
-            vertText = vertText.Replace("CAMVARS", "uniform vec3 cp, cr;");
+            //vertText = vertText.Replace("CAMVARS", "uniform vec3 cp, cr;");
             
             form.ShowLog("");
 
@@ -487,6 +487,8 @@ namespace kampfpanzerin
                 form.ConcatLog("* Prod built! Written " + dest + ": " + byteCount + " bytes");
                 if (byteCount <= 4096)
                     form.ConcatLog("NOW GO AND WIN THE COMPO! (" + (4096 - byteCount) + " bytes free)");
+                else
+                    form.ConcatLog("TIME FOR A SHAVE... (" + (byteCount - 4096) + " bytes to lose)");
             } else
                 form.ConcatLog("! No .exe written :(");
         }

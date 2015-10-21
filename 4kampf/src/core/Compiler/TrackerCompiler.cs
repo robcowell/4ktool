@@ -28,10 +28,13 @@ namespace kampfpanzerin.src.core.Compiler {
         }
 
         public static string SyncVars(List<TimelineBar> bars) {
+            if (bars.Count == 0)
+                return "";
+
             if (bars.Count == 1)
                 return "\r\nvec3 sn;";
-            else
-                return "\r\nvec3 sn[" + bars.Count + "];";
+            
+            return "\r\nvec3 sn[" + bars.Count + "];";
         }
 
         public static string CompileTrack(TimelineBar bar) {

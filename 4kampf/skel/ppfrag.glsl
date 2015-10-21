@@ -1,7 +1,7 @@
 // This is the default postprocessing shader :)
 
 uniform sampler2D fr;	// The rendered frame
-uniform vec3 u;		// Standard uniforms
+uniform vec3 u;			// Standard uniforms
 varying vec2 uv;		// uv
 
 void main() {

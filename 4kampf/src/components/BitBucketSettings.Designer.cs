@@ -41,9 +41,9 @@
             this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.Location = new System.Drawing.Point(12, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(176, 24);
+            this.label1.Size = new System.Drawing.Size(175, 24);
             this.label1.TabIndex = 0;
-            this.label1.Text = "BitBucket Settings";
+            this.label1.Text = "Bitbucket Settings";
             // 
             // btnCancel
             // 
@@ -80,9 +80,9 @@
             this.label2.ForeColor = System.Drawing.Color.White;
             this.label2.Location = new System.Drawing.Point(16, 52);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(83, 13);
+            this.label2.Size = new System.Drawing.Size(82, 13);
             this.label2.TabIndex = 7;
-            this.label2.Text = "BitBucket Team";
+            this.label2.Text = "Bitbucket Team";
             // 
             // label3
             // 
@@ -155,7 +155,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "BitBucketSettings";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "GitForm";
+            this.Text = "Bitbucket Settings";
             this.ResumeLayout(false);
             this.PerformLayout();
 

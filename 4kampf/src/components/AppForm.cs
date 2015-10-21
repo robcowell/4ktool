@@ -526,18 +526,11 @@ namespace kampfpanzerin {
         }
 
         private void btnPush_Click(object sender, EventArgs e) {
-            if (!CheckRemote()) {
-                return;
-            }
-            Kampfpanzerin.Repo.Push(Kampfpanzerin.project, utils.BitBucketUtils.GetCredentials(Kampfpanzerin.project.bitBucketSettings));
+            PushProject();
         }
 
         private void btnPull_Click(object sender, EventArgs e) {
-            if (!CheckRemote()) {
-                return;
-            }
-            Kampfpanzerin.Repo.Pull(Kampfpanzerin.project, utils.BitBucketUtils.GetCredentials(Kampfpanzerin.project.bitBucketSettings));
-            Kampfpanzerin.ReloadShaders();
+            PullProject();
         }
 
         private bool CheckRemote() {
@@ -548,5 +541,27 @@ namespace kampfpanzerin {
             return true;
         }
 
+        private void PullProject() {
+            if (!CheckRemote()) {
+                return;
+            }
+            Kampfpanzerin.Repo.Pull(Kampfpanzerin.project, utils.BitBucketUtils.GetCredentials(Kampfpanzerin.project.bitBucketSettings));
+            Kampfpanzerin.ReloadShaders();
+        }
+
+        private void PushProject() {
+            if (!CheckRemote()) {
+                return;
+            }
+            Kampfpanzerin.Repo.Push(Kampfpanzerin.project, utils.BitBucketUtils.GetCredentials(Kampfpanzerin.project.bitBucketSettings));
+        }
+
+        private void pullFromBitBucketToolStripMenuItem_Click(object sender, EventArgs e) {
+            PullProject();
+        }
+
+        private void pushToBitbucketToolStripMenuItem_Click(object sender, EventArgs e) {
+            PushProject();
+        }
     }
 }

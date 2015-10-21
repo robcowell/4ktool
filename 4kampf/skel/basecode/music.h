@@ -25,14 +25,11 @@ float syncVal[MAX_INSTRUMENTS];
 #pragma code_seg(".musicFuncs")
 __forceinline float MusicFrame() {
 #ifndef USE_CLINKSTER
-	_4klang_frame();
+	return _4klang_frame();
 #else
 	return _clinkster_frame();
 #endif
 }
-
-
-#define USE_CLINKSTER
 
 __forceinline void MusicInit() {
 #ifndef USE_CLINKSTER

@@ -28,11 +28,7 @@ float ao(vec3 p,vec3 n,float s){	// Do AO for point p with normal n and strength
 	return a;
 }
 
-void main(){						// Entrypoint
-	// Alternative method to calculate raydir here:
- 	//vec3 rd=normalize(vec3((gl_FragCoord.xy-u.xy/2.0)/u.y,-1.));
-	//rd*=transpose(mat3(cross(fd,up),up,-fd));
-	
+void main(){						// Entrypoint	
 	vec3 p=cp,r=normalize(rd);
 	for(int i=0;i<128;i++){
 		d=h(p)-M;
