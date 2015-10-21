@@ -1,5 +1,5 @@
 // 4kampfpanzerin basecode
-// Fell, 2012-2014
+// Fell and Skomp, 2012-2015
 
 #pragma once
 

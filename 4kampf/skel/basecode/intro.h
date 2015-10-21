@@ -1,5 +1,5 @@
 // 4kampfpanzerin basecode
-// Fell, 2012-2014
+// Fell and Skomp, 2012-2015
 
 #pragma once
 
@@ -14,8 +14,8 @@
 #include "../4klang.h"
 #include "../4kampfpanzerin.h"
 
-#define XRES 1366.	// FIX THIS SHIT
-#define YRES 768.	// FIX THIS SHIT
+#define XRES 1280.
+#define YRES 720.
 
 #ifdef USE_4KLANG_ENV_SYNC
 extern float syncVal[MAX_INSTRUMENTS];

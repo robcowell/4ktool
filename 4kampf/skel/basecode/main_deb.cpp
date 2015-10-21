@@ -1,5 +1,5 @@
 // 4kampfpanzerin basecode
-// Fell, 2012-2014
+// Fell and Skomp, 2012-2015
 
 // This version of main gets used in Debug build, so has regular win32 entrypoint
 
