@@ -4,13 +4,12 @@ o = Blue-sky dreamin'
 - General
 	- Target Location on Import gets a bit recursive :D
 !	- Would be nice to just be able to paste 4klang .inc and .h and have it build the .obj instead of manually pre-building it
-	- Project creation is still quite fragile
-	- Trying to load proj from wrong directories etc gives nonsensical message -- let's just drop the old-shit support?
 !	- Click to goto line on glsl error
 	- Ability to fork would be nice
 	- Option to choose git commit message when saving would be nice
 !	- I can't set Cam Track without Sync Timeline, is this by design? UI needs clarified if so
 	- Cam track needs a button icon alongside sync vars toggle
+	- Drop the old-shit pre-proper-project-file support
 
 - Build / basecode
 o	- Use pure asm basecode instead?

@@ -482,13 +482,13 @@ namespace kampfpanzerin
                 FileStream fs = new FileStream(dest, FileMode.Open, FileAccess.Read);
                 long byteCount = fs.Length;
                 fs.Close();
-                Logger.log("* Prod built! Written " + dest + ": " + byteCount + " bytes");
+                Logger.log("* Prod built! Written " + dest + ": " + byteCount + " bytes\r\n");
                 if (byteCount <= 4096)
-                    Logger.log("NOW GO AND WIN THE COMPO! (" + (4096 - byteCount) + " bytes free)");
+                    Logger.log("NOW GO AND WIN THE COMPO! (" + (4096 - byteCount) + " bytes free)\r\n");
                 else if (buildtype!="Debug")
-                    Logger.log("TIME FOR A SHAVE... (" + (byteCount - 4096) + " bytes to lose)");
+                    Logger.log("TIME FOR A SHAVE... (" + (byteCount - 4096) + " bytes to lose)\r\n");
             } else
-                Logger.log("! No .exe written :(");
+                Logger.log("! No .exe written :(\r\n");
         }
 
         public static void DoProjClean() {

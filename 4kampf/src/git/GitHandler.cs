@@ -13,7 +13,6 @@ using System.Windows.Forms;
 
 namespace kampfpanzerin.git {
     class GitHandler {
-
         private Repository repo;
 
         public List<String> Conflicts {
@@ -197,7 +196,6 @@ namespace kampfpanzerin.git {
                 return null;
             }
         }
-        
 
         internal void Pull(Project project, NetworkCredential credentials) {
             Logger.logf("* Pulling...");
