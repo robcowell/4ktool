@@ -34,8 +34,10 @@ namespace kampfpanzerin.components {
 
         public NewProjectWizard() {
             InitializeComponent();
-            DirectoryInfo parentDir = Directory.GetParent(Properties.Settings.Default.lastProjectLocation);
-            this.locationTxt.Text = parentDir.FullName;
+            if (Properties.Settings.Default.lastProjectLocation.Length > 0) {
+                DirectoryInfo parentDir = Directory.GetParent(Properties.Settings.Default.lastProjectLocation);
+                this.locationTxt.Text = parentDir.FullName;
+            }
             this.UserName.Text = Properties.Settings.Default.UserName;
             if (this.UserName.Text == null || this.UserName.Text.Length == 0) {
                 this.UserName.Text = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
