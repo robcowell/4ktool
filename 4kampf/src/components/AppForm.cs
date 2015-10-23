@@ -251,8 +251,8 @@ namespace kampfpanzerin {
                 Camera c = gfx.GetCamera();
                 if (c.CheckAndResetDirty()) {
                     Vector3f camPos = c.Position, camRot = c.Rotation;
-                    string camStr = camPos.x.ToString("0.00") + " " + camPos.y.ToString("0.00") + " " + camPos.z.ToString("0.00") + "\r\n";
-                    camStr += camRot.x.ToString("0.00") + " " + camRot.y.ToString("0.00") + " " + camRot.z.ToString("0.00");
+                    string camStr = camPos.x.ToString("0.00") + "," + camPos.y.ToString("0.00") + "," + camPos.z.ToString("0.00") + "\n";
+                    camStr += camRot.x.ToString("0.00") + "," + camRot.y.ToString("0.00") + "," + camRot.z.ToString("0.00");
                     lblCam.Text = camStr;
                }
             } else
@@ -552,6 +552,11 @@ namespace kampfpanzerin {
             int newHeight = current.Width / 16 * 9,
                 change = newHeight - current.Height;
             splitLHS.SplitterDistance += change;
+        }
+
+        private void lblCam_Click(object sender, EventArgs e) {
+            string[] cam = lblCam.Text.Split('\n');
+            Clipboard.SetText("cp=vec3("+cam[0]+"),cr=vec3("+cam[1]+")");
         }
     }
 }
