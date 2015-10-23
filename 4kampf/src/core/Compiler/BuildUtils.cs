@@ -42,7 +42,7 @@ namespace kampfpanzerin {
 
         private static string CleanShader(string s) {
             string r = "";
-            string[] lines = s.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+            string[] lines = s.Split(new string[] { "\n" }, StringSplitOptions.None);
             for (int i = 0; i < lines.Count(); i++) {
                 if (i > 55) {
                     int sdf = 345;
