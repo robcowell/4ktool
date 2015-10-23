@@ -546,5 +546,12 @@ namespace kampfpanzerin {
         private void importToolStripMenuItem_Click(object sender, EventArgs e) {
             DoImport();
         }
+
+        private void forceDisplayTo169ToolStripMenuItem_Click(object sender, EventArgs e) {
+            Size current = preview.Size;
+            int newHeight = current.Width / 16 * 9,
+                change = newHeight - current.Height;
+            splitLHS.SplitterDistance += change;
+        }
     }
 }

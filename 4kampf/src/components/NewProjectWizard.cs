@@ -37,6 +37,8 @@ namespace kampfpanzerin.components {
             if (Properties.Settings.Default.lastProjectLocation.Length > 0) {
                 DirectoryInfo parentDir = Directory.GetParent(Properties.Settings.Default.lastProjectLocation);
                 this.locationTxt.Text = parentDir.FullName;
+            } else {
+                this.locationTxt.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             }
             this.UserName.Text = Properties.Settings.Default.UserName;
             if (this.UserName.Text == null || this.UserName.Text.Length == 0) {
@@ -127,8 +129,6 @@ namespace kampfpanzerin.components {
             Properties.Settings.Default.UserName = this.UserName.Text;
             git.GitHandler.SetUsername(this.UserName.Text);
         }
-
-
 
         public string ProjectLocation { get { return this.locationTxt.Text; } }
         public string ProjectName { get { return this.nameTxt.Text; } }

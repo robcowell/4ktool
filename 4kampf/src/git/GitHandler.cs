@@ -91,6 +91,8 @@ namespace kampfpanzerin.git {
                 Logger.logf("Pushed {0} to {1}\r\n", repo.Head.Name, repo.Head.Remote.Name);
             } catch (NonFastForwardException) {
                 Logger.logf("! Heavy Vibes Boss, someone edited the prod already, you need a pull here!\r\n");
+            } catch (TimeoutException) {
+                Logger.logf("! Bugger, couldn't push -- the request timed out man!\r\n");
             }
             Cursor.Current = Cursors.Default;
         }

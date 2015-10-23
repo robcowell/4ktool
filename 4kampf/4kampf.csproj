@@ -283,6 +283,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\sample.gitconfig">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="skel\4klang.obj" />
     <None Include="skel\basecode\prod.vcxproj" />
     <None Include="skel\clinksterwriter\ClinksterPlayer.vcxproj" />

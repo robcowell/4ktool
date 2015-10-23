@@ -44,6 +44,9 @@ namespace kampfpanzerin {
             string r = "";
             string[] lines = s.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
             for (int i = 0; i < lines.Count(); i++) {
+                if (i > 55) {
+                    int sdf = 345;
+                }
                 // Remove comments
                 int commentPos = lines[i].IndexOf("//");
                 if (commentPos == 0)

@@ -32,6 +32,13 @@ namespace kampfpanzerin
         [STAThread]
         static void Main() {
             NativeLoadHelper.SetupDllPath();
+
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            if (!File.Exists(path + "\\.gitconfig")) {
+                MessageBox.Show("Hmm, you need a .gitconfig in " + path + "\n\nThere's a sample.gitconfig in the 4kampfpanzerin directory.", "Major bummer", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             form = AppForm.GetInstance();
             ApplySettings();
             form.SetFullscreen();
@@ -83,7 +90,6 @@ namespace kampfpanzerin
                 var targetPath = d.ProjectLocation + @"\" + d.Repo.Slug;
                 GitHandler.Clone(d.Repo, targetPath, BitBucketUtils.GetCredentials(bbd));
                 OpenProject(targetPath);
-                
             }
         }
 
@@ -229,7 +235,6 @@ namespace kampfpanzerin
             Properties.Settings.Default.Save();
 
             LoadShader();
-            BuildShader();
             
             if (File.Exists("music.wav"))
                 form.musicPlayer.LoadWAV(currentProjectDirectory + "\\music.wav");
@@ -553,7 +558,6 @@ namespace kampfpanzerin
         }
 
         internal static void ReloadShaders() {
-
             StreamReader sr = new StreamReader("vert.glsl");
             form.edVert.Text = sr.ReadToEnd();
             sr.Close();
@@ -565,6 +569,8 @@ namespace kampfpanzerin
             sr = new StreamReader("ppfrag.glsl");
             form.edPost.Text = sr.ReadToEnd();
             sr.Close();
+
+            BuildShader();
         }
     }
 }

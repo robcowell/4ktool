@@ -32,6 +32,7 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
@@ -131,7 +132,7 @@
             this.btnRefreshShaders = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.musicPlayer = new kampfpanzerin.MusicPlayer();
-            this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.forceDisplayTo169ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitMainLR)).BeginInit();
             this.splitMainLR.Panel1.SuspendLayout();
@@ -207,6 +208,14 @@
             this.createToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.createToolStripMenuItem.Text = "&Create...";
             this.createToolStripMenuItem.Click += new System.EventHandler(this.createToolStripMenuItem_Click);
+            // 
+            // importToolStripMenuItem
+            // 
+            this.importToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.importToolStripMenuItem.Text = "Import...";
+            this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
@@ -440,7 +449,8 @@
             this.resetCameraToolStripMenuItem,
             this.minifyShadersToolStripMenuItem,
             this.colourHelperToolStripMenuItem,
-            this.screenshotToolStripMenuItem});
+            this.screenshotToolStripMenuItem,
+            this.forceDisplayTo169ToolStripMenuItem});
             this.toolsToolStripMenuItem.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
@@ -800,7 +810,7 @@
             this.log.Multiline = true;
             this.log.Name = "log";
             this.log.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.log.Size = new System.Drawing.Size(291, 110);
+            this.log.Size = new System.Drawing.Size(291, 107);
             this.log.TabIndex = 4;
             this.log.TextChanged += new System.EventHandler(this.log_TextChanged);
             // 
@@ -1464,13 +1474,13 @@
             this.musicPlayer.Size = new System.Drawing.Size(943, 62);
             this.musicPlayer.TabIndex = 9;
             // 
-            // importToolStripMenuItem
+            // forceDisplayTo169ToolStripMenuItem
             // 
-            this.importToolStripMenuItem.ForeColor = System.Drawing.Color.White;
-            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-            this.importToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.importToolStripMenuItem.Text = "Import...";
-            this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
+            this.forceDisplayTo169ToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.forceDisplayTo169ToolStripMenuItem.Name = "forceDisplayTo169ToolStripMenuItem";
+            this.forceDisplayTo169ToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.forceDisplayTo169ToolStripMenuItem.Text = "Force display to 16:9";
+            this.forceDisplayTo169ToolStripMenuItem.Click += new System.EventHandler(this.forceDisplayTo169ToolStripMenuItem_Click);
             // 
             // AppForm
             // 
@@ -1628,6 +1638,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.Label lblCam;
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem forceDisplayTo169ToolStripMenuItem;
     }
 }
 
