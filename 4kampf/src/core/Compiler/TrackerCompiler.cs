@@ -37,7 +37,7 @@ namespace kampfpanzerin.src.core.Compiler {
             return "\r\nvec3 sn[" + bars.Count + "];";
         }
 
-        public static string CompileTrack(TimelineBar bar) {
+        public static string CompileTrack(TimelineBar bar, double scale = 1) {
             string current = "{0};";
 
             for (int i = 0; i < bar.events.Count; i++) {
@@ -48,7 +48,7 @@ namespace kampfpanzerin.src.core.Compiler {
                     current = string.Format(current, startVal);
                     break;
                 } else {
-                    string stopVal = ToOptimisedString(bar.events[i + 1].value);
+                    string stopVal = ToOptimisedString(bar.events[i + 1].value * (float)scale);
                     string stopTime = ToOptimisedString(bar.events[i + 1].time);
                     switch (be.type) {
                         case BarEventType.HOLD:
@@ -76,7 +76,7 @@ namespace kampfpanzerin.src.core.Compiler {
             }
 
             var cp = "cp=" + CompileTrack(bars[0]);
-            var rot = "cr=" + CompileTrack(bars[1]);
+            var rot = "cr=" + CompileTrack(bars[1], Math.PI);
             return cp + rot;
         }
 
@@ -85,9 +85,9 @@ namespace kampfpanzerin.src.core.Compiler {
             IEnumerable<BarEventType> types = bars.SelectMany(b => b).SelectMany(b => b.events).GroupBy(e => e.type).Select(Enumerable.First).Select(e => e.type);
             IEnumerable <string> strings = types.Select(t => {
                 switch (t) {
-                    case BarEventType.HOLD: return "#define fx(b,bb,bbb) u.z<b?bb:bbb\r\n";
-                    case BarEventType.LERP: return "#define mx(b,bb,bbb,bbbb) u.z<bb?mix(bbb,bbbb,(u.z-b)/(bb-b)):bbbb\r\n";
-                    case BarEventType.SMOOTH: return "#define sx(b,bb,bbb,bbbb) u.z<bb?bbb+(bbbb-bbb)*smoothstep(b,bb,u.z):bbbb\r\n";
+                    case BarEventType.HOLD: return "#define fx(b,bb,bbb) (u.z<b?bb:bbb)\r\n";
+                    case BarEventType.LERP: return "#define mx(b,bb,bbb,bbbb) (u.z<bb?mix(bbb,bbbb,(u.z-b)/(bb-b)):bbbb)\r\n";
+                    case BarEventType.SMOOTH: return "#define sx(b,bb,bbb,bbbb) (u.z<bb?bbb+(bbbb-bbb)*smoothstep(b,bb,u.z):bbbb)\r\n";
                     default: throw new NotImplementedException();
                 }
             });
