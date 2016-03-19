@@ -300,7 +300,8 @@ namespace kampfpanzerin
             fragText = fragText.Replace("SYNCCODE", syncCode);
             fragText = fragText.Replace("SYNCVARS", syncRest + syncVars);
 
-            //vertText = vertText.Replace("CAMVARS", "uniform vec3 cp, cr;");
+            vertText = vertText.Replace("CAMVARS", "uniform vec3 u, cp, cr;");
+            vertText = vertText.Replace("CAMCODE", "");
 
             if (syncCode != "" && Properties.Settings.Default.useSyncTracker)
                 Logger.log("Generated sync code:\r\n" + syncCode);
@@ -439,11 +440,15 @@ namespace kampfpanzerin
             string syncCode = TrackerCompiler.CompileSyncTrackerCode(form.timeLine.syncBars);
             string vertText = form.edVert.Text;
             string fragText = form.edFrag.Text;
-            //string syncCode = TrackerCompiler.CompileSyncTrackerCode(form.timeLine.syncBars);
+            string camVars = TrackerCompiler.SyncVars(form.timeLine.camBars);
+            string camCode = TrackerCompiler.CompileCamTrackerCode(form.timeLine.camBars);
             string syncVars = TrackerCompiler.SyncVars(form.timeLine.syncBars);
-            string syncRest = "\r\n" + TrackerCompiler.GetInterpolationCode(form.timeLine.syncBars, form.timeLine.camBars);
+            string syncRest = TrackerCompiler.GetInterpolationCode(form.timeLine.syncBars, form.timeLine.camBars);
             vertText = vertText.Replace("SYNCCODE", syncCode);
             vertText = vertText.Replace("SYNCVARS", syncRest + syncVars);
+            vertText = vertText.Replace("SYNCCODE", syncCode);
+            vertText = vertText.Replace("CAMVARS", "uniform vec3 u;vec3 cp,cr;");
+            vertText = vertText.Replace("CAMCODE", camCode);
             fragText = fragText.Replace("SYNCCODE", syncCode);
             fragText = fragText.Replace("SYNCVARS", syncRest + syncVars);
             if (Properties.Settings.Default.usePP) {

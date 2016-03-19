@@ -76,7 +76,7 @@ namespace kampfpanzerin.src.core.Compiler {
             }
 
             var cp = "cp=" + CompileTrack(bars[0]);
-            var rot = "or=" + CompileTrack(bars[1]);
+            var rot = "cr=" + CompileTrack(bars[1]);
             return cp + rot;
         }
 
