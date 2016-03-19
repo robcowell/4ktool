@@ -39,7 +39,7 @@ namespace kampfpanzerin
 		private float fpsUpdateInterval = 1.0f, lastUpdate = 0, fps = 0, frameTime, lastFrameTime;
 		private ulong ticksPerSecond;
         private int[] shaderProg = new int[] { -1, -1 };
-        private int rtt, fbo;
+        private int rtt,rtt2,fbo;
 
         private BitmapFont debugLabeller;
         private Project project;
@@ -51,14 +51,25 @@ namespace kampfpanzerin
 		}
 
         private void BuildRenderTarget() {
-            Gl.glGenFramebuffersEXT(1, out fbo);
-            Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, fbo);
             Gl.glGenTextures(1, out rtt);
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, rtt);
             Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR);
             Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR);
             Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGBA16F_ARB, control.Width, control.Height, 0, Gl.GL_RGBA, Gl.GL_HALF_FLOAT_ARB, IntPtr.Zero);
+
+            Gl.glGenTextures(1, out rtt2);
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, rtt2);
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR);
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR);
+            Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGBA16F_ARB, control.Width, control.Height, 0, Gl.GL_RGBA, Gl.GL_HALF_FLOAT_ARB, IntPtr.Zero);
+
+            Gl.glGenFramebuffersEXT(1, out fbo);
+            Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, fbo);
             Gl.glFramebufferTexture2DEXT(Gl.GL_FRAMEBUFFER_EXT, Gl.GL_COLOR_ATTACHMENT0_EXT, Gl.GL_TEXTURE_2D, rtt, 0);
+            Gl.glFramebufferTexture2DEXT(Gl.GL_FRAMEBUFFER_EXT, Gl.GL_COLOR_ATTACHMENT1_EXT, Gl.GL_TEXTURE_2D, rtt2, 0);
+
+            int[] myBuffers = { Gl.GL_COLOR_ATTACHMENT0_EXT, Gl.GL_COLOR_ATTACHMENT1_EXT };
+            Gl.glDrawBuffers(2,myBuffers);
             Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, 0);
         }
 
@@ -319,8 +330,12 @@ namespace kampfpanzerin
             if (Properties.Settings.Default.usePP) {
                 Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, 0);  // Unbind the fbo
                 Gl.glUseProgram(shaderProg[1]);                     // Use the PP prog
+                Gl.glActiveTexture(Gl.GL_TEXTURE0);
                 Gl.glBindTexture(Gl.GL_TEXTURE_2D, rtt);
-                Gl.glUniform1i(Gl.glGetUniformLocation(shaderProg[1], "fr"), 0);
+                Gl.glActiveTexture(Gl.GL_TEXTURE1);
+                Gl.glBindTexture(Gl.GL_TEXTURE_2D, rtt2);
+                //Gl.glUniform1i(Gl.glGetUniformLocation(shaderProg[1], "fr"), 0);
+                //Gl.glUniform1i(Gl.glGetUniformLocation(shaderProg[1], "fr"), 1);
                 if (Properties.Settings.Default.enableStandardUniforms) {
                     float[] standardUniforms = { control.Width, control.Height, GetTrackTime() };
                     Gl.glUniform3fv(Gl.glGetUniformLocation(shaderProg[1], "u"), 1, standardUniforms);
