@@ -441,8 +441,8 @@ namespace kampfpanzerin
             string fragText = form.edFrag.Text;
             //string syncCode = TrackerCompiler.CompileSyncTrackerCode(form.timeLine.syncBars);
             string syncVars = TrackerCompiler.SyncVars(form.timeLine.syncBars);
-            string syncRest = TrackerCompiler.GetInterpolationCode(form.timeLine.syncBars, form.timeLine.camBars);
-            vertText = vertText.Replace("SYNCCODE", syncRest + syncCode);
+            string syncRest = "\r\n" + TrackerCompiler.GetInterpolationCode(form.timeLine.syncBars, form.timeLine.camBars);
+            vertText = vertText.Replace("SYNCCODE", syncCode);
             vertText = vertText.Replace("SYNCVARS", syncRest + syncVars);
             fragText = fragText.Replace("SYNCCODE", syncCode);
             fragText = fragText.Replace("SYNCVARS", syncRest + syncVars);
