@@ -451,8 +451,8 @@ namespace kampfpanzerin
                     project,
                     form.musicPlayer.GetDuration(),
                     form.timeLine.syncBars,
-                    form.edVert.Text,
-                    form.edFrag.Text,
+                    vertText,
+                    fragText,
                     form.edPost.Text);
             } else {
                 BuildUtils.DoExportHeader(project, form.musicPlayer.GetDuration(), form.timeLine.syncBars, vertText, fragText);
