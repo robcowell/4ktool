@@ -96,7 +96,7 @@ namespace kampfpanzerin.src.core.Compiler {
 
 
         public static string ToOptimisedString(float f, bool intAllowed = false) {
-            string s = f.ToString(".000", Kampfpanzerin.culture);
+            string s = f.ToString(".00", Kampfpanzerin.culture);
             if (s.StartsWith("-0."))
                 s = s.Substring(1);
             if (s.StartsWith("0."))
