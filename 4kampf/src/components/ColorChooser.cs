@@ -468,7 +468,7 @@ namespace kampfpanzerin
 			// If you have the left mouse button down, 
 			// then update the selectedPoint value and 
 			// force a repaint of the color wheel.
-			if ( e.Button == MouseButtons.Left ) 
+			if (e.Button == MouseButtons.Left && pnlColor.ClientRectangle.Contains(pnlColor.PointToClient(Cursor.Position))) 
 			{
 				changeType = ChangeStyle.MouseMove;
 				selectedPoint = new Point(e.X, e.Y);
