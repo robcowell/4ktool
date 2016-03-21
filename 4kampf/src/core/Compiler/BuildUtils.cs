@@ -41,11 +41,17 @@ namespace kampfpanzerin {
 
 
         private static string CleanShader(string s) {
+            Dictionary<string,string> replacements = new Dictionary<string, string>();
             string r = "";
             string[] lines = s.Split(new string[] { "\n" }, StringSplitOptions.None);
             for (int i = 0; i < lines.Count(); i++) {
-                if (i > 55) {
-                    int sdf = 345;
+                // Substitute AUTOREP
+                if (lines[i].IndexOf("// AUTOREP") != -1 && lines[i].StartsWith("#define")) {
+                    string t = lines[i].Substring(8);
+                    string varName = t.Substring(0, t.IndexOf(" "));
+                    string varValue = t.Substring(t.IndexOf(" ") + 1).Replace("// AUTOREP","").Trim();
+                    replacements.Add(varName,varValue);
+                    continue;
                 }
                 // Remove comments
                 int commentPos = lines[i].IndexOf("//");
@@ -61,6 +67,9 @@ namespace kampfpanzerin {
                 // Add spaces after braceless elses
                 if (lines[i].EndsWith("else"))
                     lines[i] += " ";
+                // Do replacements
+                foreach (var pair in replacements)
+                    lines[i] = lines[i].Replace(pair.Key, pair.Value);
                 // Got anything left? Cool, add it!
                 if (lines[i].Length > 0)
                     r += lines[i];
