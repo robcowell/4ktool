@@ -37,18 +37,18 @@ namespace kampfpanzerin.src.core.Compiler {
             return "\r\nvec3 sn[" + bars.Count + "];";
         }
 
-        public static string CompileTrack(TimelineBar bar, double scale = 1) {
+        public static string CompileTrack(TimelineBar bar, double scale = 1, bool forceInt = false) {
             string current = "{0};";
 
             for (int i = 0; i < bar.events.Count; i++) {
                 TimelineBarEvent be = bar.events[i];
-                string startVal = ToOptimisedString(be.value);
+                string startVal = ToOptimisedString(be.value, true, forceInt);
                 string startTime = ToOptimisedString(be.time);
                 if (i == bar.events.Count - 1) {
                     current = string.Format(current, startVal);
                     break;
                 } else {
-                    string stopVal = ToOptimisedString(bar.events[i + 1].value * (float)scale);
+                    string stopVal = ToOptimisedString(bar.events[i + 1].value * (float)scale, true, forceInt);
                     string stopTime = ToOptimisedString(bar.events[i + 1].time);
                     switch (be.type) {
                         case BarEventType.HOLD:
@@ -75,7 +75,7 @@ namespace kampfpanzerin.src.core.Compiler {
                 return "";
             }
 
-            var cp = "cp=" + CompileTrack(bars[0]);
+            var cp = "cp=" + CompileTrack(bars[0],1.0,true);
             var rot = "cr=" + CompileTrack(bars[1], Math.PI);
             return cp + rot;
         }
@@ -95,7 +95,10 @@ namespace kampfpanzerin.src.core.Compiler {
         }
 
 
-        public static string ToOptimisedString(float f, bool intAllowed = false) {
+        public static string ToOptimisedString(float f, bool intAllowed = false, bool forceInt = false) {
+            if (forceInt)
+                return Convert.ToInt32(f).ToString();
+
             string s = f.ToString(".00", Kampfpanzerin.culture);
             if (s.StartsWith("-0."))
                 s = s.Substring(1);
@@ -114,8 +117,8 @@ namespace kampfpanzerin.src.core.Compiler {
             return s;
         }
 
-        public static string ToOptimisedString(Vector3f v, bool intAllowed = true) {
-            return String.Format("vec3({0},{1},{2})", ToOptimisedString(v.x, intAllowed), ToOptimisedString(v.y, intAllowed), ToOptimisedString(v.z, intAllowed));
+        public static string ToOptimisedString(Vector3f v, bool intAllowed = true, bool forceInt = false) {
+            return String.Format("vec3({0},{1},{2})", ToOptimisedString(v.x, intAllowed, forceInt), ToOptimisedString(v.y, intAllowed, forceInt), ToOptimisedString(v.z, intAllowed, forceInt));
         }
 
     }
