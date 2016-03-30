@@ -288,6 +288,7 @@ namespace kampfpanzerin
 
         // TODO: extract shader constant replacement stuff
         public static void BuildShader() {
+            Logger.clear();     // Controversial, but really required IMO (Fell). Sorry, it's back!
             Logger.log("* Building shaders...");
 
             GraphicsManager gfx = GraphicsManager.GetInstance();
@@ -480,6 +481,7 @@ namespace kampfpanzerin
             form.musicPlayer.Stop();
             ExportHeader();
 
+            Logger.clear();     // Controversial, but really required IMO (Fell). Sorry, it's back!
             Logger.log("* Building prod in " + buildtype + " mode...");
             Utils.LaunchAndLog("cmd.exe", "/k \"\"" + Properties.Settings.Default.devCommandPromptLocation + "\" & cd \"" + currentProjectDirectory + "\\basecode\" & msbuild -p:configuration=\"" + buildtype + "\"\"");
 
