@@ -562,5 +562,11 @@ namespace kampfpanzerin {
                 change = newHeight - current.Height;
             splitLHS.SplitterDistance += change;
         }
+
+        private void btnRenderEnable_Click(object sender, EventArgs e) {
+            GraphicsManager gfx = GraphicsManager.GetInstance();
+            gfx.SetRenderEnabled(!gfx.GetRenderEnabled());
+            btnRenderEnable.BackColor = gfx.GetRenderEnabled() ? Color.FromArgb(100, 100, 100) : Color.FromArgb(64,64,64);
+        }
     }
 }

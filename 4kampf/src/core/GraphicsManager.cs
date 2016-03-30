@@ -40,6 +40,7 @@ namespace kampfpanzerin
 		private ulong ticksPerSecond;
         private int[] shaderProg = new int[] { -1, -1 };
         private int rtt,rtt2,fbo;
+        private bool renderEnabled = true;
 
         private BitmapFont debugLabeller;
         private Project project;
@@ -266,6 +267,9 @@ namespace kampfpanzerin
 		}
 
         public void Render() {
+            if (!renderEnabled)
+                return;
+
             UpdateFPS();
 
             Gl.glUseProgram(shaderProg[0]);         // Use scene prog
@@ -508,6 +512,13 @@ namespace kampfpanzerin
             return camera;
         }
 
+        public bool GetRenderEnabled() {
+            return renderEnabled;
+        }
+
+        public void SetRenderEnabled(bool b) {
+            renderEnabled = b;
+        }
         public void updateProject(Project project) {
             this.project = project;
         }
