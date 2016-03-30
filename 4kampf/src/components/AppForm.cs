@@ -548,15 +548,19 @@ namespace kampfpanzerin {
         }
 
         private void forceDisplayTo169ToolStripMenuItem_Click(object sender, EventArgs e) {
-            Size current = preview.Size;
-            int newHeight = current.Width / 16 * 9,
-                change = newHeight - current.Height;
-            splitLHS.SplitterDistance += change;
+            DoForce16To9();
         }
 
         private void lblCam_Click(object sender, EventArgs e) {
             string[] cam = lblCam.Text.Split('\n');
             Clipboard.SetText("cp=vec3(" + cam[0].ToString(Kampfpanzerin.culture) + "),cr=vec3(" + cam[1].ToString(Kampfpanzerin.culture) + ")");
+        }
+
+        public void DoForce16To9() {
+            Size current = preview.Size;
+            int newHeight = current.Width / 16 * 9,
+                change = newHeight - current.Height;
+            splitLHS.SplitterDistance += change;
         }
     }
 }

@@ -43,6 +43,7 @@ namespace kampfpanzerin
             ApplySettings();
             form.SetFullscreen();
             form.Show();    // Note: Not done in AppForm constructor to prevent SetFullscreen() etc causing ugly resizes
+            form.DoForce16To9();
 
             MessageBoxManager.Register();
 
