@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using Tao.OpenGl;
 using System.Xml.Serialization;
 using System.Globalization;
@@ -73,6 +74,8 @@ namespace kampfpanzerin
             Application.EnableVisualStyles();
             while (!form.IsDisposed) {
                 Application.DoEvents();
+                if (!gfx.GetRenderEnabled())
+                    Thread.Sleep(50);
                 gfx.Render();
                 form.FrameUpdate();
                 GC.Collect();

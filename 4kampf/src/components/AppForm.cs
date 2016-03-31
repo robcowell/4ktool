@@ -243,6 +243,7 @@ namespace kampfpanzerin {
 
         public void FrameUpdate() {
             GraphicsManager gfx = GraphicsManager.GetInstance();
+
             float time = gfx.GetTrackTime();
             string fps = (int)gfx.GetFPS() + " fps";
             string timeStr = time.ToString("000.00");
