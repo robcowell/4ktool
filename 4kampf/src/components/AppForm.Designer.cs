@@ -1,4 +1,6 @@
-﻿namespace kampfpanzerin
+﻿using System.Drawing;
+
+namespace kampfpanzerin
 {
     partial class AppForm
     {
@@ -1502,6 +1504,7 @@
             this.preview.TabStop = false;
             this.preview.MouseClick += new System.Windows.Forms.MouseEventHandler(this.preview_MouseClick);
             this.preview.MouseDown += new System.Windows.Forms.MouseEventHandler(this.preview_MouseDown);
+            this.preview.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.preview_MouseWheel);
             // 
             // btnClearLog
             // 

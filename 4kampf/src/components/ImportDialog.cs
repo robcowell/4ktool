@@ -55,6 +55,11 @@ namespace kampfpanzerin.components {
             bbc.UserName = userNameTxt.Text;
             repoList.Items.Clear();
             var repos = GitHandler.GetBitBucketRepos(teamTxt.Text, BitBucketUtils.GetCredentials(bbc));
+            if (repos == null)
+            {
+                MessageBox.Show("Got no repos!");
+                return;
+            }
             foreach (var item in repos) {
                 repoList.Items.Add(item);
             }

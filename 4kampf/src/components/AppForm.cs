@@ -159,6 +159,14 @@ namespace kampfpanzerin {
             preview.Focus();
         }
 
+        private void preview_MouseWheel(object sender, MouseEventArgs e)
+        {
+            //preview.Focus();
+            GraphicsManager gfx = GraphicsManager.GetInstance();
+            float amt = e.Delta*0.1f;
+            gfx.GetCamera().Move(ModifierKeys == Keys.Shift ? amt * 0.1f : amt);
+        }
+
         private void cleanToolStripMenuItem_Click_1(object sender, EventArgs e) {
             Kampfpanzerin.DoBuildClean();
         }
