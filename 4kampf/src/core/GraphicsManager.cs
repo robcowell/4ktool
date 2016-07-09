@@ -11,6 +11,9 @@ using kampfpanzerin.core.Serialization;
 
 using Tao.OpenGl;
 using Tao.Platform.Windows;
+using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
+using KeyEventHandler = System.Windows.Forms.KeyEventHandler;
+using MouseEventHandler = System.Windows.Forms.MouseEventHandler;
 
 namespace kampfpanzerin
 {
@@ -266,8 +269,8 @@ namespace kampfpanzerin
 			return true;
 		}
 
-        public void Render() {
-            if (!renderEnabled)
+        public void Render(bool forceRender = false) {
+            if (!renderEnabled && !forceRender)
                 return;
 
             UpdateFPS();
@@ -277,19 +280,23 @@ namespace kampfpanzerin
             if (Properties.Settings.Default.usePP)  // Using PP? Render to the FBO then
                 Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, fbo);
 
+            bool shiftPressed = (Control.ModifierKeys & Keys.Shift) == Keys.Shift;
+            float speedMove = MOVE_SPEED * (shiftPressed ? 1.0f : 0.02f);
+            float speedLook = MOUSE_LOOK_SPEED * (shiftPressed ? 1.0f : 0.02f);
+
             if (Properties.Settings.Default.enableCamControls) {
                 if (keys[(int)Keys.W] || keys[(int)Keys.Up])
-                    camera.Move(-MOVE_SPEED * editStep);
+                    camera.Move(-speedMove * editStep);
                 if (keys[(int)Keys.S] || keys[(int)Keys.Down])
-                    camera.Move(MOVE_SPEED * editStep);
+                    camera.Move(speedMove * editStep);
                 if (keys[(int)Keys.A] || keys[(int)Keys.Left])
-                    camera.Strafe(-MOVE_SPEED * editStep);
+                    camera.Strafe(-speedMove * editStep);
                 if (keys[(int)Keys.D] || keys[(int)Keys.Right])
-                    camera.Strafe(MOVE_SPEED * editStep);
+                    camera.Strafe(speedMove * editStep);
                 if (keys[(int)Keys.PageUp] || keys[(int)Keys.R])
-                    camera.Crane(MOVE_SPEED * editStep);
+                    camera.Crane(speedMove * editStep);
                 if (keys[(int)Keys.PageDown] || keys[(int)Keys.F])
-                    camera.Crane(-MOVE_SPEED * editStep);
+                    camera.Crane(-speedMove * editStep);
                 if (mouseRDown) {
                     if (!rmp) {
                         mouseStartPos = mouseCurrentPos;
@@ -298,8 +305,8 @@ namespace kampfpanzerin
 
                     PointF mouseMovement = new PointF();
 
-                    mouseMovement.X = (mouseCurrentPos.X - mouseStartPos.X) * MOUSE_LOOK_SPEED;
-                    mouseMovement.Y = (mouseCurrentPos.Y - mouseStartPos.Y) * MOUSE_LOOK_SPEED;
+                    mouseMovement.X = (mouseCurrentPos.X - mouseStartPos.X) * speedLook;
+                    mouseMovement.Y = (mouseCurrentPos.Y - mouseStartPos.Y) * speedLook;
 
                     camera.Mouselook(mouseMovement);
                     mouseStartPos = mouseCurrentPos;
