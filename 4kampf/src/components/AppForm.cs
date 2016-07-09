@@ -167,7 +167,7 @@ namespace kampfpanzerin {
         {
             GraphicsManager gfx = GraphicsManager.GetInstance();
             float amt = -e.Delta*0.1f;
-            gfx.GetCamera().Move(ModifierKeys == Keys.Shift ? amt : amt * 0.1f);
+            gfx.GetCamera().Move(ModifierKeys == Keys.Shift ? amt * 0.1f : amt);
         }
 
         private void cleanToolStripMenuItem_Click_1(object sender, EventArgs e) {

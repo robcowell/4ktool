@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.IO;
@@ -36,6 +37,17 @@ namespace kampfpanzerin {
             } catch (Exception) {
                 return false;
             }
+        }
+
+        public static void SaveJpeg(Bitmap bitmap, string savePath, int qualityPercent)
+        {
+            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
+            ImageCodecInfo jpgEncoder = codecs.Single(codec => codec.FormatID == ImageFormat.Jpeg.Guid);
+            System.Drawing.Imaging.Encoder myEncoder = System.Drawing.Imaging.Encoder.Quality;
+            EncoderParameters myEncoderParameters = new EncoderParameters(1);
+            EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, qualityPercent);
+            myEncoderParameters.Param[0] = myEncoderParameter;
+            bitmap.Save(savePath, jpgEncoder, myEncoderParameters);
         }
 
         public static void LaunchAndLog(string filename, string args) {

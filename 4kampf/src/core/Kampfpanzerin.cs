@@ -540,8 +540,17 @@ namespace kampfpanzerin
             bmp.UnlockBits(data);
 
             bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
-            bmp.Save(currentProjectDirectory + "/screenshot.png", System.Drawing.Imaging.ImageFormat.Png);
-            Logger.log("* Screenshot saved \\o/");
+            if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift)
+            {
+                Utils.SaveJpeg(bmp, currentProjectDirectory + "/screenshot.jpg", 80);
+                Logger.log("* Screenshot jpeg saved \\o/");
+            }
+            else
+            {
+                bmp.Save(currentProjectDirectory + "/screenshot.png", System.Drawing.Imaging.ImageFormat.Png);
+                Logger.log("* Screenshot png saved \\o/");
+            }
+            
         }
 
         public static void SetDirty(bool d = true) {
