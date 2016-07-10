@@ -70,6 +70,8 @@ namespace kampfpanzerin {
                 // Do replacements
                 foreach (var pair in replacements)
                     lines[i] = lines[i].Replace(pair.Key, pair.Value);
+                // Strip tabs from stuff like material tables
+                lines[i] = lines[i].Replace("\t", "");
                 // Got anything left? Cool, add it!
                 if (lines[i].Length > 0)
                     r += lines[i];
