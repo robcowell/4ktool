@@ -135,9 +135,11 @@ namespace kampfpanzerin {
         private void rebuildShadersToolStripMenuItem_Click(object sender, EventArgs e) {
             Kampfpanzerin.BuildShader();
 
+            /*
             GraphicsManager gfx = GraphicsManager.GetInstance();
             if (!gfx.GetRenderEnabled())
                 gfx.Render(true);
+             */
         }
 
         private void loopTrackToolStripMenuItem_Click(object sender, EventArgs e) {
