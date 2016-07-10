@@ -281,7 +281,7 @@ namespace kampfpanzerin
                 Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, fbo);
 
             bool shiftPressed = (Control.ModifierKeys & Keys.Shift) == Keys.Shift;
-            float speedMove = MOVE_SPEED * (shiftPressed ? 1.0f : 0.02f);
+            float speedMove = MOVE_SPEED * (shiftPressed ? 0.02f : 1.0f);
             float speedLook = MOUSE_LOOK_SPEED * (shiftPressed ? 0.02f : 1.0f);
 
             if (Properties.Settings.Default.enableCamControls) {
