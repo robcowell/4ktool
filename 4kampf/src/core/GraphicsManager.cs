@@ -282,7 +282,7 @@ namespace kampfpanzerin
 
             bool shiftPressed = (Control.ModifierKeys & Keys.Shift) == Keys.Shift;
             float speedMove = MOVE_SPEED * (shiftPressed ? 1.0f : 0.02f);
-            float speedLook = MOUSE_LOOK_SPEED * (shiftPressed ? 1.0f : 0.02f);
+            float speedLook = MOUSE_LOOK_SPEED * (shiftPressed ? 0.02f : 1.0f);
 
             if (Properties.Settings.Default.enableCamControls) {
                 if (keys[(int)Keys.W] || keys[(int)Keys.Up])
