@@ -109,9 +109,9 @@ namespace kampfpanzerin
             form.pnlToolbar.Visible = Properties.Settings.Default.showToolBar;
             form.pnlCam.Visible = Properties.Settings.Default.enableCamControls;
 
-            if (Properties.Settings.Default.usePP && form.tabControl1.TabPages.Count < 3)
+            if (project.usePP && form.tabControl1.TabPages.Count < 3)
                 form.tabControl1.TabPages.Add(form.tabPP);
-            else if (!Properties.Settings.Default.usePP && form.tabControl1.TabPages.Count == 3)
+            else if (!project.usePP && form.tabControl1.TabPages.Count == 3)
                 form.tabControl1.TabPages.Remove(form.tabPP);
 
             if (Properties.Settings.Default.useSyncTracker && form.splitRHS.Panel2Collapsed)
@@ -134,7 +134,7 @@ namespace kampfpanzerin
             form.enableStandardUniformsToolStripMenuItem.Checked = Properties.Settings.Default.enableStandardUniforms;
             form.loopTrackToolStripMenuItem.Checked = Properties.Settings.Default.enableLooping;
             form.fullscreenToolStripMenuItem.Checked = Properties.Settings.Default.fullscreen;
-            form.useExtraPPShaderToolStripMenuItem.Checked = Properties.Settings.Default.usePP;
+            form.useExtraPPShaderToolStripMenuItem.Checked = project.usePP;
             form.enableMultithread4klangInProdToolStripMenuItem.Checked = Properties.Settings.Default.useSoundThread;
             form.enableSyncTrackerToolStripMenuItem.Checked = Properties.Settings.Default.useSyncTracker;
             form.showLinenumbersToolStripMenuItem.Checked = Properties.Settings.Default.showLineNumbers;
@@ -321,7 +321,7 @@ namespace kampfpanzerin
             ).Replace("\n", "\r\n");
             Logger.log(msg);
 
-            if (Properties.Settings.Default.usePP) {
+            if (project.usePP) {
                 string postText = form.edPost.Text;
                 postText = postText.Replace("//#SYNCCODE#", syncCode);
                 
@@ -459,7 +459,7 @@ namespace kampfpanzerin
             vertText = vertText.Replace("CAMCODE", camCode);
             fragText = fragText.Replace("SYNCCODE", syncCode);
             fragText = fragText.Replace("SYNCVARS", syncRest + syncVars);
-            if (Properties.Settings.Default.usePP) {
+            if (project.usePP) {
                 BuildUtils.DoExportHeader(
                     project,
                     form.musicPlayer.GetDuration(),

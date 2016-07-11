@@ -111,6 +111,7 @@ namespace kampfpanzerin.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [System.Obsolete("use project.usePP")]
         public bool usePP {
             get {
                 return ((bool)(this["usePP"]));

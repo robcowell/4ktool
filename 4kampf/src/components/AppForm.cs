@@ -148,7 +148,7 @@ namespace kampfpanzerin {
         }
 
         private void useExtraPPShaderToolStripMenuItem_Click(object sender, EventArgs e) {
-            Properties.Settings.Default.usePP = !Properties.Settings.Default.usePP;
+            Kampfpanzerin.project.usePP = !Kampfpanzerin.project.usePP;
             Kampfpanzerin.ApplySettings();
             Kampfpanzerin.BuildShader();
         }

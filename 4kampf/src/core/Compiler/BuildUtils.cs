@@ -13,7 +13,7 @@ namespace kampfpanzerin {
                 s += "#define USE_STANDARD_UNIFORMS\n";
             if (p.use4klangEnv)
                 s += "#define USE_4KLANG_ENV_SYNC\n";
-            if (Properties.Settings.Default.usePP)
+            if (p.usePP)
                 s += "#define USE_PP\n";
             if (Properties.Settings.Default.useSoundThread)
                 s += "#define USE_SOUND_THREAD\n";

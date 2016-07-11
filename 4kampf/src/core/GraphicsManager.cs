@@ -277,7 +277,7 @@ namespace kampfpanzerin
 
             Gl.glUseProgram(shaderProg[0]);         // Use scene prog
 
-            if (Properties.Settings.Default.usePP)  // Using PP? Render to the FBO then
+            if (project.usePP)  // Using PP? Render to the FBO then
                 Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, fbo);
 
             bool shiftPressed = (Control.ModifierKeys & Keys.Shift) == Keys.Shift;
@@ -338,7 +338,7 @@ namespace kampfpanzerin
 
             Gl.glRects(-1, -1, 1, 1);   // Render scene to current target (screen if no PP, or FBO if using PP)
 
-            if (Properties.Settings.Default.usePP) {
+            if (project.usePP) {
                 Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, 0);  // Unbind the fbo
                 Gl.glUseProgram(shaderProg[1]);                     // Use the PP prog
                 Gl.glActiveTexture(Gl.GL_TEXTURE0);
