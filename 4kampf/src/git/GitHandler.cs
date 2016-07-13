@@ -214,7 +214,11 @@ namespace kampfpanzerin.git {
                             Username = credentials.UserName,
                             Password = credentials.Password
                         });
-                Signature s = new Signature(project.bitBucketSettings.UserName, project.bitBucketSettings.UserName, DateTime.Now);
+
+                Configuration config = new Configuration();
+                var gitUsername = config.Get<string>("user.name", ConfigurationLevel.Global).Value;
+
+                Signature s = new Signature(gitUsername, gitUsername, DateTime.Now);
                 MergeResult r = repo.Network.Pull(s, options);
                 switch (r.Status) {
                     case MergeStatus.UpToDate:
