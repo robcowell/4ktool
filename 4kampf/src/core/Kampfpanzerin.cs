@@ -51,7 +51,6 @@ namespace kampfpanzerin
             WelcomeDialog wd = new WelcomeDialog();
             wd.StartPosition = FormStartPosition.CenterScreen;
             WelcomeDialogResult d;
-            bool hideDialog = false;
             do {
                 wd.ShowDialog();
                 d = wd.result;
@@ -66,10 +65,11 @@ namespace kampfpanzerin
                         ImportProject();
                         break;
                     case WelcomeDialogResult.QUIT:
-                        hideDialog = true;
+                        Application.Exit();
+                        Environment.Exit(0);
                         break; // C# is gay
                 }
-            } while (string.IsNullOrEmpty(currentProjectDirectory) && !hideDialog);
+            } while (string.IsNullOrEmpty(currentProjectDirectory));
 
             GraphicsManager gfx = GraphicsManager.GetInstance();
             Application.EnableVisualStyles();
