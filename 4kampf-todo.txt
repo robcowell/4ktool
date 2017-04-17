@@ -1,3 +1,7 @@
+- THE BIG QUESTIONS
+	- Can we drop the sync / cam track stuff? I don't see it ever being used. Too much data!
+	- Was Clinkster a dead end we can now drop? (Pleeeeease)
+
 - General
 	- Target Location on Import gets a bit recursive :D
 	- Would be nice to just be able to paste 4klang .inc and .h and have it build the .obj instead of manually pre-building it
@@ -7,20 +11,20 @@
 	- Option to choose git commit message when saving would be nice
 CHK	- I can't set Cam Track without Sync Timeline, is this by design? UI needs clarified if so
 	- Cam track needs a button icon alongside sync vars toggle
-!	- 16:9 button
+!	- 16:9 button required for UI consistency
 	- Project does not remember if Cam Track was set
 	- Possibly also clinkster -- CHECK PROJ OOPTION SAVIN / LOADIN / APPLYIN IN GENERAL
 !	- Beat It Clive should CLOSE app if just opened
 		- Check raizor's commit
 	
 - Build / basecode
+CHK	- Possibly some more of iq's small-compile tricks need to be reinstated in basecode proj (see http://www.iquilezles.org/www/articles/compilingsmall/compilingsmall.htm)	
 	- Use pure asm basecode instead?
 		- I mean, yeah
-	- Choose resolution to build?? Batch build resolutions?? Something else?
-		- Fuck it, 1080 is fine these days
-	- Toggle whether to do a proper mode change -- saves 10 bytes in final prod
-	- possibly some more of iq's small-compile tricks need to be reinstated in basecode proj (see http://www.iquilezles.org/www/articles/compilingsmall/compilingsmall.htm)	
+WF	- Choose resolution to build?? Batch build resolutions?? Something else?
+WF		- Fuck it, 1080 is fine these days :D
 	- Fast/slow build settings could be optimised -- CHECK AGAINST PRODS / SKOMP
-	- Toggle whether to do an initial swapbuffers() to clear a screen for precalc (or derive this automagically: if 4klang and no extra sound thread, do it; if clinkster, always do it....
+	- Derive whether to do an initial swapbuffers() to clear a screen for precalc: if 4klang and no extra sound thread, do it; if clinkster, always do it....
 	
-	
+- New project options:
+	- Toggle whether to do a proper mode change -- saves 10 bytes in final prod	
