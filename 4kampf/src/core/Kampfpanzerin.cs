@@ -212,8 +212,8 @@ namespace kampfpanzerin
             Logger.clear();
 
             if (!File.Exists(dir + "/project.kml")) {
-                MessageBox.Show("Wow, you are quite old fashioned trying to open such an old project.\nI will convert it to the new format on save.", "4kampfpanzerin", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                form.timeLine.LoadData("sync.dat");
+                MessageBox.Show("That doesn't seem to be a project directory;\nI couldn't find project.kml :(", "4kampf", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             } else {
                 using (Stream stream = File.Open(dir + "/project.kml", FileMode.Open)) {
                     XmlSerializer serializer = new XmlSerializer(typeof(Project));
@@ -228,11 +228,6 @@ namespace kampfpanzerin
                 GraphicsManager.GetInstance().updateProject(project);
                 Repo = new GitHandler(dir);
                 ApplySettings();
-            }
-
-            if (!File.Exists(dir + "\\vert.glsl") || !File.Exists(dir + "\\frag.glsl")) {
-                MessageBox.Show("That doesn't seem to be a project directory;\nI couldn't find vert.glsl and frag.glsl :(", "4kampf", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
             }
 
             currentProjectDirectory = dir;
