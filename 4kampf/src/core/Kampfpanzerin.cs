@@ -269,24 +269,6 @@ namespace kampfpanzerin
             form.edPost.UndoRedo.EmptyUndoBuffer();
         }
 
-        public static void MinifyShaders() {
-            SaveProject();
-            Logger.log("* Using shader_minify on yer shaders...");
-            MinifyShader("frag.glsl");
-            MinifyShader("vert.glsl");
-            MinifyShader("ppfrag.glsl");
-            LoadShader();
-            Logger.log("Done");
-        }
-
-        private static void MinifyShader(string filename) {
-            Logger.log("* Minifying " + filename + "...");
-            string cmd = AppDomain.CurrentDomain.BaseDirectory + "shader_minifier.exe";
-            string args = "--preserve-externals --format none \"" + currentProjectDirectory + "\\" + filename + "\" -o \"" + currentProjectDirectory + "\\" + filename + "\"";
-
-            Utils.LaunchAndLog(cmd, args);
-        }
-
         // TODO: extract shader constant replacement stuff
         public static void BuildShader() {
             Logger.clear();     // Controversial, but really required IMO (Fell). Sorry, it's back!
@@ -312,7 +294,9 @@ namespace kampfpanzerin
             string msg = "Scene shader compilation:\r\n" + gfx.BuildShader(
                 0, 
                 vertText.Replace("\n", "\r\n"),
-                fragText.Replace("\n", "\r\n")
+                fragText.Replace("\n", "\r\n"),
+                form.edVert,
+                form.edFrag
             ).Replace("\n", "\r\n");
             Logger.log(msg);
 
@@ -322,8 +306,11 @@ namespace kampfpanzerin
                 
                 msg = "Postprocessing shader compilation:\r\n" + gfx.BuildShader(
                     1, 
-                    vertText.Replace("\n", "\r\n"), 
-                    postText.Replace("\n", "\r\n")).Replace("\n", "\r\n");
+                    vertText.Replace("\n", "\r\n"),
+                    postText.Replace("\n", "\r\n"),
+                form.edVert,
+                form.edPost
+                ).Replace("\n", "\r\n");
                 Logger.log(msg);
             }
         }
@@ -497,13 +484,16 @@ namespace kampfpanzerin
                     FileStream fs = new FileStream(dest, FileMode.Open, FileAccess.Read);
                     long byteCount = fs.Length;
                     fs.Close();
-                    Logger.log("* Prod built! Written " + dest + ": " + byteCount + " bytes\r\n");
-                    if (byteCount <= 4096)
-                        Logger.log("NOW GO AND WIN THE COMPO! (" + (4096 - byteCount) + " bytes free)\r\n");
-                    else if (buildtype != "Debug")
-                        Logger.log("TIME FOR A SHAVE... (" + (byteCount - 4096) + " bytes to lose)\r\n");
+                    if (fs.Length > 0) {
+                        Logger.log("* Prod built! Written " + dest + ": " + byteCount + " bytes\r\n");
+                        if (byteCount <= 4096)
+                            Logger.log("NOW GO AND WIN THE COMPO! (" + (4096 - byteCount) + " bytes free)\r\n");
+                        else if (buildtype != "Debug")
+                            Logger.log("TIME FOR A SHAVE... (" + (byteCount - 4096) + " bytes to lose)\r\n");
+                    } else
+                        Logger.log("! Build failed/cancelledd :(\r\n");
                 } catch (Exception) {
-                    Logger.log("! Couldn't copy the exe\r\n");
+                    Logger.log("! Couldn't copy the exe :(\r\n");
                 }
             } else
                 Logger.log("! No .exe written :(\r\n");

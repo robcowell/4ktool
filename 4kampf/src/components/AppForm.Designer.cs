@@ -64,7 +64,6 @@ namespace kampfpanzerin
             this.rUNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetCameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.minifyShadersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colourHelperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.screenshotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.forceDisplayTo169ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -452,7 +451,6 @@ namespace kampfpanzerin
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.resetCameraToolStripMenuItem,
-            this.minifyShadersToolStripMenuItem,
             this.colourHelperToolStripMenuItem,
             this.screenshotToolStripMenuItem,
             this.forceDisplayTo169ToolStripMenuItem});
@@ -470,14 +468,6 @@ namespace kampfpanzerin
             this.resetCameraToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.resetCameraToolStripMenuItem.Text = "&Reset camera";
             this.resetCameraToolStripMenuItem.Click += new System.EventHandler(this.resetCameraToolStripMenuItem_Click);
-            // 
-            // minifyShadersToolStripMenuItem
-            // 
-            this.minifyShadersToolStripMenuItem.ForeColor = System.Drawing.Color.White;
-            this.minifyShadersToolStripMenuItem.Name = "minifyShadersToolStripMenuItem";
-            this.minifyShadersToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.minifyShadersToolStripMenuItem.Text = "&Minify shaders";
-            this.minifyShadersToolStripMenuItem.Click += new System.EventHandler(this.minifyShadersToolStripMenuItem_Click);
             // 
             // colourHelperToolStripMenuItem
             // 
@@ -529,8 +519,7 @@ namespace kampfpanzerin
             this.enableMultithread4klangInProdToolStripMenuItem.Name = "enableMultithread4klangInProdToolStripMenuItem";
             this.enableMultithread4klangInProdToolStripMenuItem.Size = new System.Drawing.Size(266, 22);
             this.enableMultithread4klangInProdToolStripMenuItem.Text = "Enable &multithreaded 4klang in prod";
-            this.enableMultithread4klangInProdToolStripMenuItem.ToolTipText = "Saves ~50 bytes in final prod, but requires multicore. Disable for precalc music." +
-    "";
+            this.enableMultithread4klangInProdToolStripMenuItem.ToolTipText = "Saves ~50 bytes in final prod, but requires multicore. Disable for precalc music.";
             this.enableMultithread4klangInProdToolStripMenuItem.Click += new System.EventHandler(this.enableMultithread4klangInProdToolStripMenuItem_Click);
             // 
             // useExtraPPShaderToolStripMenuItem
@@ -1269,7 +1258,7 @@ namespace kampfpanzerin
             this.btnRenderMusic.Name = "btnRenderMusic";
             this.btnRenderMusic.Size = new System.Drawing.Size(20, 20);
             this.btnRenderMusic.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnRenderMusic, "Rebuild music");
+            this.toolTip1.SetToolTip(this.btnRenderMusic, "Render music");
             this.btnRenderMusic.UseVisualStyleBackColor = true;
             this.btnRenderMusic.Click += new System.EventHandler(this.btnRenderMusic_Click);
             // 
@@ -1589,7 +1578,6 @@ namespace kampfpanzerin
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportToVSToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem minifyShadersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setVisualStudioDevCommandpromptLocationToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitMainLR;
         private System.Windows.Forms.SplitContainer splitLHS;

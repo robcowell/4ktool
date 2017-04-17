@@ -1,0 +1,2 @@
+vsyasm.props, vsyasm.targets, vsyasm.xml --> C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\BuildCustomizations
+vsyasm.exe --> C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin

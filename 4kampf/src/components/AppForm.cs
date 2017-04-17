@@ -208,10 +208,6 @@ namespace kampfpanzerin {
             Kampfpanzerin.SaveProject();
         }
 
-        private void minifyShadersToolStripMenuItem_Click(object sender, EventArgs e) {
-            Kampfpanzerin.MinifyShaders();
-        }
-
         private void edVert_TextChanged(object sender, EventArgs e) {
             Kampfpanzerin.SetDirty();
         }

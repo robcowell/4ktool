@@ -77,7 +77,7 @@ namespace kampfpanzerin
             Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, 0);
         }
 
-        public string BuildShader(int progIndex, string vertSource, string fragSource) {
+        public string BuildShader(int progIndex, string vertSource, string fragSource, ScintillaNET.Scintilla editorVert, ScintillaNET.Scintilla editorFrag) {
             string[] vertShaderSource = { vertSource };
             string[] fragShaderSource = { fragSource };
 
@@ -109,10 +109,20 @@ namespace kampfpanzerin
             if (vsResult.ToString().Length > 0) {
                 noLog = false;
                 result += "Vert shader compile log:\n" + vsResult.ToString() + "\n";
+                /*
+                int lineNum = int.Parse(vsResult.ToString().Split('(', ')')[1])-1;
+                MessageBox.Show(lineNum.ToString()); 
+                editorVert.CurrentPos = lineNum;
+                 */
             }
             if (fsResult.ToString().Length > 0) {
                 noLog = false;
                 result += "Frag shader compile log:\n" + fsResult.ToString() + "\n";
+                /*
+                int lineNum = int.Parse(fsResult.ToString().Split('(', ')')[1]) - 1;
+                MessageBox.Show(lineNum.ToString());
+                editorFrag.CurrentPos = lineNum;
+                 */
             }
             if (noLog)
                 result = "No shader compilation errors, homeboy \\o/\n";
