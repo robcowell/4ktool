@@ -617,6 +617,7 @@ namespace kampfpanzerin
             this.splitMainLR.Location = new System.Drawing.Point(0, 27);
             this.splitMainLR.Margin = new System.Windows.Forms.Padding(0);
             this.splitMainLR.Name = "splitMainLR";
+            this.splitMainLR.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitMainLR_SplitterMoved);
             // 
             // splitMainLR.Panel1
             // 

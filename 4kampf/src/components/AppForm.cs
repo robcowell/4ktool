@@ -578,5 +578,9 @@ namespace kampfpanzerin {
             gfx.SetRenderEnabled(!gfx.GetRenderEnabled());
             btnRenderEnable.BackColor = gfx.GetRenderEnabled() ? Color.FromArgb(100, 100, 100) : Color.FromArgb(64,64,64);
         }
+
+        private void splitMainLR_SplitterMoved(object sender, SplitterEventArgs e) {
+            DoForce16To9();
+        }
     }
 }
