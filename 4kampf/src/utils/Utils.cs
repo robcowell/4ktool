@@ -64,11 +64,8 @@ namespace kampfpanzerin {
             //stopButton.Visible = true;
             p.BeginOutputReadLine();
 
-            while (true) {
+            while (p != null && !p.HasExited)
                 Application.DoEvents();
-                if (p == null || p.HasExited)
-                    break;
-            }
 
             //activeExternalProcess = null;
             //stopButton.Visible = false;

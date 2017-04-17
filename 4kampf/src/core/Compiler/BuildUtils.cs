@@ -37,9 +37,7 @@ namespace kampfpanzerin {
             s += "\"};\n";
             File.WriteAllText("4kampfpanzerin.h", s);
         }
-
-
-
+        
         private static string CleanShader(string s) {
             Dictionary<string,string> replacements = new Dictionary<string, string>();
             string r = "";

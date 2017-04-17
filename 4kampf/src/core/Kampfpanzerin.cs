@@ -354,7 +354,7 @@ namespace kampfpanzerin
                 currentProjectDirectory, 
                 project.useClinkster ? "clinksterwriter" : "wavwriter");
             
-            string command = "/k \"\"" + Properties.Settings.Default.devCommandPromptLocation + "\" & cd \"" + currentProjectDirectory + "\\wavwriter\" & msbuild -p:configuration=\"Release\" & cd .. & wavwriter.exe\"";
+            string command = "/k \"\"" + Properties.Settings.Default.devCommandPromptLocation + "\" & cd \"" + currentProjectDirectory + "\\wavwriter\" & msbuild -p:configuration=\"Release\" & cd .. & wavwriter.exe & exit\"";
             Logger.log("Executing 'cmd.exe " + command + "'");
             Utils.LaunchAndLog("cmd.exe", commandFormat);
 
@@ -489,7 +489,7 @@ namespace kampfpanzerin
 
             Logger.clear();     // Controversial, but really required IMO (Fell). Sorry, it's back!
             Logger.log("* Building prod in " + buildtype + " mode...");
-            Utils.LaunchAndLog("cmd.exe", "/k \"\"" + Properties.Settings.Default.devCommandPromptLocation + "\" & cd \"" + currentProjectDirectory + "\\basecode\" & msbuild -p:configuration=\"" + buildtype + "\"\"");
+            Utils.LaunchAndLog("cmd.exe", "/k \"\"" + Properties.Settings.Default.devCommandPromptLocation + "\" & cd \"" + currentProjectDirectory + "\\basecode\" & msbuild -p:configuration=\"" + buildtype + "\" & exit \"");
 
             string src = "basecode\\exe\\prod.exe";
             if (File.Exists(src)) {
