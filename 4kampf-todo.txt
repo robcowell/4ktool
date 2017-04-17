@@ -14,8 +14,6 @@ CHK	- I can't set Cam Track without Sync Timeline, is this by design? UI needs c
 !	- 16:9 button required for UI consistency
 	- Project does not remember if Cam Track was set
 	- Possibly also clinkster -- CHECK PROJ OOPTION SAVIN / LOADIN / APPLYIN IN GENERAL
-!	- Beat It Clive should CLOSE app if just opened
-		- Check raizor's commit
 	
 - Build / basecode
 CHK	- Possibly some more of iq's small-compile tricks need to be reinstated in basecode proj (see http://www.iquilezles.org/www/articles/compilingsmall/compilingsmall.htm)	
