@@ -484,7 +484,7 @@ namespace kampfpanzerin
                     FileStream fs = new FileStream(dest, FileMode.Open, FileAccess.Read);
                     long byteCount = fs.Length;
                     fs.Close();
-                    if (fs.Length > 0) {
+                    if (byteCount > 0) {
                         Logger.log("* Prod built! Written " + dest + ": " + byteCount + " bytes\r\n");
                         if (byteCount <= 4096)
                             Logger.log("NOW GO AND WIN THE COMPO! (" + (4096 - byteCount) + " bytes free)\r\n");
