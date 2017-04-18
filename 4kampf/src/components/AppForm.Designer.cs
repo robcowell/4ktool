@@ -359,12 +359,12 @@ namespace kampfpanzerin
             this.rerender4klangMuskcToolStripMenuItem,
             this.doBuildToolStripMenuItem,
             this.runToolStripMenuItem,
+            this.cleanToolStripMenuItem,
             this.toolStripSeparator4,
             this.debugToolStripMenuItem,
             this.unpackedReleaseToolStripMenuItem,
             this.packedReleasefastToolStripMenuItem,
-            this.packedReleaseslowToolStripMenuItem,
-            this.cleanToolStripMenuItem});
+            this.packedReleaseslowToolStripMenuItem});
             this.buildToolStripMenuItem.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.buildToolStripMenuItem.Name = "buildToolStripMenuItem";
             this.buildToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
