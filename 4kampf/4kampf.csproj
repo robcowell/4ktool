@@ -367,6 +367,8 @@
     <None Include="Resources\bitbucket-push.png" />
     <None Include="Resources\bitbucket-pull.png" />
     <None Include="Resources\RenderEnable.png" />
+    <Content Include="Resources\16-9-variation.png" />
+    <None Include="Resources\16to9.bmp" />
     <Content Include="skel\4klang.h" />
     <Content Include="skel\basecode\glext.h" />
     <Content Include="skel\basecode\intro.h" />

@@ -3,6 +3,8 @@
 	- Was Clinkster a dead end we can now drop? (Pleeeeease)
 
 - General
+	- Vertex shader toggle
+		- Ask skomp how it workss
 	- Target Location on Import gets a bit recursive :D
 	- Would be nice to just be able to paste 4klang .inc and .h and have it build the .obj instead of manually pre-building it
 	- Click to goto line on glsl error
@@ -11,10 +13,12 @@
 	- Option to choose git commit message when saving would be nice
 CHK	- I can't set Cam Track without Sync Timeline, is this by design? UI needs clarified if so
 	- Cam track needs a button icon alongside sync vars toggle
-!	- 16:9 button required for UI consistency
+
+- Project.kml
+!	- Render toggle to be proj setting (helpful for exe gfx prods)
 	- Project does not remember if Cam Track was set
 	- Possibly also clinkster -- CHECK PROJ OOPTION SAVIN / LOADIN / APPLYIN IN GENERAL
-	
+
 - Build / basecode
 CHK	- Possibly some more of iq's small-compile tricks need to be reinstated in basecode proj (see http://www.iquilezles.org/www/articles/compilingsmall/compilingsmall.htm)	
 	- Use pure asm basecode instead?

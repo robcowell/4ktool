@@ -319,9 +319,13 @@ namespace kampfpanzerin {
         private void btnSaveAll_Click(object sender, EventArgs e) {
             Kampfpanzerin.SaveProject();
         }
-
+        
         private void btnUndo_Click(object sender, EventArgs e) {
             GetActiveScintilla().UndoRedo.Undo();
+        }
+
+        private void btn16to9_Click(object sender, EventArgs e) {
+            DoForce16To9();
         }
 
         private ScintillaNET.Scintilla GetActiveScintilla() {
@@ -576,7 +580,7 @@ namespace kampfpanzerin {
         private void btnRenderEnable_Click(object sender, EventArgs e) {
             GraphicsManager gfx = GraphicsManager.GetInstance();
             gfx.SetRenderEnabled(!gfx.GetRenderEnabled());
-            btnRenderEnable.BackColor = gfx.GetRenderEnabled() ? Color.FromArgb(100, 100, 100) : Color.FromArgb(64,64,64);
+            btnRenderEnable.BackColor = gfx.GetRenderEnabled() ? Color.FromArgb(100, 100, 100) : Color.FromArgb(250,0,0);
         }
 
         private void splitMainLR_SplitterMoved(object sender, SplitterEventArgs e) {
