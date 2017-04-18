@@ -60,8 +60,8 @@ namespace kampfpanzerin
             this.packedReleasefastToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packedReleaseslowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cleanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.rUNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.doBuildToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetCameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colourHelperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -357,14 +357,14 @@ namespace kampfpanzerin
             this.buildToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.rebuildShadersToolStripMenuItem,
             this.rerender4klangMuskcToolStripMenuItem,
+            this.doBuildToolStripMenuItem,
+            this.runToolStripMenuItem,
             this.toolStripSeparator4,
             this.debugToolStripMenuItem,
             this.unpackedReleaseToolStripMenuItem,
             this.packedReleasefastToolStripMenuItem,
             this.packedReleaseslowToolStripMenuItem,
-            this.cleanToolStripMenuItem,
-            this.toolStripSeparator3,
-            this.rUNToolStripMenuItem});
+            this.cleanToolStripMenuItem});
             this.buildToolStripMenuItem.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.buildToolStripMenuItem.Name = "buildToolStripMenuItem";
             this.buildToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
@@ -396,7 +396,6 @@ namespace kampfpanzerin
             // 
             this.debugToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
-            this.debugToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
             this.debugToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.debugToolStripMenuItem.Text = "&Debug";
             this.debugToolStripMenuItem.Click += new System.EventHandler(this.debugToolStripMenuItem_Click);
@@ -434,19 +433,23 @@ namespace kampfpanzerin
             this.cleanToolStripMenuItem.Text = "&Clean build files";
             this.cleanToolStripMenuItem.Click += new System.EventHandler(this.cleanToolStripMenuItem_Click_1);
             // 
-            // toolStripSeparator3
+            // runToolStripMenuItem
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(184, 6);
+            this.runToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.runToolStripMenuItem.Name = "runToolStripMenuItem";
+            this.runToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
+            this.runToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.runToolStripMenuItem.Text = "&Run last build";
+            this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
             // 
-            // rUNToolStripMenuItem
+            // doBuildToolStripMenuItem
             // 
-            this.rUNToolStripMenuItem.ForeColor = System.Drawing.Color.White;
-            this.rUNToolStripMenuItem.Name = "rUNToolStripMenuItem";
-            this.rUNToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.rUNToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.rUNToolStripMenuItem.Text = "&Run last build";
-            this.rUNToolStripMenuItem.Click += new System.EventHandler(this.rUNToolStripMenuItem_Click);
+            this.doBuildToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.doBuildToolStripMenuItem.Name = "doBuildToolStripMenuItem";
+            this.doBuildToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
+            this.doBuildToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.doBuildToolStripMenuItem.Text = "&Build current config";
+            this.doBuildToolStripMenuItem.Click += new System.EventHandler(this.doBuildToolStripMenuItem_Click);
             // 
             // toolsToolStripMenuItem
             // 
@@ -1291,7 +1294,7 @@ namespace kampfpanzerin
             this.btnBuild.Name = "btnBuild";
             this.btnBuild.Size = new System.Drawing.Size(20, 20);
             this.btnBuild.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnBuild, "Build prod (Debug build)");
+            this.toolTip1.SetToolTip(this.btnBuild, "Build prod");
             this.btnBuild.UseVisualStyleBackColor = true;
             this.btnBuild.Click += new System.EventHandler(this.btnBuild_Click);
             // 
@@ -1615,8 +1618,8 @@ namespace kampfpanzerin
         private System.Windows.Forms.ToolStripMenuItem packedReleasefastToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem packedReleaseslowToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cleanToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripMenuItem rUNToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem doBuildToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem rebuildShadersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem rerender4klangMuskcToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;

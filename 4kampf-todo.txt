@@ -1,6 +1,5 @@
 - THE BIG QUESTIONS
-	- Can we drop the sync / cam track stuff? I don't see it ever being used. Too much data!
-	- Was Clinkster a dead end we can now drop? (Pleeeeease)
+	- Was Clinkster a dead end we can now drop?
 
 - General
 	- Vertex shader toggle

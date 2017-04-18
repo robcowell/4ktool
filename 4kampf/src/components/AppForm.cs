@@ -16,6 +16,7 @@ namespace kampfpanzerin {
     public partial class AppForm : Form {
         private static AppForm formInstance;
         private bool logBusy = false;
+        private string activeBuildType;
 
         public static AppForm GetInstance() {
             if (formInstance == null)
@@ -36,9 +37,15 @@ namespace kampfpanzerin {
             log.Text = " ";  // Force a textchanged to fire
             log.Text = "";
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+
+            debugToolStripMenuItem_Click(null, null);   // Select debug build by default
         }
 
-        private void rUNToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void doBuildToolStripMenuItem_Click(object sender, EventArgs e) {
+            Kampfpanzerin.DoBuild(activeBuildType);
+        }
+
+        private void runToolStripMenuItem_Click(object sender, EventArgs e) {
             Kampfpanzerin.DoRun();
         }
 
@@ -177,19 +184,35 @@ namespace kampfpanzerin {
         }
 
         private void debugToolStripMenuItem_Click(object sender, EventArgs e) {
-            Kampfpanzerin.DoBuild("Debug");
+            activeBuildType = "Debug";
+            debugToolStripMenuItem.Checked = true;
+            unpackedReleaseToolStripMenuItem.Checked = false;
+            packedReleasefastToolStripMenuItem.Checked = false;
+            packedReleaseslowToolStripMenuItem.Checked = false;
         }
 
         private void unpackedReleaseToolStripMenuItem_Click(object sender, EventArgs e) {
-            Kampfpanzerin.DoBuild("Unpacked release");
+            activeBuildType = "Unpacked release";
+            debugToolStripMenuItem.Checked = false;
+            unpackedReleaseToolStripMenuItem.Checked = true;
+            packedReleasefastToolStripMenuItem.Checked = false;
+            packedReleaseslowToolStripMenuItem.Checked = false;
         }
 
         private void packedReleasefastToolStripMenuItem_Click(object sender, EventArgs e) {
-            Kampfpanzerin.DoBuild("Packed release (fast)");
+            activeBuildType = "Packed release (fast)";
+            debugToolStripMenuItem.Checked = false;
+            unpackedReleaseToolStripMenuItem.Checked = false;
+            packedReleasefastToolStripMenuItem.Checked = true;
+            packedReleaseslowToolStripMenuItem.Checked = false; 
         }
 
         private void packedReleaseslowToolStripMenuItem_Click(object sender, EventArgs e) {
-            Kampfpanzerin.DoBuild("Packed release");
+            activeBuildType = "Packed release";
+            debugToolStripMenuItem.Checked = false;
+            unpackedReleaseToolStripMenuItem.Checked = false;
+            packedReleasefastToolStripMenuItem.Checked = false;
+            packedReleaseslowToolStripMenuItem.Checked = true;
         }
 
         private void createToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -362,7 +385,7 @@ namespace kampfpanzerin {
         }
 
         private void btnBuild_Click(object sender, EventArgs e) {
-            Kampfpanzerin.DoBuild("Debug");
+            Kampfpanzerin.DoBuild(activeBuildType);
         }
 
         private void btnRun_Click(object sender, EventArgs e) {
@@ -377,6 +400,7 @@ namespace kampfpanzerin {
             Properties.Settings.Default.fullscreen = !Properties.Settings.Default.fullscreen;
             Kampfpanzerin.ApplySettings();
             SetFullscreen();
+            DoForce16To9();
         }
 
         private void btnFullscreen_Click(object sender, EventArgs e) {
