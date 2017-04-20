@@ -331,13 +331,11 @@ namespace kampfpanzerin
 
             foreach (FileInfo f in new DirectoryInfo(currentProjectDirectory).GetFiles("envelope-*.dat"))
                 f.Delete();
-            string commandFormat = String.Format("/k \"\"{0}\" & cd \"{1}\\{2}\" & msbuild -p:configuration=\"Release\" & cd .. & wavwriter.exe\"",
+            string commandFormat = String.Format("/k \"\"{0}\" & cd \"{1}\\{2}\" & msbuild -p:configuration=\"Release\" & cd .. & wavwriter.exe & exit\"",
                 Properties.Settings.Default.devCommandPromptLocation, 
                 currentProjectDirectory, 
                 project.useClinkster ? "clinksterwriter" : "wavwriter");
-            
-            string command = "/k \"\"" + Properties.Settings.Default.devCommandPromptLocation + "\" & cd \"" + currentProjectDirectory + "\\wavwriter\" & msbuild -p:configuration=\"Release\" & cd .. & wavwriter.exe & exit\"";
-            Logger.log("Executing 'cmd.exe " + command + "'");
+
             Utils.LaunchAndLog("cmd.exe", commandFormat);
 
             if (!File.Exists("music.wav")) {
