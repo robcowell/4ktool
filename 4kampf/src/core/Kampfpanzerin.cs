@@ -373,8 +373,8 @@ namespace kampfpanzerin
                 MessageBox.Show("This Aggression will not stand dude, I need basecode!", "4kampfpanzer", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-        public static void SaveProject(string directory = "") {
+        
+        public static void SaveProject(string directory = "", bool withCommitMessage = false) {
             StreamWriter sw = new StreamWriter("frag.glsl");
             sw.Write(form.edFrag.Text);
             sw.Close();
@@ -391,12 +391,12 @@ namespace kampfpanzerin
             project.camBars = form.timeLine.camBars;
             project.syncBars = form.timeLine.syncBars;
             //project.settings = kampfpanzerin.Properties.Settings.Default;
-            SaveProjectSettings(project);
+            SaveProjectSettings(project, "", withCommitMessage);
 
             projectDirty = false;
         }
 
-        private static void SaveProjectSettings(Project project, string directory = "") {
+        private static void SaveProjectSettings(Project project, string directory = "", bool withCommitMessage = false) {
             try {
                 using (Stream stream = File.Open(directory + "project.kml", FileMode.Create)) {
                     XmlSerializer serializer = new XmlSerializer(typeof(Project));
@@ -412,16 +412,28 @@ namespace kampfpanzerin
                             if (Repo.Conflicts.Count() > 0) {
                                 Logger.logf("! Not all conflicts are resolved, boss...");
                             } else {
-                                Repo.Commit();
+                                DoRepoCommit(withCommitMessage);
                             }
                         }
                     } else {
-                        Repo.Commit();
+                        DoRepoCommit(withCommitMessage);
                     }
                 }
             } catch (IOException) {
                 Logger.log("! Something went wrong when saving!");
             } 
+        }
+
+        private static void DoRepoCommit(bool withCommitMessage) {
+            if(withCommitMessage) {
+                SaveWithCommitMessage dialog = new SaveWithCommitMessage();
+                dialog.ShowDialog();
+                if(dialog.DialogResult == DialogResult.OK) {
+                    string commitMessage = dialog.GetCommitMessage();
+                    // TODO: Commit the shit \o/
+                }
+            } else
+                Repo.Commit();
         }
 
         private static void ExportHeader() {

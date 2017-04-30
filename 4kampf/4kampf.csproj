@@ -108,6 +108,12 @@
     <Compile Include="src\components\BitBucketSettings.Designer.cs">
       <DependentUpon>BitBucketSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="src\components\SaveWithCommitMessage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\components\SaveWithCommitMessage.Designer.cs">
+      <DependentUpon>SaveWithCommitMessage.cs</DependentUpon>
+    </Compile>
     <Compile Include="src\components\CredenditalPrompt.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -230,6 +236,9 @@
     <EmbeddedResource Include="src\components\BitBucketSettings.resx">
       <DependentUpon>BitBucketSettings.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\components\SaveWithCommitMessage.resx">
+      <DependentUpon>SaveWithCommitMessage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="src\components\CredenditalPrompt.resx">
       <DependentUpon>CredenditalPrompt.cs</DependentUpon>
@@ -368,7 +377,6 @@
     <None Include="Resources\bitbucket-pull.png" />
     <None Include="Resources\RenderEnable.png" />
     <Content Include="Resources\16-9-variation.png" />
-    <None Include="Resources\16to9.bmp" />
     <Content Include="skel\4klang.h" />
     <Content Include="skel\basecode\glext.h" />
     <Content Include="skel\basecode\intro.h" />

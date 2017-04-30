@@ -231,6 +231,10 @@ namespace kampfpanzerin {
             Kampfpanzerin.SaveProject();
         }
 
+        private void saveWithCommitMessageToolStripMenuItem_Click(object sender, EventArgs e) {
+            Kampfpanzerin.SaveProject("",true);
+        }        
+
         private void edVert_TextChanged(object sender, EventArgs e) {
             Kampfpanzerin.SetDirty();
         }

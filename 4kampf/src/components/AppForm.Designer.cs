@@ -37,6 +37,7 @@ namespace kampfpanzerin
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveWithCommitMessageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.pullFromBitBucketToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pushToBitbucketToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -191,6 +192,7 @@ namespace kampfpanzerin
             this.importToolStripMenuItem,
             this.openToolStripMenuItem,
             this.saveAllToolStripMenuItem,
+            this.saveWithCommitMessageToolStripMenuItem,
             this.toolStripSeparator5,
             this.pullFromBitBucketToolStripMenuItem,
             this.pushToBitbucketToolStripMenuItem,
@@ -239,6 +241,15 @@ namespace kampfpanzerin
             this.saveAllToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.saveAllToolStripMenuItem.Text = "&Save all";
             this.saveAllToolStripMenuItem.Click += new System.EventHandler(this.saveAllToolStripMenuItem_Click);
+            // 
+            // saveWithCommitMessageToolStripMenuItem
+            // 
+            this.saveWithCommitMessageToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.saveWithCommitMessageToolStripMenuItem.Name = "saveWithCommitMessageToolStripMenuItem";
+            this.saveWithCommitMessageToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.S)));
+            this.saveWithCommitMessageToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.saveWithCommitMessageToolStripMenuItem.Text = "Save all with &commit message";
+            this.saveWithCommitMessageToolStripMenuItem.Click += new System.EventHandler(this.saveWithCommitMessageToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
@@ -1598,6 +1609,7 @@ namespace kampfpanzerin
         private System.Windows.Forms.ToolStripMenuItem createToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveWithCommitMessageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportToVSToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setVisualStudioDevCommandpromptLocationToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitMainLR;
