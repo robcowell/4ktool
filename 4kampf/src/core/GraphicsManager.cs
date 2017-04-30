@@ -88,13 +88,13 @@ namespace kampfpanzerin
 
             shaderProg[progIndex] = Gl.glCreateProgram();
 
-            int vs = Gl.glCreateShader(Gl.GL_VERTEX_SHADER);
+/*            int vs = Gl.glCreateShader(Gl.GL_VERTEX_SHADER);
             Gl.glShaderSource(vs, 1, vertShaderSource, IntPtr.Zero);
             Gl.glCompileShader(vs);
             Gl.glAttachShader(shaderProg[progIndex], vs);
             StringBuilder vsResult = new StringBuilder(60000);
             Gl.glGetInfoLogARB(vs, 60000, IntPtr.Zero, vsResult);
-
+            */
             int fs = Gl.glCreateShader(Gl.GL_FRAGMENT_SHADER);
             Gl.glShaderSource(fs, 1, fragShaderSource, IntPtr.Zero);
             Gl.glCompileShader(fs);
@@ -103,9 +103,12 @@ namespace kampfpanzerin
             Gl.glGetInfoLogARB(fs, 60000, IntPtr.Zero, fsResult);
 
             Gl.glLinkProgram(shaderProg[progIndex]);
+            StringBuilder linkResult = new StringBuilder(60000);
+            Gl.glGetInfoLogARB(shaderProg[progIndex], 60000, IntPtr.Zero, fsResult);
 
             string result = "";
             bool noLog = true;
+            /*
             if (vsResult.ToString().Length > 0) {
                 noLog = false;
                 result += "Vert shader compile log:\n" + vsResult.ToString() + "\n";
@@ -113,8 +116,8 @@ namespace kampfpanzerin
                 int lineNum = int.Parse(vsResult.ToString().Split('(', ')')[1])-1;
                 MessageBox.Show(lineNum.ToString()); 
                 editorVert.CurrentPos = lineNum;
-                 */
-            }
+             
+            }    */
             if (fsResult.ToString().Length > 0) {
                 noLog = false;
                 result += "Frag shader compile log:\n" + fsResult.ToString() + "\n";
@@ -123,6 +126,10 @@ namespace kampfpanzerin
                 MessageBox.Show(lineNum.ToString());
                 editorFrag.CurrentPos = lineNum;
                  */
+            }
+            if (linkResult.ToString().Length > 0) {
+                noLog = false;
+                result += "Shader prog link log:\n" + linkResult.ToString() + "\n";
             }
             if (noLog)
                 result = "No shader compilation errors, homeboy \\o/\n";
