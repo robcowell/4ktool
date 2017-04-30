@@ -179,7 +179,7 @@ namespace kampfpanzerin
                 p.syncBars = form.timeLine.syncBars;
                 p.camBars = form.timeLine.camBars;
 
-                SaveProjectSettings(p, dest + "/");
+                SaveProjectSettingsAndCommit(p, dest + "/");
 
                 Repo = GitHandler.Init(dest, p);
                 
@@ -221,7 +221,7 @@ namespace kampfpanzerin
                     stream.Close();
                     if (project.name == null) {
                         project.name = dir.Substring(dir.LastIndexOf(@"\") + 1);
-                        SaveProjectSettings(project, dir);
+                        SaveProjectSettingsAndCommit(project, dir);
                     }
                 }
                 form.timeLine.SetProject(project);
@@ -391,12 +391,12 @@ namespace kampfpanzerin
             project.camBars = form.timeLine.camBars;
             project.syncBars = form.timeLine.syncBars;
             //project.settings = kampfpanzerin.Properties.Settings.Default;
-            SaveProjectSettings(project, "", withCommitMessage);
+            SaveProjectSettingsAndCommit(project, "", withCommitMessage);
 
             projectDirty = false;
         }
 
-        private static void SaveProjectSettings(Project project, string directory = "", bool withCommitMessage = false) {
+        private static void SaveProjectSettingsAndCommit(Project project, string directory = "", bool withCommitMessage = false) {
             if (Repo != null && !Repo.CheckCommitNeeded())
             {
                 Logger.logf("! Work harder, there is nothing changed since the last save, boss...");
