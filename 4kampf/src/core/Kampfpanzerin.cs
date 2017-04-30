@@ -397,7 +397,7 @@ namespace kampfpanzerin
         }
 
         private static void SaveProjectSettings(Project project, string directory = "", bool withCommitMessage = false) {
-            if (!Repo.CheckCommitNeeded())
+            if (Repo != null && !Repo.CheckCommitNeeded())
             {
                 Logger.logf("! Work harder, there is nothing changed since the last save, boss...");
                 return;
