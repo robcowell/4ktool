@@ -17,11 +17,10 @@ using kampfpanzerin.core.Serialization;
 using kampfpanzerin.log;
 using kampfpanzerin.utils;
 
-namespace kampfpanzerin
-{
+namespace kampfpanzerin {
     static class Kampfpanzerin {
         private static AppForm form;
-        private static string currentProjectDirectory; 
+        private static string currentProjectDirectory;
         private static bool projectDirty;
         public static Project project = new Project();
         public static CultureInfo culture = CultureInfo.CreateSpecificCulture("en-GB");
@@ -182,14 +181,14 @@ namespace kampfpanzerin
                 SaveProjectSettingsAndCommit(p, dest + "/");
 
                 Repo = GitHandler.Init(dest, p);
-                
+
                 string msg = "* Project created. Now drop your ";
-                msg += p.useClinkster?"music.asm":"4klang.obj and 4klang.h";
+                msg += p.useClinkster ? "music.asm" : "4klang.obj and 4klang.h";
                 msg += " in there and run Build->Render Music.\r\n\r\n(Or just run Build->Render Music now to render the example tune!)\r\n";
                 Logger.logf(msg);
 
                 OpenProject(dest, true);
-            } else { 
+            } else {
                 return;
             }
         }
@@ -217,7 +216,7 @@ namespace kampfpanzerin
             } else {
                 using (Stream stream = File.Open(dir + "/project.kml", FileMode.Open)) {
                     XmlSerializer serializer = new XmlSerializer(typeof(Project));
-                    project = (Project) serializer.Deserialize(stream);
+                    project = (Project)serializer.Deserialize(stream);
                     stream.Close();
                     if (project.name == null) {
                         project.name = dir.Substring(dir.LastIndexOf(@"\") + 1);
@@ -237,7 +236,7 @@ namespace kampfpanzerin
             Properties.Settings.Default.Save();
 
             LoadShader();
-            
+
             if (File.Exists("music.wav"))
                 form.musicPlayer.LoadWAV(currentProjectDirectory + "\\music.wav");
             else if (!inhibitMusicRenderPrompt) {
@@ -292,7 +291,7 @@ namespace kampfpanzerin
                 Logger.log("Generated sync code:\r\n" + syncCode);
 
             string msg = "Scene shader compilation:\r\n" + gfx.BuildShader(
-                0, 
+                0,
                 vertText.Replace("\n", "\r\n"),
                 fragText.Replace("\n", "\r\n"),
                 form.edVert,
@@ -303,9 +302,9 @@ namespace kampfpanzerin
             if (project.usePP) {
                 string postText = form.edPost.Text;
                 postText = postText.Replace("//#SYNCCODE#", syncCode);
-                
+
                 msg = "Postprocessing shader compilation:\r\n" + gfx.BuildShader(
-                    1, 
+                    1,
                     vertText.Replace("\n", "\r\n"),
                     postText.Replace("\n", "\r\n"),
                 form.edVert,
@@ -332,8 +331,8 @@ namespace kampfpanzerin
             foreach (FileInfo f in new DirectoryInfo(currentProjectDirectory).GetFiles("envelope-*.dat"))
                 f.Delete();
             string commandFormat = String.Format("/k \"\"{0}\" & cd \"{1}\\{2}\" & msbuild -p:configuration=\"Release\" & cd .. & wavwriter.exe & exit\"",
-                Properties.Settings.Default.devCommandPromptLocation, 
-                currentProjectDirectory, 
+                Properties.Settings.Default.devCommandPromptLocation,
+                currentProjectDirectory,
                 project.useClinkster ? "clinksterwriter" : "wavwriter");
 
             Utils.LaunchAndLog("cmd.exe", commandFormat);
@@ -364,7 +363,7 @@ namespace kampfpanzerin
 
             Logger.log("Build files cleaned\r\n");
         }
-        
+
         public static void DoExport() {
             ExportHeader();
             try {
@@ -373,7 +372,7 @@ namespace kampfpanzerin
                 MessageBox.Show("This Aggression will not stand dude, I need basecode!", "4kampfpanzer", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        
+
         public static void SaveProject(string directory = "", bool withCommitMessage = false) {
             StreamWriter sw = new StreamWriter("frag.glsl");
             sw.Write(form.edFrag.Text);
@@ -397,8 +396,7 @@ namespace kampfpanzerin
         }
 
         private static void SaveProjectSettingsAndCommit(Project project, string directory = "", bool withCommitMessage = false) {
-            if (Repo != null && !Repo.CheckCommitNeeded())
-            {
+            if (Repo != null && !Repo.CheckCommitNeeded()) {
                 Logger.logf("! Work harder, there is nothing changed since the last save, boss...");
                 return;
             }
@@ -426,14 +424,14 @@ namespace kampfpanzerin
                 }
             } catch (IOException) {
                 Logger.log("! Something went wrong when saving!");
-            } 
+            }
         }
 
         private static void DoRepoCommit(bool withCommitMessage) {
-            if(withCommitMessage) {
+            if (withCommitMessage) {
                 SaveWithCommitMessage dialog = new SaveWithCommitMessage();
                 dialog.ShowDialog();
-                if(dialog.DialogResult == DialogResult.OK) {
+                if (dialog.DialogResult == DialogResult.OK) {
                     string commitMessage = dialog.GetCommitMessage();
                     Repo.Commit(commitMessage);
                 }
@@ -540,17 +538,14 @@ namespace kampfpanzerin
             bmp.UnlockBits(data);
 
             bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
-            if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift)
-            {
+            if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift) {
                 Utils.SaveJpeg(bmp, currentProjectDirectory + "/screenshot.jpg", 80);
                 Logger.log("* Screenshot jpeg saved \\o/");
-            }
-            else
-            {
+            } else {
                 bmp.Save(currentProjectDirectory + "/screenshot.png", System.Drawing.Imaging.ImageFormat.Png);
                 Logger.log("* Screenshot png saved \\o/");
             }
-            
+
         }
 
         public static void SetDirty(bool d = true) {
@@ -601,3 +596,4 @@ namespace kampfpanzerin
         }
     }
 }
+// monolith line!

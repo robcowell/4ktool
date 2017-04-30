@@ -28,7 +28,7 @@ namespace kampfpanzerin.git {
         public static GitHandler Init(string folder, Project p, NetworkCredential credentials = null) {
             Logger.log("* Initialising local repo...");
             Cursor.Current = Cursors.WaitCursor;
-            
+
             try {
                 folder = folder.NormalizePath();
                 Repository.Init(folder, folder);
@@ -55,7 +55,7 @@ namespace kampfpanzerin.git {
                     gitRepo.Network.Remotes.Add("origin", p.gitRemote);
                     ret.Push(p, credentials);
                 }
-                Cursor.Current = Cursors.Default;      
+                Cursor.Current = Cursors.Default;
                 return ret;
             } catch (Exception) {
                 Logger.log("! Bad juju guvnor, I couldn't create the repo!\r\n");
@@ -67,7 +67,7 @@ namespace kampfpanzerin.git {
         public void Push(Project p, NetworkCredential credentials) {
             Logger.log("* Pushing the repo to Bitbucket...");
             Cursor.Current = Cursors.WaitCursor;
-            
+
             LibGit2Sharp.PushOptions options = new LibGit2Sharp.PushOptions();
             options.CredentialsProvider = new LibGit2Sharp.Handlers.CredentialsHandler(
                 (url, usernameFromUrl, types) =>
@@ -81,7 +81,7 @@ namespace kampfpanzerin.git {
                     string refspec = string.Format("{0}:{1}",
                              repo.Head.CanonicalName, repo.Head.CanonicalName);
                     repo.Network.Push(repo.Network.Remotes["origin"], refspec, options);
-                    repo.Branches.Update(repo.Head, delegate(BranchUpdater updater) {
+                    repo.Branches.Update(repo.Head, delegate (BranchUpdater updater) {
                         updater.Remote = repo.Network.Remotes["origin"].Name;
                         updater.UpstreamBranch = repo.Head.CanonicalName;
                     });
@@ -133,7 +133,7 @@ namespace kampfpanzerin.git {
                     return null;
                 } else {
                     string s = string.Format("https://bitbucket.org/{0}/{1}.git", data.Team, data.RepoSlug);
-                    Logger.logf("Created repo at "+s+"\r\n");
+                    Logger.logf("Created repo at " + s + "\r\n");
                     Cursor.Current = Cursors.Default;
                     return s;
                 }
@@ -178,7 +178,7 @@ namespace kampfpanzerin.git {
         }
 
         public static string Clone(RepoDescriptor desc, string path, NetworkCredential credentials) {
-            Logger.logf("* Cloning "+desc.Clone+"...");
+            Logger.logf("* Cloning " + desc.Clone + "...");
             Cursor.Current = Cursors.WaitCursor;
             try {
                 var options = new CloneOptions();
@@ -234,17 +234,14 @@ namespace kampfpanzerin.git {
             CommitOptions co = new CommitOptions();
             co.AllowEmptyCommit = false;
             foreach (StatusEntry e in repo.RetrieveStatus()) {
-                if(e.State == FileStatus.Modified) {
+                if (e.State == FileStatus.Modified) {
                     repo.Stage(e.FilePath);
                 }
             }
             try {
-                if (message == null)
-                {
+                if (message == null) {
                     repo.Commit(DateTime.Now.ToString(), co);
-                }
-                else
-                {
+                } else {
                     repo.Commit(message);
                 }
                 Logger.logf("Committed\r\n");
@@ -256,14 +253,12 @@ namespace kampfpanzerin.git {
             Cursor.Current = Cursors.Default;
         }
 
-        internal bool CheckCommitNeeded()
-        {
+        internal bool CheckCommitNeeded() {
             RepositoryStatus status = repo.RetrieveStatus();
             return status.IsDirty;
-        } 
+        }
 
-        internal void Branch(string name)
-        {
+        internal void Branch(string name) {
             Logger.logf("* Committing...");
             Cursor.Current = Cursors.WaitCursor;
 
@@ -272,8 +267,7 @@ namespace kampfpanzerin.git {
             repo.Checkout(branch, options);
         }
 
-        internal void merge(string branchToMerge)
-        {
+        internal void merge(string branchToMerge) {
             Branch b = repo.Branches[branchToMerge];
             Configuration config = new Configuration();
             var gitUsername = config.Get<string>("user.name", ConfigurationLevel.Global).Value;
@@ -284,10 +278,8 @@ namespace kampfpanzerin.git {
             MergeResult(r);
         }
 
-        internal void MergeResult(MergeResult r)
-        {
-            switch (r.Status)
-            {
+        internal void MergeResult(MergeResult r) {
+            switch (r.Status) {
                 case MergeStatus.UpToDate:
                     Logger.logf("Up to date with {0}\r\n", repo.Head.Remote.Name);
                     break;
@@ -299,8 +291,7 @@ namespace kampfpanzerin.git {
                     break;
                 case MergeStatus.Conflicts:
                     Logger.logf("! Conflict while pulling from {0}\r\n", repo.Head.Remote.Name);
-                    foreach (Conflict c in repo.Index.Conflicts)
-                    {
+                    foreach (Conflict c in repo.Index.Conflicts) {
                         Logger.logf(" * {0}", c.Ancestor.Path);
                     }
 
