@@ -220,25 +220,7 @@ namespace kampfpanzerin.git {
 
                 Signature s = new Signature(gitUsername, gitUsername, DateTime.Now);
                 MergeResult r = repo.Network.Pull(s, options);
-                switch (r.Status) {
-                    case MergeStatus.UpToDate:
-                        Logger.logf("Up to date with {0}\r\n", repo.Head.Remote.Name);
-                        break;
-                    case MergeStatus.FastForward:
-                        Logger.logf("Pulled all changes from {0} (fast forward)\r\n", repo.Head.Remote.Name);
-                        break;
-                    case MergeStatus.NonFastForward:
-                        Logger.logf("Pulled all changes from {0} (merged, non fast forward)\r\n", repo.Head.Remote.Name);
-                        break;
-                    case MergeStatus.Conflicts:
-                        Logger.logf("! Conflict while pulling from {0}\r\n", repo.Head.Remote.Name);
-                        foreach (Conflict c in repo.Index.Conflicts) {
-                            Logger.logf(" * {0}", c.Ancestor.Path);
-                        }
-
-                        Logger.logf("! Eeep, please resolve and commit\r\n", repo.Head.Remote.Name);
-                        break;
-                }
+                MergeResult(r);
             } catch (Exception) {
                 Logger.logf("! Couldn't pull the repo :(\r\n");
             }
@@ -246,7 +228,7 @@ namespace kampfpanzerin.git {
             Cursor.Current = Cursors.Default;
         }
 
-        internal void Commit() {
+        internal void Commit(string message = null) {
             Logger.logf("* Committing...");
             Cursor.Current = Cursors.WaitCursor;
             CommitOptions co = new CommitOptions();
@@ -257,7 +239,14 @@ namespace kampfpanzerin.git {
                 }
             }
             try {
-                repo.Commit(DateTime.Now.ToString(), co);
+                if (message == null)
+                {
+                    repo.Commit(DateTime.Now.ToString(), co);
+                }
+                else
+                {
+                    repo.Commit(message);
+                }
                 Logger.logf("Committed\r\n");
             } catch (EmptyCommitException) {
                 Logger.logf("! Nothing to commit\r\n");
@@ -265,6 +254,53 @@ namespace kampfpanzerin.git {
                 Logger.logf("! Bad vibes boss, can't commit while not merged!\r\n");
             }
             Cursor.Current = Cursors.Default;
+        }
+
+        internal void Branch(string name)
+        {
+            Logger.logf("* Committing...");
+            Cursor.Current = Cursors.WaitCursor;
+
+            Branch branch = repo.CreateBranch(name);
+            CheckoutOptions options = new CheckoutOptions();
+            repo.Checkout(branch, options);
+        }
+
+        internal void merge(string branchToMerge)
+        {
+            Branch b = repo.Branches[branchToMerge];
+            Configuration config = new Configuration();
+            var gitUsername = config.Get<string>("user.name", ConfigurationLevel.Global).Value;
+
+            Signature s = new Signature(gitUsername, gitUsername, DateTime.Now);
+
+            MergeResult r = repo.Merge(b, s);
+            MergeResult(r);
+        }
+
+        internal void MergeResult(MergeResult r)
+        {
+            switch (r.Status)
+            {
+                case MergeStatus.UpToDate:
+                    Logger.logf("Up to date with {0}\r\n", repo.Head.Remote.Name);
+                    break;
+                case MergeStatus.FastForward:
+                    Logger.logf("Merged all changes from {0} (fast forward)\r\n", repo.Head.Remote.Name);
+                    break;
+                case MergeStatus.NonFastForward:
+                    Logger.logf("Merged all changes from {0} (merged, non fast forward)\r\n", repo.Head.Remote.Name);
+                    break;
+                case MergeStatus.Conflicts:
+                    Logger.logf("! Conflict while pulling from {0}\r\n", repo.Head.Remote.Name);
+                    foreach (Conflict c in repo.Index.Conflicts)
+                    {
+                        Logger.logf(" * {0}", c.Ancestor.Path);
+                    }
+
+                    Logger.logf("! Eeep, please resolve and commit\r\n", repo.Head.Remote.Name);
+                    break;
+            }
         }
 
         internal void Resolve(List<string> list) {
