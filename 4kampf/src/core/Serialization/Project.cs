@@ -6,9 +6,6 @@ using System.Text;
 namespace kampfpanzerin.core.Serialization {
     [Serializable]
     public class Project {
-        
-        public List<TimelineBar> camBars { get; set; }
-        public List<TimelineBar> syncBars { get; set; }
         public bool enableStandardUniforms;
 
         public bool useClinkster = false;

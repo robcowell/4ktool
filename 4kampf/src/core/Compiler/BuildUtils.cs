@@ -7,7 +7,7 @@ using kampfpanzerin.core.Serialization;
 
 namespace kampfpanzerin {
     class BuildUtils {
-        public static void DoExportHeader(Project p, float length, List<TimelineBar> syncBars, /*string camCode, */string vertexShader, string fragmentShader, string ppShader = null) {
+        public static void DoExportHeader(Project p, float length, string vertexShader, string fragmentShader, string ppShader = null) {
             string s = "// Prod shaders, sync and config\n// Exported from 4kampf\n\n#pragma once\n\n";
             if (Properties.Settings.Default.enableStandardUniforms)
                 s += "#define USE_STANDARD_UNIFORMS\n";

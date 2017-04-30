@@ -10,7 +10,6 @@ using Tao.OpenGl;
 using System.Xml.Serialization;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using kampfpanzerin.src.core.Compiler;
 using kampfpanzerin.git;
 using kampfpanzerin.components;
 using kampfpanzerin.core.Serialization;
@@ -112,12 +111,7 @@ namespace kampfpanzerin {
                 form.tabControl1.TabPages.Add(form.tabPP);
             else if (!project.usePP && form.tabControl1.TabPages.Count == 3)
                 form.tabControl1.TabPages.Remove(form.tabPP);
-
-            if (Properties.Settings.Default.useSyncTracker && form.splitRHS.Panel2Collapsed)
-                form.splitRHS.Panel2Collapsed = false;
-            else if (!Properties.Settings.Default.useSyncTracker && !form.splitRHS.Panel2Collapsed)
-                form.splitRHS.Panel2Collapsed = true;
-
+            
             if (Properties.Settings.Default.showLineNumbers) {
                 form.edVert.Margins[0].Width = 25;
                 form.edFrag.Margins[0].Width = 25;
@@ -148,7 +142,6 @@ namespace kampfpanzerin {
             form.btnStandardUniforms.BackColor = Properties.Settings.Default.enableStandardUniforms ? Color.FromArgb(100, 100, 100) : form.BackColor;
 
             form.musicPlayer.ApplySettings(project);
-            form.timeLine.ApplySettings();
 
             Properties.Settings.Default.Save();
         }
@@ -175,8 +168,6 @@ namespace kampfpanzerin {
 
                 string src = AppDomain.CurrentDomain.BaseDirectory + "skel";
                 Utils.CopyFolderContents(src, dest);
-                p.syncBars = form.timeLine.syncBars;
-                p.camBars = form.timeLine.camBars;
 
                 SaveProjectSettingsAndCommit(p, dest + "/");
 
@@ -223,7 +214,6 @@ namespace kampfpanzerin {
                         SaveProjectSettingsAndCommit(project, dir);
                     }
                 }
-                form.timeLine.SetProject(project);
                 GraphicsManager.GetInstance().updateProject(project);
                 Repo = new GitHandler(dir);
                 ApplySettings();
@@ -276,20 +266,7 @@ namespace kampfpanzerin {
             GraphicsManager gfx = GraphicsManager.GetInstance();
             string vertText = form.edVert.Text;
             string fragText = form.edFrag.Text;
-            string syncCode = TrackerCompiler.CompileSyncTrackerCode(form.timeLine.syncBars);
-            string syncVars = TrackerCompiler.SyncVars(form.timeLine.syncBars);
-            string syncRest = TrackerCompiler.GetInterpolationCode(form.timeLine.syncBars, form.timeLine.camBars);
-            vertText = vertText.Replace("SYNCCODE", syncRest + syncCode);
-            vertText = vertText.Replace("SYNCVARS", syncRest + syncVars);
-            fragText = fragText.Replace("SYNCCODE", syncCode);
-            fragText = fragText.Replace("SYNCVARS", syncRest + syncVars);
-
-            vertText = vertText.Replace("CAMVARS", "uniform vec3 u, cp, cr;");
-            vertText = vertText.Replace("CAMCODE", "");
-
-            if (syncCode != "" && Properties.Settings.Default.useSyncTracker)
-                Logger.log("Generated sync code:\r\n" + syncCode);
-
+            
             string msg = "Scene shader compilation:\r\n" + gfx.BuildShader(
                 0,
                 vertText.Replace("\n", "\r\n"),
@@ -301,8 +278,6 @@ namespace kampfpanzerin {
 
             if (project.usePP) {
                 string postText = form.edPost.Text;
-                postText = postText.Replace("//#SYNCCODE#", syncCode);
-
                 msg = "Postprocessing shader compilation:\r\n" + gfx.BuildShader(
                     1,
                     vertText.Replace("\n", "\r\n"),
@@ -383,12 +358,9 @@ namespace kampfpanzerin {
             sw = new StreamWriter("ppfrag.glsl");
             sw.Write(form.edPost.Text);
             sw.Close();
-            form.timeLine.SaveData("sync.dat");
-
+            
             BuildShader();
 
-            project.camBars = form.timeLine.camBars;
-            project.syncBars = form.timeLine.syncBars;
             //project.settings = kampfpanzerin.Properties.Settings.Default;
             SaveProjectSettingsAndCommit(project, "", withCommitMessage);
 
@@ -440,30 +412,17 @@ namespace kampfpanzerin {
         }
 
         private static void ExportHeader() {
-            string syncCode = TrackerCompiler.CompileSyncTrackerCode(form.timeLine.syncBars);
             string vertText = form.edVert.Text;
             string fragText = form.edFrag.Text;
-            string camVars = TrackerCompiler.SyncVars(form.timeLine.camBars);
-            string camCode = TrackerCompiler.CompileCamTrackerCode(form.timeLine.camBars);
-            string syncVars = TrackerCompiler.SyncVars(form.timeLine.syncBars);
-            string syncRest = TrackerCompiler.GetInterpolationCode(form.timeLine.syncBars, form.timeLine.camBars);
-            vertText = vertText.Replace("SYNCCODE", syncCode);
-            vertText = vertText.Replace("SYNCVARS", syncRest + syncVars);
-            vertText = vertText.Replace("SYNCCODE", syncCode);
-            vertText = vertText.Replace("CAMVARS", "uniform vec3 u;vec3 cp,cr;");
-            vertText = vertText.Replace("CAMCODE", camCode);
-            fragText = fragText.Replace("SYNCCODE", syncCode);
-            fragText = fragText.Replace("SYNCVARS", syncRest + syncVars);
             if (project.usePP) {
                 BuildUtils.DoExportHeader(
                     project,
                     form.musicPlayer.GetDuration(),
-                    form.timeLine.syncBars,
                     vertText,
                     fragText,
                     form.edPost.Text);
             } else {
-                BuildUtils.DoExportHeader(project, form.musicPlayer.GetDuration(), form.timeLine.syncBars, vertText, fragText);
+                BuildUtils.DoExportHeader(project, form.musicPlayer.GetDuration(), vertText, fragText);
             }
         }
 
@@ -545,7 +504,6 @@ namespace kampfpanzerin {
                 bmp.Save(currentProjectDirectory + "/screenshot.png", System.Drawing.Imaging.ImageFormat.Png);
                 Logger.log("* Screenshot png saved \\o/");
             }
-
         }
 
         public static void SetDirty(bool d = true) {

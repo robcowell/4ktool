@@ -1,15 +1,12 @@
-- THE BIG QUESTIONS
-	- Was Clinkster a dead end we can now drop?
-
 - General
 	- Target Location on Import gets a bit recursive :D
 	- Would be nice to just be able to paste 4klang .inc and .h and have it build the .obj instead of manually pre-building it
-	- Click to goto line on glsl error
-		- Actually too tricky -- line nums are reported wrong cos of defines and stuff
 WIP[Skomp]- Ability to fork would be nice
 CHK	- I can't set Cam Track without Sync Timeline, is this by design? UI needs clarified if so
 	- Cam track needs a button icon alongside sync vars toggle
-
+	- Click to goto line on glsl error
+		- Actually too tricky -- line nums are reported wrong cos of defines and stuff
+		
 - Project.kml
 !	- Render toggle to be proj setting (helpful for exe gfx prods)
 	- Project does not remember if Cam Track was set
@@ -17,15 +14,11 @@ CHK	- I can't set Cam Track without Sync Timeline, is this by design? UI needs c
 	- Vertex shader toggle
 	- Toggle whether to do a proper mode change -- saves 10 bytes in final prod	
 	- Derive whether to do an initial swapbuffers() to clear a screen for precalc: if 4klang and no extra sound thread, do it; if clinkster, always do it....
+	- Choose resolution to build??	
 	
 - Build / basecode
 CHK	- Possibly some more of iq's small-compile tricks need to be reinstated in basecode proj (see http://www.iquilezles.org/www/articles/compilingsmall/compilingsmall.htm)	
 	- Use pure asm basecode instead?
 		- I mean, yeah
-WF	- Choose resolution to build?? Batch build resolutions?? Something else?
-WF		- Fuck it, 1080 is fine these days :D
 	- Fast/slow build settings could be optimised -- CHECK AGAINST PRODS / SKOMP
 		- Less of both those things on Fast, but add Instant
-		
-- New project options:
-	
