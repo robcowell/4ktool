@@ -256,6 +256,12 @@ namespace kampfpanzerin.git {
             Cursor.Current = Cursors.Default;
         }
 
+        internal bool CheckCommitNeeded()
+        {
+            RepositoryStatus status = repo.RetrieveStatus();
+            return status.IsDirty;
+        } 
+
         internal void Branch(string name)
         {
             Logger.logf("* Committing...");

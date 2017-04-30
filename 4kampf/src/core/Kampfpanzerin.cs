@@ -397,6 +397,11 @@ namespace kampfpanzerin
         }
 
         private static void SaveProjectSettings(Project project, string directory = "", bool withCommitMessage = false) {
+            if (!Repo.CheckCommitNeeded())
+            {
+                Logger.logf("! Work harder, there is nothing changed since the last save, boss...");
+                return;
+            }
             try {
                 using (Stream stream = File.Open(directory + "project.kml", FileMode.Create)) {
                     XmlSerializer serializer = new XmlSerializer(typeof(Project));
