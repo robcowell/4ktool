@@ -430,7 +430,7 @@ namespace kampfpanzerin
                 dialog.ShowDialog();
                 if(dialog.DialogResult == DialogResult.OK) {
                     string commitMessage = dialog.GetCommitMessage();
-                    // TODO: Commit the shit \o/
+                    Repo.Commit(commitMessage);
                 }
             } else
                 Repo.Commit();
