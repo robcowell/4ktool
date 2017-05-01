@@ -267,7 +267,7 @@ namespace kampfpanzerin.git {
             repo.Checkout(branch, options);
         }
 
-        internal void merge(string branchToMerge) {
+        internal void Merge(string branchToMerge) {
             Branch b = repo.Branches[branchToMerge];
             Configuration config = new Configuration();
             var gitUsername = config.Get<string>("user.name", ConfigurationLevel.Global).Value;
@@ -276,6 +276,10 @@ namespace kampfpanzerin.git {
 
             MergeResult r = repo.Merge(b, s);
             MergeResult(r);
+        }
+
+        internal IEnumerable<string> GetBranches() {
+            return repo.Branches.Select(b => b.Name);
         }
 
         internal void MergeResult(MergeResult r) {
