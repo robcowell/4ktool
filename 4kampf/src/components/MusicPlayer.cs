@@ -101,7 +101,6 @@ namespace kampfpanzerin {
         private void mediaPlayer_OpenStateChange(object sender, AxWMPLib._WMPOCXEvents_OpenStateChangeEvent e) {
             if (mediaPlayer.openState == WMPLib.WMPOpenState.wmposMediaOpen) {
                 double duration = mediaPlayer.Ctlcontrols.currentItem.duration;
-                AppForm.GetInstance().timeLine.SetMaxTime((float)duration);
                 trkTransport.Maximum = (int)duration;
                 lblTrackLength.Text = duration.ToString("000.00");
             }

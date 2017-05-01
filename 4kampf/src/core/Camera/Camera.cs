@@ -10,8 +10,7 @@ namespace kampfpanzerin
 {
     public enum CameraMode
     {
-        FREEFLY,
-        AUTOMATED
+        FREEFLY
     }
 
     public class Camera
@@ -40,47 +39,24 @@ namespace kampfpanzerin
 
         public Vector3f Rotation {
             get {
-                if (mode == CameraMode.AUTOMATED) {
-                    return automation.Rot;
-                }
                 return rotation;
             }
         }
         
         public Vector3f Position {
             get {
-                if (mode == CameraMode.AUTOMATED)
-                    return automation.Pos;
                 return position;
             }
         }
-
-        private CamAutomationProxy automation;
+        
         private CameraMode mode;
-
 
         public CameraMode Mode {
                 get {
                     return mode;
                 }
                 set {
-                    if (value != mode) {
-                        if (value == CameraMode.AUTOMATED) {
-                            List<TimelineBar> bars = AppForm.GetInstance().timeLine.camBars;
-                            Dictionary<TimelineBar.TimeLineMode, TimelineBar> d = new Dictionary<TimelineBar.TimeLineMode, TimelineBar>();
-                            d.Add(TimelineBar.TimeLineMode.CAMERA_POS, bars[0]);
-                            d.Add(TimelineBar.TimeLineMode.CAMERA_ROT, bars[1]);
-
-                            automation = new CamAutomationProxy(d, AppForm.GetInstance().musicPlayer);
-                        } else if(mode == CameraMode.AUTOMATED) {
-
-                            this.position = automation.Pos.Clone();
-                            this.rotation = automation.Rot.Clone();
-                            UpdateVectors();
-                        }
-                        mode = value;
-                        UpdateVectors();
-                    }
+                    mode = value;
                 }
         }
         
@@ -143,24 +119,18 @@ namespace kampfpanzerin
         }
 
         public void Mouselook(PointF mouseMovement) {
-            if (mode != CameraMode.AUTOMATED) {
-                Yaw(-mouseMovement.X);
-                Pitch(-mouseMovement.Y);
-            }
+            Yaw(-mouseMovement.X);
+            Pitch(-mouseMovement.Y);
         }
 
         public void Yaw(float amount) {
-            if (mode != CameraMode.AUTOMATED) {
-                rotation.y = (rotation.y + amount * PI_OVER_180) % 360;
-                dirty = true;
-            }
+            rotation.y = (rotation.y + amount * PI_OVER_180) % 360;
+            dirty = true;
         }
         
         public void Pitch(float amount) {
-            if (mode != CameraMode.AUTOMATED) {
-                rotation.x = (rotation.x + amount * PI_OVER_180) % 360;
-                dirty = true;
-            }
+            rotation.x = (rotation.x + amount * PI_OVER_180) % 360;
+            dirty = true;
         }
     }
 }

@@ -160,8 +160,6 @@
       <DependentUpon>AppForm.cs</DependentUpon>
     </Compile>
     <Compile Include="src\core\Compiler\BuildUtils.cs" />
-    <Compile Include="src\core\Camera\CamAutomationProxy.cs" />
-    <Compile Include="src\core\Compiler\TrackerCompiler.cs" />
     <Compile Include="src\git\RepoDescriptor.cs" />
     <Compile Include="src\log\Logger.cs" />
     <Compile Include="src\utils\BitBucketUtils.cs" />
@@ -169,12 +167,6 @@
     <Compile Include="src\core\Serialization\Project.cs" />
     <Compile Include="src\components\EyedropColorPicker.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="src\components\TimelineBarEventEditForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="src\components\TimelineBarEventEditForm.Designer.cs">
-      <DependentUpon>TimelineBarEventEditForm.cs</DependentUpon>
     </Compile>
     <Compile Include="src\core\BitmapFont.cs" />
     <Compile Include="src\core\Camera\Camera.cs" />
@@ -209,14 +201,6 @@
     <Compile Include="src\components\TextBoxWithScrollLeft.Designer.cs">
       <DependentUpon>TextBoxWithScrollLeft.cs</DependentUpon>
     </Compile>
-    <Compile Include="src\core\TimeLine.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="src\core\TimeLine.Designer.cs">
-      <DependentUpon>TimeLine.cs</DependentUpon>
-    </Compile>
-    <Compile Include="src\core\Timeline\TimelineBar.cs" />
-    <Compile Include="src\core\Timeline\TimelineBarEvent.cs" />
     <Compile Include="src\utils\Utils.cs" />
     <Compile Include="src\core\Math\Vector3f.cs" />
     <Compile Include="src\components\VUMeter.cs">
@@ -256,10 +240,6 @@
       <DependentUpon>NewProjectWizard.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="src\components\TimelineBarEventEditForm.resx">
-      <DependentUpon>TimelineBarEventEditForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="src\components\ColorChooser.resx">
       <DependentUpon>ColorChooser.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -272,10 +252,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="src\core\TimeLine.resx">
-      <DependentUpon>TimeLine.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="src\components\VUMeter.resx">
       <DependentUpon>VUMeter.cs</DependentUpon>

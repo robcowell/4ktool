@@ -62,18 +62,9 @@ namespace kampfpanzerin {
             GraphicsManager gfx = GraphicsManager.GetInstance();
             gfx.SetCameraMode(CameraMode.FREEFLY);
             freeFlyButton.BackColor = Color.FromArgb(100, 100, 100);
-            camAutoButton.BackColor = Color.FromArgb(32, 32, 32);
             preview.Focus();
         }
-
-        private void camAutoButton_Click(object sender, EventArgs e) {
-            GraphicsManager gfx = GraphicsManager.GetInstance();
-            gfx.SetCameraMode(CameraMode.AUTOMATED);
-            freeFlyButton.BackColor = Color.FromArgb(32, 32, 32);
-            camAutoButton.BackColor = Color.FromArgb(100, 100, 100);
-            preview.Focus();
-        }
-
+        
         private void stepDownButton_Click(object sender, EventArgs e) {
             GraphicsManager gfx = GraphicsManager.GetInstance();
             float editStep = gfx.GetEditStep();
@@ -156,6 +147,12 @@ namespace kampfpanzerin {
 
         private void useExtraPPShaderToolStripMenuItem_Click(object sender, EventArgs e) {
             Kampfpanzerin.project.usePP = !Kampfpanzerin.project.usePP;
+            Kampfpanzerin.ApplySettings();
+            Kampfpanzerin.BuildShader();
+        }
+
+        private void useVertShaderToolStripMenuItem_Click(object sender, EventArgs e) {
+            Kampfpanzerin.project.useVertShader = !Kampfpanzerin.project.useVertShader;
             Kampfpanzerin.ApplySettings();
             Kampfpanzerin.BuildShader();
         }
@@ -297,11 +294,6 @@ namespace kampfpanzerin {
 
             musicPlayer.SetLabels(fps, timeStr);
             musicPlayer.UpdateStuff();
-
-            if (Properties.Settings.Default.useSyncTracker) {
-                timeLine.SetTime(time);
-                timeLine.Redraw();
-            }
         }
 
         private void colourHelperToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -609,6 +601,7 @@ namespace kampfpanzerin {
             GraphicsManager gfx = GraphicsManager.GetInstance();
             gfx.SetRenderEnabled(!gfx.GetRenderEnabled());
             btnRenderEnable.BackColor = gfx.GetRenderEnabled() ? Color.FromArgb(100, 100, 100) : Color.FromArgb(250,0,0);
+            // TODO: This should be a proj setting
         }
 
         private void splitMainLR_SplitterMoved(object sender, SplitterEventArgs e) {

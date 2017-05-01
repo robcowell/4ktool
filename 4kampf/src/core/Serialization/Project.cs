@@ -6,9 +6,6 @@ using System.Text;
 namespace kampfpanzerin.core.Serialization {
     [Serializable]
     public class Project {
-        
-        public List<TimelineBar> camBars { get; set; }
-        public List<TimelineBar> syncBars { get; set; }
         public bool enableStandardUniforms;
 
         public bool useClinkster = false;
@@ -17,6 +14,7 @@ namespace kampfpanzerin.core.Serialization {
         public bool usePP = false;
         public bool useSoundThread = false;
         public bool useBitBucket = false;
+        public bool useVertShader = true;
 
         public BitBucketData bitBucketSettings;
 

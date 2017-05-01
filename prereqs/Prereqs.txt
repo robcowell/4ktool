@@ -1,0 +1,26 @@
+========================
+1. VSYASM
+========================
+
+This is v1.1.0 "Win32 VS2010 .zip (for use with VS2010 on 32-bit Windows)". Newer ones don't work.
+
+Stick the stuff like so:
+
+vsyasm.props, vsyasm.targets, vsyasm.xml --> C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\BuildCustomizations
+vsyasm.exe --> C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin
+
+In vsyasm.props, fix this probably wrong path:
+
+ <YasmPath Condition= "'$(YASMPATH)' == ''">C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\</YasmPath>
+ 
+ -->
+ 
+ C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\
+ 
+========================
+1. Scintilla
+========================
+ 
+(Required only if developing 4kampf so you can open the main form)
+
+Copy 4kampf\libs\sci* to C:\Windows\SysWOW64
