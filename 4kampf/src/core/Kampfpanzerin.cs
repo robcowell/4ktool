@@ -107,11 +107,16 @@ namespace kampfpanzerin {
             form.pnlToolbar.Visible = Properties.Settings.Default.showToolBar;
             form.pnlCam.Visible = Properties.Settings.Default.enableCamControls;
 
-            if (project.usePP && form.tabControl1.TabPages.Count < 3)
+            if (project.usePP && !form.tabControl1.TabPages.Contains(form.tabPP))
                 form.tabControl1.TabPages.Add(form.tabPP);
-            else if (!project.usePP && form.tabControl1.TabPages.Count == 3)
+            else if (!project.usePP && form.tabControl1.TabPages.Contains(form.tabPP))
                 form.tabControl1.TabPages.Remove(form.tabPP);
-            
+
+            if (project.useVertShader && !form.tabControl1.TabPages.Contains(form.tabVS))
+                form.tabControl1.TabPages.Add(form.tabVS);
+            else if (!project.useVertShader && form.tabControl1.TabPages.Contains(form.tabVS))
+                form.tabControl1.TabPages.Remove(form.tabVS);
+
             if (Properties.Settings.Default.showLineNumbers) {
                 form.edVert.Margins[0].Width = 25;
                 form.edFrag.Margins[0].Width = 25;
@@ -128,8 +133,8 @@ namespace kampfpanzerin {
             form.loopTrackToolStripMenuItem.Checked = Properties.Settings.Default.enableLooping;
             form.fullscreenToolStripMenuItem.Checked = Properties.Settings.Default.fullscreen;
             form.useExtraPPShaderToolStripMenuItem.Checked = project.usePP;
+            form.useVertShaderToolStripMenuItem.Checked = project.useVertShader;
             form.enableMultithread4klangInProdToolStripMenuItem.Checked = Properties.Settings.Default.useSoundThread;
-            form.enableSyncTrackerToolStripMenuItem.Checked = Properties.Settings.Default.useSyncTracker;
             form.showLinenumbersToolStripMenuItem.Checked = Properties.Settings.Default.showLineNumbers;
             form.showToolbarToolStripMenuItem.Checked = Properties.Settings.Default.showToolBar;
 
@@ -137,7 +142,6 @@ namespace kampfpanzerin {
             form.btnLoop.BackColor = Properties.Settings.Default.enableLooping ? Color.FromArgb(100, 100, 100) : form.BackColor;
             form.btnFullscreen.BackColor = Properties.Settings.Default.fullscreen ? Color.FromArgb(100, 100, 100) : form.BackColor;
             form.btnLineNumbers.BackColor = Properties.Settings.Default.showLineNumbers ? Color.FromArgb(100, 100, 100) : form.BackColor;
-            form.btnTracker.BackColor = Properties.Settings.Default.useSyncTracker ? Color.FromArgb(100, 100, 100) : form.BackColor;
             form.btnEnvelopes.BackColor = project.use4klangEnv ? Color.FromArgb(100, 100, 100) : form.BackColor;
             form.btnStandardUniforms.BackColor = Properties.Settings.Default.enableStandardUniforms ? Color.FromArgb(100, 100, 100) : form.BackColor;
 
@@ -269,6 +273,7 @@ namespace kampfpanzerin {
             
             string msg = "Scene shader compilation:\r\n" + gfx.BuildShader(
                 0,
+                project.useVertShader,
                 vertText.Replace("\n", "\r\n"),
                 fragText.Replace("\n", "\r\n"),
                 form.edVert,
@@ -280,6 +285,7 @@ namespace kampfpanzerin {
                 string postText = form.edPost.Text;
                 msg = "Postprocessing shader compilation:\r\n" + gfx.BuildShader(
                     1,
+                    project.useVertShader,
                     vertText.Replace("\n", "\r\n"),
                     postText.Replace("\n", "\r\n"),
                 form.edVert,

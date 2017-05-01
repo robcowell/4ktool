@@ -6,12 +6,11 @@ CHK	- I can't set Cam Track without Sync Timeline, is this by design? UI needs c
 	- Cam track needs a button icon alongside sync vars toggle
 	- Click to goto line on glsl error
 		- Actually too tricky -- line nums are reported wrong cos of defines and stuff
-		
+
 - Project.kml
 !	- Render toggle to be proj setting (helpful for exe gfx prods)
 	- Project does not remember if Cam Track was set
 	- Possibly also clinkster -- CHECK PROJ OOPTION SAVIN / LOADIN / APPLYIN IN GENERAL
-	- Vertex shader toggle
 	- Toggle whether to do a proper mode change -- saves 10 bytes in final prod	
 	- Derive whether to do an initial swapbuffers() to clear a screen for precalc: if 4klang and no extra sound thread, do it; if clinkster, always do it....
 	- Choose resolution to build??	

@@ -14,6 +14,7 @@ namespace kampfpanzerin.core.Serialization {
         public bool usePP = false;
         public bool useSoundThread = false;
         public bool useBitBucket = false;
+        public bool useVertShader = true;
 
         public BitBucketData bitBucketSettings;
 

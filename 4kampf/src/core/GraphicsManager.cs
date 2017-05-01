@@ -77,8 +77,7 @@ namespace kampfpanzerin
             Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, 0);
         }
 
-        public string BuildShader(int progIndex, string vertSource, string fragSource, ScintillaNET.Scintilla editorVert, ScintillaNET.Scintilla editorFrag) {
-            string[] vertShaderSource = { vertSource };
+        public string BuildShader(int progIndex, bool useVertShader, string vertSource, string fragSource, ScintillaNET.Scintilla editorVert, ScintillaNET.Scintilla editorFrag) {
             string[] fragShaderSource = { fragSource };
 
             if (shaderProg[progIndex] > -1) {
@@ -88,15 +87,15 @@ namespace kampfpanzerin
 
             shaderProg[progIndex] = Gl.glCreateProgram();
 
-            // TODO: Toggle this \o/
-            ////////////////////////////////
-            int vs = Gl.glCreateShader(Gl.GL_VERTEX_SHADER);
-            Gl.glShaderSource(vs, 1, vertShaderSource, IntPtr.Zero);
-            Gl.glCompileShader(vs);
-            Gl.glAttachShader(shaderProg[progIndex], vs);
             StringBuilder vsResult = new StringBuilder(60000);
-            Gl.glGetInfoLogARB(vs, 60000, IntPtr.Zero, vsResult);
-            ////////////////////////////////
+            if (useVertShader) {
+                string[] vertShaderSource = { vertSource };
+                int vs = Gl.glCreateShader(Gl.GL_VERTEX_SHADER);
+                Gl.glShaderSource(vs, 1, vertShaderSource, IntPtr.Zero);
+                Gl.glCompileShader(vs);
+                Gl.glAttachShader(shaderProg[progIndex], vs);                
+                Gl.glGetInfoLogARB(vs, 60000, IntPtr.Zero, vsResult);
+            }
 
             int fs = Gl.glCreateShader(Gl.GL_FRAGMENT_SHADER);
             Gl.glShaderSource(fs, 1, fragShaderSource, IntPtr.Zero);
@@ -112,7 +111,7 @@ namespace kampfpanzerin
             string result = "";
             bool noLog = true;
             
-            if (vsResult.ToString().Length > 0) {
+            if (useVertShader && vsResult.ToString().Length > 0) {
                 noLog = false;
                 result += "\nVert shader compile log:\n" + vsResult.ToString() + "\n";
                 /*

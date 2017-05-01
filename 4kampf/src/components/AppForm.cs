@@ -151,6 +151,12 @@ namespace kampfpanzerin {
             Kampfpanzerin.BuildShader();
         }
 
+        private void useVertShaderToolStripMenuItem_Click(object sender, EventArgs e) {
+            Kampfpanzerin.project.useVertShader = !Kampfpanzerin.project.useVertShader;
+            Kampfpanzerin.ApplySettings();
+            Kampfpanzerin.BuildShader();
+        }
+
         private void exportToVSToolStripMenuItem_Click(object sender, EventArgs e) {
             Kampfpanzerin.DoExport();
         }

@@ -51,7 +51,6 @@ namespace kampfpanzerin
             this.enableStandardUniformsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enableCamControlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enableTrack02EnvsInUniformSvrequiresCorrect4klangExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.enableSyncTrackerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buildToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rebuildShadersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rerender4klangMuskcToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,6 +70,7 @@ namespace kampfpanzerin
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enableMultithread4klangInProdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useExtraPPShaderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.useVertShaderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loopTrackToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fullscreenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showLinenumbersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,7 +87,7 @@ namespace kampfpanzerin
             this.pnlCam = new System.Windows.Forms.Panel();
             this.log = new kampfpanzerin.TextBoxWithScrollLeft();
             this.tabControl1 = new kampfpanzerin.TabControlFlat();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabVS = new System.Windows.Forms.TabPage();
             this.edVert = new ScintillaNET.Scintilla();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.edFrag = new ScintillaNET.Scintilla();
@@ -122,7 +122,6 @@ namespace kampfpanzerin
             this.btnRenderMusic = new System.Windows.Forms.Button();
             this.btnBuild = new System.Windows.Forms.Button();
             this.btnLineNumbers = new System.Windows.Forms.Button();
-            this.btnTracker = new System.Windows.Forms.Button();
             this.btnEnvelopes = new System.Windows.Forms.Button();
             this.btnStandardUniforms = new System.Windows.Forms.Button();
             this.btnCamToggle = new System.Windows.Forms.Button();
@@ -146,7 +145,7 @@ namespace kampfpanzerin
             this.splitLHS.SuspendLayout();
             this.pnlCam.SuspendLayout();
             this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.tabVS.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPP.SuspendLayout();
             this.pnlToolbar.SuspendLayout();
@@ -314,8 +313,7 @@ namespace kampfpanzerin
             this.uniformsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.enableStandardUniformsToolStripMenuItem,
             this.enableCamControlToolStripMenuItem,
-            this.enableTrack02EnvsInUniformSvrequiresCorrect4klangExportToolStripMenuItem,
-            this.enableSyncTrackerToolStripMenuItem});
+            this.enableTrack02EnvsInUniformSvrequiresCorrect4klangExportToolStripMenuItem});
             this.uniformsToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.uniformsToolStripMenuItem.Name = "uniformsToolStripMenuItem";
             this.uniformsToolStripMenuItem.Size = new System.Drawing.Size(68, 20);
@@ -348,14 +346,6 @@ namespace kampfpanzerin
             this.enableTrack02EnvsInUniformSvrequiresCorrect4klangExportToolStripMenuItem.Text = "Enable &4klang envelope uniforms";
             this.enableTrack02EnvsInUniformSvrequiresCorrect4klangExportToolStripMenuItem.ToolTipText = "float ev[MAX_INSTRUMENTS]";
             this.enableTrack02EnvsInUniformSvrequiresCorrect4klangExportToolStripMenuItem.Click += new System.EventHandler(this.enableTrack02EnvsInUniformSvrequiresCorrect4klangExportToolStripMenuItem_Click);
-            // 
-            // enableSyncTrackerToolStripMenuItem
-            // 
-            this.enableSyncTrackerToolStripMenuItem.ForeColor = System.Drawing.Color.White;
-            this.enableSyncTrackerToolStripMenuItem.Name = "enableSyncTrackerToolStripMenuItem";
-            this.enableSyncTrackerToolStripMenuItem.Size = new System.Drawing.Size(249, 22);
-            this.enableSyncTrackerToolStripMenuItem.Text = "Enable s&ync timeline uniforms";
-            this.enableSyncTrackerToolStripMenuItem.Click += new System.EventHandler(this.enableSyncTrackerToolStripMenuItem_Click);
             // 
             // buildToolStripMenuItem
             // 
@@ -510,6 +500,7 @@ namespace kampfpanzerin
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.enableMultithread4klangInProdToolStripMenuItem,
+            this.useVertShaderToolStripMenuItem,
             this.useExtraPPShaderToolStripMenuItem,
             this.loopTrackToolStripMenuItem,
             this.fullscreenToolStripMenuItem,
@@ -530,6 +521,14 @@ namespace kampfpanzerin
             this.enableMultithread4klangInProdToolStripMenuItem.Text = "Enable &multithreaded 4klang in prod";
             this.enableMultithread4klangInProdToolStripMenuItem.ToolTipText = "Saves ~50 bytes in final prod, but requires multicore. Disable for precalc music.";
             this.enableMultithread4klangInProdToolStripMenuItem.Click += new System.EventHandler(this.enableMultithread4klangInProdToolStripMenuItem_Click);
+            // 
+            // useVertShaderToolStripMenuItem
+            // 
+            this.useVertShaderToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.useVertShaderToolStripMenuItem.Name = "useVertShaderToolStripMenuItem";
+            this.useVertShaderToolStripMenuItem.Size = new System.Drawing.Size(266, 22);
+            this.useVertShaderToolStripMenuItem.Text = "Enable &vert shader";
+            this.useVertShaderToolStripMenuItem.Click += new System.EventHandler(this.useVertShaderToolStripMenuItem_Click);
             // 
             // useExtraPPShaderToolStripMenuItem
             // 
@@ -694,9 +693,9 @@ namespace kampfpanzerin
             this.pnlCam.Controls.Add(this.btnCamReset);
             this.pnlCam.Controls.Add(this.freeFlyButton);
             this.pnlCam.Controls.Add(this.stepDownButton);
-            this.pnlCam.Location = new System.Drawing.Point(215, 292);
+            this.pnlCam.Location = new System.Drawing.Point(235, 292);
             this.pnlCam.Name = "pnlCam";
-            this.pnlCam.Size = new System.Drawing.Size(101, 22);
+            this.pnlCam.Size = new System.Drawing.Size(181, 22);
             this.pnlCam.TabIndex = 2;
             // 
             // log
@@ -719,7 +718,7 @@ namespace kampfpanzerin
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabVS);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPP);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -734,15 +733,15 @@ namespace kampfpanzerin
             // 
             // tabPage1
             // 
-            this.tabPage1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.tabPage1.Controls.Add(this.edVert);
-            this.tabPage1.ForeColor = System.Drawing.Color.White;
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(700, 160);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Vertex shader";
+            this.tabVS.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.tabVS.Controls.Add(this.edVert);
+            this.tabVS.ForeColor = System.Drawing.Color.White;
+            this.tabVS.Location = new System.Drawing.Point(4, 25);
+            this.tabVS.Margin = new System.Windows.Forms.Padding(0);
+            this.tabVS.Name = "tabPage1";
+            this.tabVS.Size = new System.Drawing.Size(700, 160);
+            this.tabVS.TabIndex = 0;
+            this.tabVS.Text = "Vertex shader";
             // 
             // tabPage2
             // 
@@ -798,7 +797,6 @@ namespace kampfpanzerin
             this.pnlToolbar.Controls.Add(this.btnRenderMusic);
             this.pnlToolbar.Controls.Add(this.btnBuild);
             this.pnlToolbar.Controls.Add(this.btnLineNumbers);
-            this.pnlToolbar.Controls.Add(this.btnTracker);
             this.pnlToolbar.Controls.Add(this.btnEnvelopes);
             this.pnlToolbar.Controls.Add(this.btnStandardUniforms);
             this.pnlToolbar.Controls.Add(this.btnCamToggle);
@@ -824,7 +822,7 @@ namespace kampfpanzerin
             // 
             this.pictureBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox3.Image = global::kampfpanzerin.Properties.Resources.Seperator;
-            this.pictureBox3.Location = new System.Drawing.Point(543, 0);
+            this.pictureBox3.Location = new System.Drawing.Point(523, 0);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(20, 20);
             this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -835,7 +833,7 @@ namespace kampfpanzerin
             // 
             this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox2.Image = global::kampfpanzerin.Properties.Resources.Seperator;
-            this.pictureBox2.Location = new System.Drawing.Point(463, 0);
+            this.pictureBox2.Location = new System.Drawing.Point(443, 0);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(20, 20);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -879,7 +877,7 @@ namespace kampfpanzerin
             // 
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.Image = global::kampfpanzerin.Properties.Resources.Seperator;
-            this.pictureBox1.Location = new System.Drawing.Point(323, 0);
+            this.pictureBox1.Location = new System.Drawing.Point(303, 0);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(20, 20);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -893,7 +891,7 @@ namespace kampfpanzerin
             this.btnScreenshot.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnScreenshot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.btnScreenshot.Image = global::kampfpanzerin.Properties.Resources.Screenshot;
-            this.btnScreenshot.Location = new System.Drawing.Point(423, 0);
+            this.btnScreenshot.Location = new System.Drawing.Point(403, 0);
             this.btnScreenshot.Name = "btnScreenshot";
             this.btnScreenshot.Size = new System.Drawing.Size(20, 20);
             this.btnScreenshot.TabIndex = 3;
@@ -908,7 +906,7 @@ namespace kampfpanzerin
             this.btnColourHelper.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnColourHelper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.btnColourHelper.Image = global::kampfpanzerin.Properties.Resources.ColourHelper;
-            this.btnColourHelper.Location = new System.Drawing.Point(403, 0);
+            this.btnColourHelper.Location = new System.Drawing.Point(383, 0);
             this.btnColourHelper.Name = "btnColourHelper";
             this.btnColourHelper.Size = new System.Drawing.Size(20, 20);
             this.btnColourHelper.TabIndex = 3;
@@ -923,7 +921,7 @@ namespace kampfpanzerin
             this.btnFind.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnFind.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.btnFind.Image = global::kampfpanzerin.Properties.Resources.Find;
-            this.btnFind.Location = new System.Drawing.Point(383, 0);
+            this.btnFind.Location = new System.Drawing.Point(363, 0);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(20, 20);
             this.btnFind.TabIndex = 3;
@@ -938,7 +936,7 @@ namespace kampfpanzerin
             this.btnRedo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRedo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.btnRedo.Image = global::kampfpanzerin.Properties.Resources.Redo;
-            this.btnRedo.Location = new System.Drawing.Point(363, 0);
+            this.btnRedo.Location = new System.Drawing.Point(343, 0);
             this.btnRedo.Name = "btnRedo";
             this.btnRedo.Size = new System.Drawing.Size(20, 20);
             this.btnRedo.TabIndex = 3;
@@ -953,7 +951,7 @@ namespace kampfpanzerin
             this.btnUndo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnUndo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.btnUndo.Image = global::kampfpanzerin.Properties.Resources.Undo;
-            this.btnUndo.Location = new System.Drawing.Point(343, 0);
+            this.btnUndo.Location = new System.Drawing.Point(323, 0);
             this.btnUndo.Name = "btnUndo";
             this.btnUndo.Size = new System.Drawing.Size(20, 20);
             this.btnUndo.TabIndex = 3;
@@ -968,7 +966,7 @@ namespace kampfpanzerin
             this.btn16to9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn16to9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.btn16to9.Image = global::kampfpanzerin.Properties.Resources.SixteenNine;
-            this.btn16to9.Location = new System.Drawing.Point(443, 0);
+            this.btn16to9.Location = new System.Drawing.Point(423, 0);
             this.btn16to9.Name = "btn16to9";
             this.btn16to9.Size = new System.Drawing.Size(20, 20);
             this.btn16to9.TabIndex = 3;
@@ -1118,7 +1116,7 @@ namespace kampfpanzerin
             this.btnCleanBuild.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCleanBuild.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.btnCleanBuild.Image = global::kampfpanzerin.Properties.Resources.CleanBuild;
-            this.btnCleanBuild.Location = new System.Drawing.Point(643, 0);
+            this.btnCleanBuild.Location = new System.Drawing.Point(623, 0);
             this.btnCleanBuild.Name = "btnCleanBuild";
             this.btnCleanBuild.Size = new System.Drawing.Size(20, 20);
             this.btnCleanBuild.TabIndex = 3;
@@ -1132,7 +1130,7 @@ namespace kampfpanzerin
             this.btnRun.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRun.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.btnRun.Image = global::kampfpanzerin.Properties.Resources.Run;
-            this.btnRun.Location = new System.Drawing.Point(623, 0);
+            this.btnRun.Location = new System.Drawing.Point(603, 0);
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(20, 20);
             this.btnRun.TabIndex = 3;
@@ -1147,7 +1145,7 @@ namespace kampfpanzerin
             this.btnRenderMusic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRenderMusic.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.btnRenderMusic.Image = global::kampfpanzerin.Properties.Resources.BuildAudio;
-            this.btnRenderMusic.Location = new System.Drawing.Point(583, 0);
+            this.btnRenderMusic.Location = new System.Drawing.Point(563, 0);
             this.btnRenderMusic.Name = "btnRenderMusic";
             this.btnRenderMusic.Size = new System.Drawing.Size(20, 20);
             this.btnRenderMusic.TabIndex = 3;
@@ -1162,7 +1160,7 @@ namespace kampfpanzerin
             this.btnBuild.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnBuild.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.btnBuild.Image = global::kampfpanzerin.Properties.Resources.BuildProd;
-            this.btnBuild.Location = new System.Drawing.Point(603, 0);
+            this.btnBuild.Location = new System.Drawing.Point(583, 0);
             this.btnBuild.Name = "btnBuild";
             this.btnBuild.Size = new System.Drawing.Size(20, 20);
             this.btnBuild.TabIndex = 3;
@@ -1177,28 +1175,13 @@ namespace kampfpanzerin
             this.btnLineNumbers.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLineNumbers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.btnLineNumbers.Image = global::kampfpanzerin.Properties.Resources.LineNumbers;
-            this.btnLineNumbers.Location = new System.Drawing.Point(523, 0);
+            this.btnLineNumbers.Location = new System.Drawing.Point(503, 0);
             this.btnLineNumbers.Name = "btnLineNumbers";
             this.btnLineNumbers.Size = new System.Drawing.Size(20, 20);
             this.btnLineNumbers.TabIndex = 3;
             this.toolTip1.SetToolTip(this.btnLineNumbers, "Show line numbers");
             this.btnLineNumbers.UseVisualStyleBackColor = true;
             this.btnLineNumbers.Click += new System.EventHandler(this.btnLineNumbers_Click);
-            // 
-            // btnTracker
-            // 
-            this.btnTracker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnTracker.FlatAppearance.BorderSize = 0;
-            this.btnTracker.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnTracker.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.btnTracker.Image = global::kampfpanzerin.Properties.Resources.SyncTracker;
-            this.btnTracker.Location = new System.Drawing.Point(303, 0);
-            this.btnTracker.Name = "btnTracker";
-            this.btnTracker.Size = new System.Drawing.Size(20, 20);
-            this.btnTracker.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnTracker, "Enable sync tracker and uniforms");
-            this.btnTracker.UseVisualStyleBackColor = true;
-            this.btnTracker.Click += new System.EventHandler(this.btnTracker_Click);
             // 
             // btnEnvelopes
             // 
@@ -1252,7 +1235,7 @@ namespace kampfpanzerin
             this.btnFullscreen.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnFullscreen.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.btnFullscreen.Image = ((System.Drawing.Image)(resources.GetObject("btnFullscreen.Image")));
-            this.btnFullscreen.Location = new System.Drawing.Point(483, 0);
+            this.btnFullscreen.Location = new System.Drawing.Point(463, 0);
             this.btnFullscreen.Name = "btnFullscreen";
             this.btnFullscreen.Size = new System.Drawing.Size(20, 20);
             this.btnFullscreen.TabIndex = 3;
@@ -1267,7 +1250,7 @@ namespace kampfpanzerin
             this.btnLoop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLoop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.btnLoop.Image = global::kampfpanzerin.Properties.Resources.Loop;
-            this.btnLoop.Location = new System.Drawing.Point(503, 0);
+            this.btnLoop.Location = new System.Drawing.Point(483, 0);
             this.btnLoop.Name = "btnLoop";
             this.btnLoop.Size = new System.Drawing.Size(20, 20);
             this.btnLoop.TabIndex = 3;
@@ -1282,7 +1265,7 @@ namespace kampfpanzerin
             this.btnRefreshShaders.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRefreshShaders.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.btnRefreshShaders.Image = global::kampfpanzerin.Properties.Resources.Refresh;
-            this.btnRefreshShaders.Location = new System.Drawing.Point(563, 0);
+            this.btnRefreshShaders.Location = new System.Drawing.Point(543, 0);
             this.btnRefreshShaders.Name = "btnRefreshShaders";
             this.btnRefreshShaders.Size = new System.Drawing.Size(20, 20);
             this.btnRefreshShaders.TabIndex = 3;
@@ -1510,7 +1493,7 @@ namespace kampfpanzerin
             this.splitLHS.ResumeLayout(false);
             this.pnlCam.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
+            this.tabVS.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.edVert)).EndInit();
             this.tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.edFrag)).EndInit();
@@ -1550,7 +1533,7 @@ namespace kampfpanzerin
         private System.Windows.Forms.SplitContainer splitMainLR;
         private System.Windows.Forms.SplitContainer splitLHS;
         public TabControlFlat tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
+        public System.Windows.Forms.TabPage tabVS;
         private System.Windows.Forms.TabPage tabPage2;
         public ScintillaNET.Scintilla edVert;
         public ScintillaNET.Scintilla edFrag;
@@ -1570,6 +1553,7 @@ namespace kampfpanzerin
         private System.Windows.Forms.ToolStripMenuItem rerender4klangMuskcToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         public System.Windows.Forms.ToolStripMenuItem useExtraPPShaderToolStripMenuItem;
+        public System.Windows.Forms.ToolStripMenuItem useVertShaderToolStripMenuItem;
         public System.Windows.Forms.TabPage tabPP;
         public ScintillaNET.Scintilla edPost;
         public System.Windows.Forms.ToolStripMenuItem enableMultithread4klangInProdToolStripMenuItem;
@@ -1577,7 +1561,6 @@ namespace kampfpanzerin
         public System.Windows.Forms.ToolStripMenuItem enableCamControlToolStripMenuItem;
         public System.Windows.Forms.ToolStripMenuItem enableStandardUniformsToolStripMenuItem;
         public System.Windows.Forms.ToolStripMenuItem enableTrack02EnvsInUniformSvrequiresCorrect4klangExportToolStripMenuItem;
-        public System.Windows.Forms.ToolStripMenuItem enableSyncTrackerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem screenshotToolStripMenuItem;
         public System.Windows.Forms.Panel pnlCam;
         private System.Windows.Forms.Button stepUpButton;
@@ -1612,7 +1595,6 @@ namespace kampfpanzerin
         private System.Windows.Forms.Button btnColourHelper;
         public System.Windows.Forms.ToolStripMenuItem showLinenumbersToolStripMenuItem;
         public System.Windows.Forms.Button btnLineNumbers;
-        public System.Windows.Forms.Button btnTracker;
         public System.Windows.Forms.Button btnEnvelopes;
         private System.Windows.Forms.PictureBox pictureBox4;
         public System.Windows.Forms.ToolStripMenuItem showToolbarToolStripMenuItem;
