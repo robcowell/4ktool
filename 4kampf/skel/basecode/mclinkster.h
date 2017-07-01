@@ -6,16 +6,16 @@
 #include "../clinksterwriter/clinkster.h"
 
 
-__forceinline float _clinkster_frame() {
-	float pos = Clinkster_GetPosition();
+#define _clinkster_frame(t) t = Clinkster_GetPosition() / Clinkster_TicksPerSecond * 44000;
 
-#ifdef USE_4KLANG_ENV_SYNC
+/*#ifdef USE_4KLANG_ENV_SYNC
 	for (int i = 0; i < Clinkster_NumTracks; i++) {
-		syncVal[i] = Clinkster_GetInstrumentTrigger(i, pos);
+		syncVal[i] = Clinkster_GetInstrumentTrigger(i, Clinkster_GetPosition());
 	}
 #endif
-	return pos / Clinkster_TicksPerSecond;
+	return pos / Clinkster_TicksPerSecond * 44000;
 }
+*/
 
 __forceinline void _clinkster_init() {
 	Clinkster_GenerateMusic();

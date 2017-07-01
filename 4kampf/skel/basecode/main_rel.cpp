@@ -52,9 +52,9 @@ void entrypoint() {
 	//SwapBuffers(hDC);	// Remind me why this was here? lol
     MusicInit();
 
-	float t=0;
+	int t=0;
 	do {
-		t=MusicFrame();
+		MusicFrame(t);
 		IntroFrame(t);
         //wglSwapLayerBuffers(hDC, WGL_SWAP_MAIN_PLANE); 
 		SwapBuffers(hDC);

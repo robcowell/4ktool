@@ -30,7 +30,8 @@ static WAVEHDR WaveHDR = { (LPSTR)lpSoundBuffer, MAX_SAMPLES*sizeof(SAMPLE_TYPE)
 static MMTIME MMTime = { TIME_SAMPLES, 0 };
 static HWAVEOUT hWaveOut;
 
-__forceinline float _4klang_frame() {
+#define _4klang_frame(t) waveOutGetPosition(hWaveOut, &MMTime, sizeof(MMTIME));t=MMTime.u.sample;
+/*__forceinline float _4klang_frame() {
 	waveOutGetPosition(hWaveOut, &MMTime, sizeof(MMTIME));
 	int index = ((MMTime.u.sample >> 8) << 5);
 #ifdef USE_4KLANG_ENV_SYNC
@@ -41,6 +42,7 @@ __forceinline float _4klang_frame() {
 #endif
 	return ((float)MMTime.u.sample) / (SAMPLE_RATE);
 }
+*/
 
 __forceinline void _4klang_init() {
 

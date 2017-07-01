@@ -1,7 +1,13 @@
 // This is the default frag shader.
 
-uniform vec3 u,cp;					// Standard uniforms; time in .z. Also using cam pos cp.
-varying vec3 rd;					// Ray direction
+#version 450 // base code needs this
+
+// setting u to location 0 is required by the basecode
+layout(location=0)uniform vec3 u;					// Standard uniforms; time in .z. Also using cam pos cp.
+layout(location=1)uniform vec3 cp;
+layout(location=2)uniform vec3 cr;
+//in vec3 rd;					// Ray direction
+out vec3 c;
 
 float d,M=.001;						// Epsilon
 
@@ -29,7 +35,13 @@ float ao(vec3 p,vec3 n,float s){	// Do AO for point p with normal n and strength
 }
 
 void main(){						// Entrypoint	
-	vec3 p=cp,r=normalize(rd);
+	vec3 v=gl_FragCoord.xyz/u.xyz-.5,q=cos(cr),ppp=sin(cr),g=v+.5,						// Calc ray dir
+		r=normalize(mat3(
+			q.y*q.z,0,ppp.y,
+			q.z*ppp.x*ppp.y,q.x*q.z,-q.y*ppp.x,
+			-q.x*q.z*ppp.y,q.z*ppp.x,q.x*q.y
+		)*vec3(v.x*u.x/u.y*.2,v.y*.2,u.y/u.x)),p=cp;
+	
 	for(int i=0;i<128;i++){
 		d=h(p)-M;
 		if(d<M)break;
@@ -39,7 +51,7 @@ void main(){						// Entrypoint
 		vec3 dc=vec3(.6,.3,.7)*h(p-.1)*16.,
 		n=nr(p);
 		dc=mix(dc/2.,dc,ao(p,n,.5));
-		gl_FragColor=vec4(dc,1.);
+		c=dc;
 	}else
-		gl_FragColor=vec4(abs(sin(u.z)),.1,.4,1.);
+		c=vec3(abs(sin(u.z)),.1,.4);
 }

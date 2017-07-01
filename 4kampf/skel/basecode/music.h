@@ -23,13 +23,13 @@ float syncVal[MAX_INSTRUMENTS];
 
 
 #pragma code_seg(".musicFuncs")
-__forceinline float MusicFrame() {
 #ifndef USE_CLINKSTER
-	return _4klang_frame();
+#define MusicFrame(t) _4klang_frame(t);
 #else
-	return _clinkster_frame();
+#define MusicFrame(t) _clinkster_frame(t);
 #endif
-}
+
+// envelope macro is missing atm
 
 __forceinline void MusicInit() {
 #ifndef USE_CLINKSTER

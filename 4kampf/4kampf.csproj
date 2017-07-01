@@ -354,11 +354,14 @@
     <None Include="Resources\RenderEnable.png" />
     <Content Include="Resources\16-9-variation.png" />
     <Content Include="skel\4klang.h" />
+    <Content Include="skel\basecode\ext.h" />
     <Content Include="skel\basecode\glext.h" />
     <Content Include="skel\basecode\intro.h" />
     <Content Include="skel\basecode\link.exe" />
+    <Content Include="skel\basecode\m4klang.h" />
     <Content Include="skel\basecode\main_deb.cpp" />
     <Content Include="skel\basecode\main_rel.cpp" />
+    <Content Include="skel\basecode\mclinkster.h" />
     <Content Include="skel\basecode\music.h" />
     <Content Include="skel\clinksterwriter\clinkster.asm" />
     <Content Include="skel\clinksterwriter\clinkster.h" />

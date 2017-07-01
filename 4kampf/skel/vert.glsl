@@ -6,22 +6,16 @@
 
 uniform vec3 u;			// If Standard Uniforms are enabled, this gives {xres, yres, time}
 uniform vec3 cp,cr;		// If the camera system is enabled, these give cam pos and rotation
-uniform float ev[6];	// If 4klang envelopes are enabled, this gives track envelopes
 
 varying vec2 uv;		// uv coord
 varying vec3 rd;		// ray direction for RM
 
-// If the Sync Tracker is enabled, sync macros and variables get inserted in place of the below keyword.
-SYNCVARS
 
 float scale = 0.41;
 void main(){
 	// Must be set
 	gl_Position=gl_Vertex;
 
-	// If the Sync Tracker is enabled, sync code gets inserted in place of the below keyword; available from any shader.
-	SYNCCODE
-		
 	// Calculate uv
 	uv=(gl_Vertex.xy+1.)/2.;
 
