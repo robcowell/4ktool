@@ -61,8 +61,12 @@ namespace kampfpanzerin {
                 // Trim
                 lines[i] = lines[i].Trim();
                 // Add newlines for lines starting #
-                if (lines[i].StartsWith("#"))
+                if (lines[i].StartsWith("#")) {
+                    if(i > 0 && !lines[i-1].EndsWith("\\n")) {
+                        lines[i] = "\\n" + lines[i];
+                    }
                     lines[i] += "\\n";
+                }
                 // Add spaces after braceless elses
                 if (lines[i].EndsWith("else"))
                     lines[i] += " ";
