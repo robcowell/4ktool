@@ -803,7 +803,7 @@ namespace kampfpanzerin
             this.pnlToolbar.Controls.Add(this.btnFullscreen);
             this.pnlToolbar.Controls.Add(this.btnLoop);
             this.pnlToolbar.Controls.Add(this.btnRefreshShaders);
-            this.pnlToolbar.Location = new System.Drawing.Point(357, 2);
+            this.pnlToolbar.Location = new System.Drawing.Point(377, 2);
             this.pnlToolbar.Name = "pnlToolbar";
             this.pnlToolbar.Size = new System.Drawing.Size(663, 23);
             this.pnlToolbar.TabIndex = 4;
@@ -1281,7 +1281,7 @@ namespace kampfpanzerin
             this.stepUpButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
             this.stepUpButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.stepUpButton.Image = global::kampfpanzerin.Properties.Resources.Faster;
-            this.stepUpButton.Location = new System.Drawing.Point(80, 0);
+            this.stepUpButton.Location = new System.Drawing.Point(60, 0);
             this.stepUpButton.Name = "stepUpButton";
             this.stepUpButton.Size = new System.Drawing.Size(22, 20);
             this.stepUpButton.TabIndex = 0;
@@ -1298,7 +1298,7 @@ namespace kampfpanzerin
             this.btnCamReset.Font = new System.Drawing.Font("Microsoft Sans Serif", 3.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCamReset.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.btnCamReset.Image = global::kampfpanzerin.Properties.Resources.Home;
-            this.btnCamReset.Location = new System.Drawing.Point(60, 0);
+            this.btnCamReset.Location = new System.Drawing.Point(40, 0);
             this.btnCamReset.Name = "btnCamReset";
             this.btnCamReset.Size = new System.Drawing.Size(20, 20);
             this.btnCamReset.TabIndex = 0;
@@ -1332,7 +1332,7 @@ namespace kampfpanzerin
             this.stepDownButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
             this.stepDownButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.stepDownButton.Image = global::kampfpanzerin.Properties.Resources.Slower;
-            this.stepDownButton.Location = new System.Drawing.Point(40, 0);
+            this.stepDownButton.Location = new System.Drawing.Point(20, 0);
             this.stepDownButton.Name = "stepDownButton";
             this.stepDownButton.Size = new System.Drawing.Size(20, 20);
             this.stepDownButton.TabIndex = 0;

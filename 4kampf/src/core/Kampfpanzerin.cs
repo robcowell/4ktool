@@ -82,6 +82,8 @@ namespace kampfpanzerin {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
             }
+            Application.Exit();
+            Environment.Exit(0);
         }
 
         public static void ImportProject() {
@@ -469,7 +471,7 @@ namespace kampfpanzerin {
                         else if (buildtype != "Debug")
                             Logger.log("TIME FOR A SHAVE... (" + (byteCount - 4096) + " bytes to lose)\r\n");
                     } else
-                        Logger.log("! Build failed/cancelledd :(\r\n");
+                        Logger.log("! Build failed/cancelled :(\r\n");
                 } catch (Exception) {
                     Logger.log("! Couldn't copy the exe :(\r\n");
                 }
