@@ -59,7 +59,7 @@ void entrypoint() {
         //wglSwapLayerBuffers(hDC, WGL_SWAP_MAIN_PLANE); 
 		SwapBuffers(hDC);
 		PeekMessage(0,0,0,0,PM_REMOVE);
-    } while (!GetAsyncKeyState(VK_ESCAPE) && t<PROD_LENGTH);
+    } while (!GetAsyncKeyState(VK_ESCAPE) && t<PROD_LENGTH*SAMPLE_RATE);
 
     ExitProcess(0);
 }
