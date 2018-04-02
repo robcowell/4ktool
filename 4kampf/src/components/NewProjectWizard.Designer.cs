@@ -47,6 +47,7 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.UserName = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.oidos = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider3)).BeginInit();
@@ -306,12 +307,26 @@
             this.label8.TabIndex = 17;
             this.label8.Text = "Git user name";
             // 
+            // oidos
+            // 
+            this.oidos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.oidos.AutoSize = true;
+            this.oidos.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.oidos.ForeColor = System.Drawing.Color.White;
+            this.oidos.Location = new System.Drawing.Point(311, 228);
+            this.oidos.Name = "oidos";
+            this.oidos.Size = new System.Drawing.Size(51, 17);
+            this.oidos.TabIndex = 19;
+            this.oidos.Text = "Oidos";
+            this.oidos.UseVisualStyleBackColor = true;
+            // 
             // NewProjectWizard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
             this.ClientSize = new System.Drawing.Size(455, 294);
+            this.Controls.Add(this.oidos);
             this.Controls.Add(this.UserName);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.pictureBox1);
@@ -370,5 +385,6 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox UserName;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.RadioButton oidos;
     }
 }

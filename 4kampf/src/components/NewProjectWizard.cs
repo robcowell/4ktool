@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using kampfpanzerin.core.Serialization;
 using kampfpanzerin.utils;
 using System.Net;
-using Simple.CredentialManager;
 
 namespace kampfpanzerin.components {
     public partial class NewProjectWizard : Form {
@@ -133,6 +127,14 @@ namespace kampfpanzerin.components {
         public string ProjectLocation { get { return this.locationTxt.Text; } }
         public string ProjectName { get { return this.nameTxt.Text; } }
         public bool UseClinkster { get { return this.clinkster.Checked; } }
+
+        public Synth Synth {
+            get {
+                return this.clinkster.Checked
+                    ? Synth.clinkster :
+                    this.oidos.Checked ? Synth.oidos : Synth.vierklang;
+            }
+        }
         public bool UseBitBucket { get { return this.checkBox1.Checked; } }
 
         private void bitbucketSettingsButton_Click(object sender, EventArgs e) {
@@ -153,7 +155,7 @@ namespace kampfpanzerin.components {
                 return;
             }
             string error = null;
-            if (BitBucketConfig == null || ( BitBucketConfig.Team == null || BitBucketConfig.UserName == null  || BitBucketConfig.RepoSlug == null)) {
+            if (BitBucketConfig == null || (BitBucketConfig.Team == null || BitBucketConfig.UserName == null || BitBucketConfig.RepoSlug == null)) {
                 error = "Dude! If you want to use BitBucket, give me some information, man!";
                 e.Cancel = ValidationCancels;
             }
