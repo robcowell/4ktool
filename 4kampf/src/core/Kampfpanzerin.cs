@@ -181,8 +181,9 @@ namespace kampfpanzerin {
                 Repo = GitHandler.Init(dest, p);
 
                 string msg = "* Project created. Now drop your ";
-                // TODO: add the real messages
-                msg += p.useClinkster ? "music.asm" : "4klang.obj and 4klang.h";
+                msg += p.synth == Synth.clinkster ? "music.asm" 
+                    : p.synth == Synth.vierklang ? "4klang.obj and 4klang.h"
+                    : "music.xrns";
                 msg += " in there and run Build->Render Music.\r\n\r\n(Or just run Build->Render Music now to render the example tune!)\r\n";
                 Logger.logf(msg);
 
