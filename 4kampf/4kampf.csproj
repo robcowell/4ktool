@@ -275,6 +275,12 @@
     <None Include="skel\basecode\prod.vcxproj" />
     <None Include="skel\clinksterwriter\ClinksterPlayer.vcxproj" />
     <None Include="skel\frag.glsl" />
+    <None Include="skel\music.xrns" />
+    <None Include="skel\oidos\easy_exe\build.bat" />
+    <None Include="skel\oidos\easy_exe\tools\Kernel32.Lib" />
+    <None Include="skel\oidos\easy_exe\tools\msvcrt_old.lib" />
+    <None Include="skel\oidos\easy_exe\tools\User32.Lib" />
+    <None Include="skel\oidos\easy_exe\tools\WinMM.Lib" />
     <None Include="skel\ppfrag.glsl" />
     <None Include="skel\vert.glsl" />
     <None Include="skel\wavwriter\wavwriter.vcxproj" />
@@ -370,6 +376,22 @@
     <Content Include="skel\clinksterwriter\Main.cpp" />
     <Content Include="skel\clinksterwriter\readme.txt" />
     <Content Include="skel\music.asm" />
+    <Content Include="skel\oidos\convert\OidosConvert.exe" />
+    <Content Include="skel\oidos\convert\OidosConvert.py" />
+    <Content Include="skel\oidos\convert\XML.py" />
+    <Content Include="skel\oidos\easy_exe\crinkler_options.txt" />
+    <Content Include="skel\oidos\easy_exe\music.txt" />
+    <Content Include="skel\oidos\easy_exe\readme.txt" />
+    <Content Include="skel\oidos\easy_exe\tools\crinkler20\crinkler.exe" />
+    <Content Include="skel\oidos\easy_exe\tools\crinkler20\license.txt" />
+    <Content Include="skel\oidos\easy_exe\tools\crinkler20\manual.txt" />
+    <Content Include="skel\oidos\easy_exe\tools\nasmw.exe" />
+    <Content Include="skel\oidos\easy_exe\wav_filename.txt" />
+    <Content Include="skel\oidos\player\oidos.asm" />
+    <Content Include="skel\oidos\player\oidos.h" />
+    <Content Include="skel\oidos\player\oidos.inc" />
+    <Content Include="skel\oidos\player\play.asm" />
+    <Content Include="skel\oidos\player\random.asm" />
     <Content Include="skel\wavwriter\main.cpp" />
     <Content Include="libs\Tao.Externals.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

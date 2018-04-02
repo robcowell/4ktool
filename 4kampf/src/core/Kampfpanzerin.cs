@@ -171,6 +171,7 @@ namespace kampfpanzerin {
                 p.useBitBucket = wzd.UseBitBucket;
 
                 p.useClinkster = wzd.UseClinkster;
+                p.synth = wzd.Synth;
 
                 string src = AppDomain.CurrentDomain.BaseDirectory + "skel";
                 Utils.CopyFolderContents(src, dest);
@@ -180,6 +181,7 @@ namespace kampfpanzerin {
                 Repo = GitHandler.Init(dest, p);
 
                 string msg = "* Project created. Now drop your ";
+                // TODO: add the real messages
                 msg += p.useClinkster ? "music.asm" : "4klang.obj and 4klang.h";
                 msg += " in there and run Build->Render Music.\r\n\r\n(Or just run Build->Render Music now to render the example tune!)\r\n";
                 Logger.logf(msg);
@@ -215,6 +217,8 @@ namespace kampfpanzerin {
                     XmlSerializer serializer = new XmlSerializer(typeof(Project));
                     project = (Project)serializer.Deserialize(stream);
                     stream.Close();
+                    if (project.FixLegacy())
+                        SaveProjectSettingsAndCommit(project, dir);
                     if (project.name == null) {
                         project.name = dir.Substring(dir.LastIndexOf(@"\") + 1);
                         SaveProjectSettingsAndCommit(project, dir);
@@ -272,7 +276,7 @@ namespace kampfpanzerin {
             GraphicsManager gfx = GraphicsManager.GetInstance();
             string vertText = form.edVert.Text;
             string fragText = form.edFrag.Text;
-            
+
             string msg = "Scene shader compilation:\r\n" + gfx.BuildShader(
                 0,
                 project.useVertShader,
@@ -313,10 +317,10 @@ namespace kampfpanzerin {
 
             foreach (FileInfo f in new DirectoryInfo(currentProjectDirectory).GetFiles("envelope-*.dat"))
                 f.Delete();
-            string commandFormat = String.Format("/k \"\"{0}\" & cd \"{1}\\{2}\" & msbuild -p:configuration=\"Release\" & cd .. & wavwriter.exe & exit\"",
-                Properties.Settings.Default.devCommandPromptLocation,
-                currentProjectDirectory,
-                project.useClinkster ? "clinksterwriter" : "wavwriter");
+
+            string commandFormat = SoundCommandLine(project.synth);
+
+
 
             Utils.LaunchAndLog("cmd.exe", commandFormat);
 
@@ -329,6 +333,22 @@ namespace kampfpanzerin {
                 Logger.log("Tune rendered and loaded - happy days!\r\n");
             else
                 Logger.log("! Couldn't read the WAV :(\r\n");
+        }
+
+        public static string SoundCommandLine(Synth synth) {
+            switch (synth) {
+                case Synth.clinkster:
+                case Synth.vierklang:
+                    return String.Format("/k \"\"{0}\" & cd \"{1}\\{2}\" & msbuild -p:configuration=\"Release\" & cd .. & wavwriter.exe & exit\"",
+                            Properties.Settings.Default.devCommandPromptLocation,
+                            currentProjectDirectory,
+                            project.useClinkster ? "clinksterwriter" : "wavwriter");
+                case Synth.oidos:
+                    return String.Format("/k oidos\\easy_exe\\build.bat && oidos\\easy_exe\\music_wav.exe && cp oidos\\easy_exe\\music.wav .");
+
+            }
+
+            return "";
         }
 
         public static void DoBuildClean() {
@@ -366,7 +386,7 @@ namespace kampfpanzerin {
             sw = new StreamWriter("ppfrag.glsl");
             sw.Write(form.edPost.Text);
             sw.Close();
-            
+
             BuildShader();
 
             //project.settings = kampfpanzerin.Properties.Settings.Default;
