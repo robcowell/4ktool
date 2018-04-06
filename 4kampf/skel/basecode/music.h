@@ -8,35 +8,45 @@
 
 #include <windows.h>
 #include <mmsystem.h>
-#include "mmreg.h"
-#include "music.h"
-#ifndef USE_CLINKSTER
-#include "m4klang.h"
-#else
-#include "mclinkster.h"
-#endif
+#include <mmreg.h>
 
+#include "4kampfpanzerin.h"
+#include "music.h"
+
+#include <windows.h>
+#include <mmsystem.h>
+#include "mmreg.h"
+
+#if		SYNTH==_4KLANG
+#include "m4klang.h"
+#define MusicFrame(t) _4klang_frame(t);
+
+#elif	SYNTH==CLINKSTER
+#include "mclinkster.h"
+#define MusicFrame(t) _clinkster_frame(t);
+
+#elif	SYNTH==OIDOS
+#include "moidos.h"
+#define MusicFrame(t) _oidos_frame(t);
+
+#endif
 
 #ifdef USE_4KLANG_ENV_SYNC
 float syncVal[MAX_INSTRUMENTS];
 #endif
 
 
-#pragma code_seg(".musicFuncs")
-#ifndef USE_CLINKSTER
-#define MusicFrame(t) _4klang_frame(t);
-#else
-#define MusicFrame(t) _clinkster_frame(t);
-#endif
 
 // envelope macro is missing atm
 
+#pragma code_seg(".musicFuncs")
 __forceinline void MusicInit() {
-#ifndef USE_CLINKSTER
+#if		SYNTH==_4KLANG
 	_4klang_init();
-#else
+#elif	SYNTH==CLINKSTER
 	_clinkster_init();
+#elif	SYNTH==OIDOS
+	_oidos_init();
 #endif
 }
-
 

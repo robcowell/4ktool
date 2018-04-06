@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -36,6 +36,7 @@
     <ClInclude Include="intro.h" />
     <ClInclude Include="m4klang.h" />
     <ClInclude Include="mclinkster.h" />
+    <ClInclude Include="moidos.h" />
     <ClInclude Include="music.h" />
   </ItemGroup>
   <ItemGroup>
@@ -54,24 +55,24 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Packed Release (Fast)|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Unpacked release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -148,7 +149,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;</AdditionalDependencies>
+      <AdditionalDependencies>..\oidos\easy_exe\temp\oidos.obj;..\oidos\easy_exe\temp\random.obj;../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)4verts_deb.pdb</ProgramDatabaseFile>
@@ -217,7 +218,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/CRINKLER /PROGRESSGUI /PRINT:IMPORTS /PRINT:LABELS /HASHTRIES:6000 /HASHSIZE:512 /COMPMODE:SLOW /ORDERTRIES:50000 /PRIORITY:NORMAL /TRANSFORM:CALLS /RANGE:opengl32 /TRUNCATEFLOATS:16 /UNSAFEIMPORT /REPORT:exe\link.html /RANGE:gdi32 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;</AdditionalDependencies>
+      <AdditionalDependencies>..\oidos\easy_exe\temp\oidos.obj;..\oidos\easy_exe\temp\random.obj;../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <SubSystem>Windows</SubSystem>
@@ -282,7 +283,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/CRINKLER /PROGRESSGUI /PRINT:IMPORTS /PRINT:LABELS /HASHTRIES:100 /HASHSIZE:512 /COMPMODE:INSTANT /ORDERTRIES:1000 /PRIORITY:NORMAL /TRANSFORM:CALLS /RANGE:opengl32 /TRUNCATEFLOATS:16 /UNSAFEIMPORT /REPORT:exe\link.html /RANGE:gdi32 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;</AdditionalDependencies>
+      <AdditionalDependencies>..\oidos\easy_exe\temp\oidos.obj;..\oidos\easy_exe\temp\random.obj;../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <SubSystem>Windows</SubSystem>
@@ -340,7 +341,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;</AdditionalDependencies>
+      <AdditionalDependencies>..\oidos\easy_exe\temp\oidos.obj;..\oidos\easy_exe\temp\random.obj;../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <SubSystem>Windows</SubSystem>
