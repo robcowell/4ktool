@@ -188,3 +188,5 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 /4kampf.VC.db
+/4kampf/skel/oidos/easy_exe/temp/*.asm
+/4kampf/skel/oidos/easy_exe/temp/*.txt
