@@ -344,7 +344,7 @@ namespace kampfpanzerin {
                             currentProjectDirectory,
                             project.useClinkster ? "clinksterwriter" : "wavwriter");
                 case Synth.oidos:
-                    return String.Format("/k oidos\\easy_exe\\build.bat && oidos\\easy_exe\\music_wav.exe && cp oidos\\easy_exe\\music.wav .");
+                    return String.Format("/k oidos\\easy_exe\\build.bat && music_wav.exe");
 
             }
 

@@ -1,27 +1,51 @@
 pushd %~dp0
 
-if not exist temp mkdir temp
-del /q temp\*
+set OBJ_DIR=..\..\basecode\music\
+set PLAYER=..\..\basecode\music\player\
+set TOOLS=..\..\basecode\tools\
+set OUT_DIR=..\..\
+SET TMP=temp\
+
+if not exist %TMP% mkdir %TMP%
+del /q %TMP%\*
 del music.exe
 del music_wav.exe
 
-..\convert\OidosConvert.exe ..\..\oidos.xrns temp\music.asm
+if not exist %OBJ_DIR% mkdir %OBJ_DIR%
+del /q %OBJ_DIR%\*
 
-copy ..\player\oidos.asm temp
-copy ..\player\random.asm temp
-copy ..\player\oidos.inc temp
-copy ..\player\play.asm temp
-copy music.txt temp
-copy wav_filename.txt temp
+if not exist %PLAYER% mkdir %PLAYER%
+del /q %PLAYER%\*
 
-cd temp
-..\tools\nasmw -f win32 oidos.asm -o oidos.obj
-..\tools\nasmw -f win32 random.asm -o random.obj
-..\tools\nasmw -f win32 play.asm -o play.obj
-..\tools\nasmw -f win32 -dWRITE_WAV play.asm -o play_wav.obj
-cd ..
 
-tools\crinkler20\crinkler temp\oidos.obj temp\random.obj temp\play.obj /OUT:music.exe /ENTRY:main tools\kernel32.lib tools\user32.lib tools\winmm.lib tools\msvcrt_old.lib @crinkler_options.txt
-tools\crinkler20\crinkler temp\oidos.obj temp\random.obj temp\play_wav.obj /OUT:music_wav.exe /ENTRY:main tools\kernel32.lib tools\user32.lib tools\winmm.lib tools\msvcrt_old.lib @crinkler_options.txt
+..\convert\OidosConvert.exe ..\..\oidos.xrns %TMP%\music.asm
+
+copy ..\player\oidos.asm %TMP%
+copy ..\player\random.asm %TMP%
+copy ..\player\oidos.inc %TMP%
+copy ..\player\play.asm %TMP%
+copy music.txt %TMP%
+copy wav_filename.txt %TMP%
+
+%TOOLS%\nasmw -f win32 -I %TMP%\ %TMP%\oidos.asm -o %OBJ_DIR%\oidos.obj
+%TOOLS%\nasmw -f win32 %TMP%\random.asm -o %OBJ_DIR%\random.obj
+%TOOLS%\nasmw -f win32 -I %TMP%\ %TMP%\play.asm -o %PLAYER%\play.obj
+%TOOLS%\nasmw -f win32 -I %TMP%\ -dWRITE_WAV %TMP%\play.asm -o %PLAYER%\play_wav.obj
+
+%TOOLS%\crinkler20\crinkler^
+	%OBJ_DIR%\oidos.obj^
+	%OBJ_DIR%\random.obj^
+	%PLAYER%\play.obj^
+	/OUT:%OUT_DIR%\music.exe^
+	/ENTRY:main %TOOLS%\kernel32.lib %TOOLS%\user32.lib %TOOLS%\winmm.lib %TOOLS%\msvcrt_old.lib^
+	@crinkler_options.txt
+
+%TOOLS%\crinkler20\crinkler^
+	%OBJ_DIR%\oidos.obj^
+	%OBJ_DIR%\random.obj^
+	%PLAYER%\play_wav.obj^
+	/OUT:%OUT_DIR%\music_wav.exe^
+	/ENTRY:main %TOOLS%\kernel32.lib %TOOLS%\user32.lib %TOOLS%\winmm.lib %TOOLS%\msvcrt_old.lib^
+	@crinkler_options.txt
 
 popd

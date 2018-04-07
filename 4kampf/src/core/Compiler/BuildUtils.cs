@@ -52,6 +52,8 @@ namespace kampfpanzerin {
             }
             s += "\"};\n";
             File.WriteAllText("4kampfpanzerin.h", s);
+
+            File.WriteAllText("basecode/.used_synth", p.synth.ToString());
         }
         
         private static string CleanShader(string s) {

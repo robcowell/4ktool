@@ -272,15 +272,16 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="skel\4klang.obj" />
+    <None Include="skel\basecode\compile_music.bat" />
     <None Include="skel\basecode\prod.vcxproj" />
+    <None Include="skel\basecode\tools\Kernel32.Lib" />
+    <None Include="skel\basecode\tools\msvcrt_old.lib" />
+    <None Include="skel\basecode\tools\User32.Lib" />
+    <None Include="skel\basecode\tools\WinMM.Lib" />
     <None Include="skel\clinksterwriter\ClinksterPlayer.vcxproj" />
     <None Include="skel\frag.glsl" />
     <None Include="skel\music.xrns" />
     <None Include="skel\oidos\easy_exe\build.bat" />
-    <None Include="skel\oidos\easy_exe\tools\Kernel32.Lib" />
-    <None Include="skel\oidos\easy_exe\tools\msvcrt_old.lib" />
-    <None Include="skel\oidos\easy_exe\tools\User32.Lib" />
-    <None Include="skel\oidos\easy_exe\tools\WinMM.Lib" />
     <None Include="skel\ppfrag.glsl" />
     <None Include="skel\vert.glsl" />
     <None Include="skel\wavwriter\wavwriter.vcxproj" />
@@ -364,13 +365,17 @@
     <Content Include="skel\basecode\ext.h" />
     <Content Include="skel\basecode\glext.h" />
     <Content Include="skel\basecode\intro.h" />
-    <Content Include="skel\basecode\link.exe" />
     <Content Include="skel\basecode\m4klang.h" />
     <Content Include="skel\basecode\main_deb.cpp" />
     <Content Include="skel\basecode\main_rel.cpp" />
     <Content Include="skel\basecode\mclinkster.h" />
     <Content Include="skel\basecode\moidos.h" />
     <Content Include="skel\basecode\music.h" />
+    <Content Include="skel\basecode\link.exe" />
+    <Content Include="skel\basecode\tools\crinkler20\crinkler.exe" />
+    <Content Include="skel\basecode\tools\crinkler20\license.txt" />
+    <Content Include="skel\basecode\tools\crinkler20\manual.txt" />
+    <Content Include="skel\basecode\tools\nasmw.exe" />
     <Content Include="skel\clinksterwriter\clinkster.asm" />
     <Content Include="skel\clinksterwriter\clinkster.h" />
     <Content Include="skel\clinksterwriter\clinkster.inc" />
@@ -384,10 +389,6 @@
     <Content Include="skel\oidos\easy_exe\crinkler_options.txt" />
     <Content Include="skel\oidos\easy_exe\music.txt" />
     <Content Include="skel\oidos\easy_exe\readme.txt" />
-    <Content Include="skel\oidos\easy_exe\tools\crinkler20\crinkler.exe" />
-    <Content Include="skel\oidos\easy_exe\tools\crinkler20\license.txt" />
-    <Content Include="skel\oidos\easy_exe\tools\crinkler20\manual.txt" />
-    <Content Include="skel\oidos\easy_exe\tools\nasmw.exe" />
     <Content Include="skel\oidos\easy_exe\wav_filename.txt" />
     <Content Include="skel\oidos\player\oidos.asm" />
     <Content Include="skel\oidos\player\oidos.h" />
