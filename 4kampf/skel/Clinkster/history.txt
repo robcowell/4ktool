@@ -1,0 +1,36 @@
+
+Change history of Clinkster:
+
+2016-04-15:
+ - Fixed an error in the multithreaded player code which made it not
+   compile if panning was used.
+ - Added a WAV writer feature to the easy_exe setup.
+ - Added checks for illegal use of command columns to the converter.
+ - Added music from U-Boat to examples.
+
+2015-10-31:
+ - Added some code in the player to avoid denormals in the index decay,
+   speeding up computation of long notes with high index decay.
+ - Padded the music buffer to avoid writing into adjacent memory.
+ - Included a multithreaded version of the player, which computes the
+   left and right channels in separate threads.
+ - Included a Windows 64-bit build of the VST.
+
+2014-11-30:
+ - Added converter support for Renoise 3
+ - Added some checks in the converter for illegal use of the
+   volume, panning, delay and effect columns
+
+2013-08-18:
+ - Added music from Wishful Twisting to examples
+
+2013-08-15:
+ - Fixed bug in converter: sometimes incorrect waveforms would be assigned
+   to instruments used in more than one track
+ - Fixed bug in converter: music would break if attack, decay or release
+   was set to -128 (minimum)
+ - Fixed bug in player: crash if sine waveform not used
+ - One more example song
+ - A bunch of additional example instruments
+
+2013-07-19: First public release
