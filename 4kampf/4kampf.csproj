@@ -274,6 +274,7 @@
     <None Include="skel\4klang.obj" />
     <None Include="skel\basecode\compile_music.bat" />
     <None Include="skel\basecode\prod.vcxproj" />
+    <None Include="skel\basecode\random.obj" />
     <None Include="skel\basecode\tools\Kernel32.Lib" />
     <None Include="skel\basecode\tools\msvcrt_old.lib" />
     <None Include="skel\basecode\tools\User32.Lib" />
