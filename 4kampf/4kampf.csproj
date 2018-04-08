@@ -280,7 +280,6 @@
     <None Include="skel\basecode\tools\User32.Lib" />
     <None Include="skel\basecode\tools\WinMM.Lib" />
     <None Include="skel\clinkster.xrns" />
-    <None Include="skel\clinksterwriter\ClinksterPlayer.vcxproj" />
     <None Include="skel\Clinkster\easy_exe\build.bat" />
     <None Include="skel\Clinkster\easy_exe\clinkster.h" />
     <None Include="skel\Clinkster\easy_exe\src\clinkster.asm" />
@@ -383,12 +382,6 @@
     <Content Include="skel\basecode\tools\crinkler20\license.txt" />
     <Content Include="skel\basecode\tools\crinkler20\manual.txt" />
     <Content Include="skel\basecode\tools\nasmw.exe" />
-    <Content Include="skel\clinksterwriter\clinkster.asm" />
-    <Content Include="skel\clinksterwriter\clinkster.h" />
-    <Content Include="skel\clinksterwriter\clinkster.inc" />
-    <Content Include="skel\clinksterwriter\ftol.asm" />
-    <Content Include="skel\clinksterwriter\Main.cpp" />
-    <Content Include="skel\clinksterwriter\readme.txt" />
     <Content Include="skel\Clinkster\clinkster.txt" />
     <Content Include="skel\Clinkster\easy_exe\crinkler_options.txt" />
     <Content Include="skel\Clinkster\easy_exe\music.txt" />
