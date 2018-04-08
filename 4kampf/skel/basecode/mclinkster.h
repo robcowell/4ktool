@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "../clinksterwriter/clinkster.h"
+#include "../Clinkster/easy_exe/clinkster.h"
 
 
 #define _clinkster_frame(t) t = Clinkster_GetPosition() / Clinkster_TicksPerSecond * 44000;
