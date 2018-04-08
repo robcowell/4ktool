@@ -9,3 +9,4 @@ extern Clinkster_NoteTiming
 extern Clinkster_TicksPerSecond
 extern Clinkster_MusicLength
 extern Clinkster_NumTracks
+extern Clinkster_WavFileHeader

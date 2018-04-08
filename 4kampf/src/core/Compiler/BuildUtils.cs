@@ -9,6 +9,7 @@ namespace kampfpanzerin {
     class BuildUtils {
         public static void DoExportHeader(Project p, float length, string vertexShader, string fragmentShader, string ppShader = null) {
             string s = "// Prod shaders and config\n// Exported from 4kampf\n\n#pragma once\n\n";
+            s += "#include \"const.h\"\n\n";
             if (Properties.Settings.Default.enableStandardUniforms)
                 s += "#define USE_STANDARD_UNIFORMS\n";
             if (p.use4klangEnv)
@@ -21,6 +22,20 @@ namespace kampfpanzerin {
                 s += "#define USE_CLINKSTER\n";
             if (p.useVertShader)
                 s += "#define USE_VERT_SHADER\n";
+
+            switch (p.synth) {
+                case Synth.clinkster:
+                    s += "#define SYNTH		CLINKSTER";
+                    break;
+                case Synth.vierklang:
+                    s += "#define SYNTH		_4KLANG";
+                    break;
+                case Synth.oidos:
+                    s += "#define SYNTH		OIDOS";
+                    break;
+            }
+
+            s += "\n\n";
 
             s += "#define PROD_LENGTH " + ((int)length) + "\n\n";
 
@@ -37,6 +52,8 @@ namespace kampfpanzerin {
             }
             s += "\"};\n";
             File.WriteAllText("4kampfpanzerin.h", s);
+
+            File.WriteAllText("basecode/.used_synth", p.synth.ToString());
         }
         
         private static string CleanShader(string s) {

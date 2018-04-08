@@ -1,12 +1,9 @@
 using System;
-using System.IO;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Text;
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
 using kampfpanzerin.core.Serialization;
 
 using Tao.OpenGl;

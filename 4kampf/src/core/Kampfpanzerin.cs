@@ -339,13 +339,14 @@ namespace kampfpanzerin {
         public static string SoundCommandLine(Synth synth) {
             switch (synth) {
                 case Synth.clinkster:
+                    return String.Format("/k Clinkster\\easy_exe\\build.bat && music_wav.exe");
                 case Synth.vierklang:
                     return String.Format("/k \"\"{0}\" & cd \"{1}\\{2}\" & msbuild -p:configuration=\"Release\" & cd .. & wavwriter.exe & exit\"",
                             Properties.Settings.Default.devCommandPromptLocation,
                             currentProjectDirectory,
                             project.useClinkster ? "clinksterwriter" : "wavwriter");
                 case Synth.oidos:
-                    return String.Format("/k oidos\\easy_exe\\build.bat && oidos\\easy_exe\\music_wav.exe && cp oidos\\easy_exe\\music.wav .");
+                    return String.Format("/k oidos\\easy_exe\\build.bat && music_wav.exe");
 
             }
 

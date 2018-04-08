@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -36,6 +36,7 @@
     <ClInclude Include="intro.h" />
     <ClInclude Include="m4klang.h" />
     <ClInclude Include="mclinkster.h" />
+    <ClInclude Include="moidos.h" />
     <ClInclude Include="music.h" />
   </ItemGroup>
   <ItemGroup>
@@ -54,29 +55,27 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Packed Release (Fast)|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Unpacked release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\vsyasm.props" />
-  </ImportGroup>
+  <ImportGroup Label="ExtensionSettings" />
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Packed Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
@@ -116,6 +115,22 @@
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Packed Release (Fast)|Win32'">prod</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Unpacked release|Win32'">prod</TargetName>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <CustomBuildAfterTargets>Compile</CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets>Link</CustomBuildBeforeTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Unpacked release|Win32'">
+    <CustomBuildAfterTargets>Compile</CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets>Link</CustomBuildBeforeTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Packed Release|Win32'">
+    <CustomBuildAfterTargets>Compile</CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets>Link</CustomBuildBeforeTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Packed Release (Fast)|Win32'">
+    <CustomBuildAfterTargets>Compile</CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets>Link</CustomBuildBeforeTargets>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -148,7 +163,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;</AdditionalDependencies>
+      <AdditionalDependencies>music/music.obj;random.obj;../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)4verts_deb.pdb</ProgramDatabaseFile>
@@ -165,9 +180,18 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>$(OutDir)i4k_OGLShader_vc2010.bsc</OutputFile>
     </Bscmake>
-    <YASM>
-      <IncludePaths>../;../clinksterwriter/</IncludePaths>
-    </YASM>
+    <CustomBuildStep>
+      <Command>compile_music.bat</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>compiling music</Message>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>music/music.obj</Outputs>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Packed Release|Win32'">
     <Midl>
@@ -217,7 +241,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/CRINKLER /PROGRESSGUI /PRINT:IMPORTS /PRINT:LABELS /HASHTRIES:6000 /HASHSIZE:512 /COMPMODE:SLOW /ORDERTRIES:50000 /PRIORITY:NORMAL /TRANSFORM:CALLS /RANGE:opengl32 /TRUNCATEFLOATS:16 /UNSAFEIMPORT /REPORT:exe\link.html /RANGE:gdi32 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;</AdditionalDependencies>
+      <AdditionalDependencies>music/music.obj;random.obj;../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <SubSystem>Windows</SubSystem>
@@ -238,6 +262,18 @@
     <YASM>
       <IncludePaths>../;../clinksterwriter/</IncludePaths>
     </YASM>
+    <CustomBuildStep>
+      <Command>compile_music.bat</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>compiling music</Message>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>music/music.obj</Outputs>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Packed Release (Fast)|Win32'">
     <Midl>
@@ -282,7 +318,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/CRINKLER /PROGRESSGUI /PRINT:IMPORTS /PRINT:LABELS /HASHTRIES:100 /HASHSIZE:512 /COMPMODE:INSTANT /ORDERTRIES:1000 /PRIORITY:NORMAL /TRANSFORM:CALLS /RANGE:opengl32 /TRUNCATEFLOATS:16 /UNSAFEIMPORT /REPORT:exe\link.html /RANGE:gdi32 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;</AdditionalDependencies>
+      <AdditionalDependencies>music/music.obj;random.obj;../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <SubSystem>Windows</SubSystem>
@@ -303,6 +339,18 @@
     <YASM>
       <IncludePaths>../;../clinksterwriter/</IncludePaths>
     </YASM>
+    <CustomBuildStep>
+      <Command>compile_music.bat</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>compiling music</Message>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>music/music.obj</Outputs>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Unpacked release|Win32'">
     <Midl>
@@ -340,7 +388,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;</AdditionalDependencies>
+      <AdditionalDependencies>music/music.obj;random.obj;../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <SubSystem>Windows</SubSystem>
@@ -361,9 +409,19 @@
     <YASM>
       <IncludePaths>../;../clinksterwriter/</IncludePaths>
     </YASM>
+    <CustomBuildStep>
+      <Command>compile_music.bat</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>compiling music</Message>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>music/music.obj</Outputs>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\vsyasm.targets" />
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

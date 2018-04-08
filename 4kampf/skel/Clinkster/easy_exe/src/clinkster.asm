@@ -2,7 +2,7 @@
 ; If set to 1, timing information is generated during music generation
 ; which is needed for Clinkster_GetInstrumentTrigger.
 ; Set it to 0 if you don't need this functionality.
-%define CLINKSTER_GENERATE_TIMING_DATA 1
+%define CLINKSTER_GENERATE_TIMING_DATA 0
 
 ; Offset applied by Clinkster_GetPosition to compensate for graphics latency.
 ; Measured in samples (44100ths of a second).
@@ -55,6 +55,7 @@ Clinkster_MusicBuffer:
 _Clinkster_MusicBuffer:
 .align24
 	resw (TOTAL_SAMPLES*2)
+	resw 2 ; padding to catch extra write in conversion
 
 section tps rdata align=4
 Clinkster_TicksPerSecond:
@@ -406,6 +407,9 @@ makelayer:
 
 %if USES_INDEXDECAY
 	fld		qword [edx] ; layer_index
+	fld1
+	fadd	st1, st0
+	fsubp	st1, st0
 %endif
 	add		edx, byte 8
 
