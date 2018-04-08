@@ -115,6 +115,22 @@
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Packed Release (Fast)|Win32'">prod</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Unpacked release|Win32'">prod</TargetName>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <CustomBuildAfterTargets>Compile</CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets>Link</CustomBuildBeforeTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Unpacked release|Win32'">
+    <CustomBuildAfterTargets>Compile</CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets>Link</CustomBuildBeforeTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Packed Release|Win32'">
+    <CustomBuildAfterTargets>Compile</CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets>Link</CustomBuildBeforeTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Packed Release (Fast)|Win32'">
+    <CustomBuildAfterTargets>Compile</CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets>Link</CustomBuildBeforeTargets>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -147,7 +163,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>music/music.obj;/random.obj;../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;</AdditionalDependencies>
+      <AdditionalDependencies>music/music.obj;random.obj;../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)4verts_deb.pdb</ProgramDatabaseFile>
@@ -164,9 +180,18 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>$(OutDir)i4k_OGLShader_vc2010.bsc</OutputFile>
     </Bscmake>
-    <YASM>
-      <IncludePaths>../;../clinksterwriter/</IncludePaths>
-    </YASM>
+    <CustomBuildStep>
+      <Command>compile_music.bat</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>compiling music</Message>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>music/music.obj</Outputs>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Packed Release|Win32'">
     <Midl>
@@ -216,7 +241,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/CRINKLER /PROGRESSGUI /PRINT:IMPORTS /PRINT:LABELS /HASHTRIES:6000 /HASHSIZE:512 /COMPMODE:SLOW /ORDERTRIES:50000 /PRIORITY:NORMAL /TRANSFORM:CALLS /RANGE:opengl32 /TRUNCATEFLOATS:16 /UNSAFEIMPORT /REPORT:exe\link.html /RANGE:gdi32 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>..\oidos\easy_exe\temp\oidos.obj;..\oidos\easy_exe\temp\random.obj;../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;</AdditionalDependencies>
+      <AdditionalDependencies>music/music.obj;random.obj;../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <SubSystem>Windows</SubSystem>
@@ -237,6 +262,18 @@
     <YASM>
       <IncludePaths>../;../clinksterwriter/</IncludePaths>
     </YASM>
+    <CustomBuildStep>
+      <Command>compile_music.bat</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>compiling music</Message>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>music/music.obj</Outputs>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Packed Release (Fast)|Win32'">
     <Midl>
@@ -281,7 +318,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/CRINKLER /PROGRESSGUI /PRINT:IMPORTS /PRINT:LABELS /HASHTRIES:100 /HASHSIZE:512 /COMPMODE:INSTANT /ORDERTRIES:1000 /PRIORITY:NORMAL /TRANSFORM:CALLS /RANGE:opengl32 /TRUNCATEFLOATS:16 /UNSAFEIMPORT /REPORT:exe\link.html /RANGE:gdi32 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>..\oidos\easy_exe\temp\oidos.obj;..\oidos\easy_exe\temp\random.obj;../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;</AdditionalDependencies>
+      <AdditionalDependencies>music/music.obj;random.obj;../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <SubSystem>Windows</SubSystem>
@@ -302,6 +339,18 @@
     <YASM>
       <IncludePaths>../;../clinksterwriter/</IncludePaths>
     </YASM>
+    <CustomBuildStep>
+      <Command>compile_music.bat</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>compiling music</Message>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>music/music.obj</Outputs>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Unpacked release|Win32'">
     <Midl>
@@ -339,7 +388,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>..\oidos\easy_exe\temp\oidos.obj;..\oidos\easy_exe\temp\random.obj;../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;</AdditionalDependencies>
+      <AdditionalDependencies>music/music.obj;random.obj;../4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;Gdi32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <SubSystem>Windows</SubSystem>
@@ -360,6 +409,18 @@
     <YASM>
       <IncludePaths>../;../clinksterwriter/</IncludePaths>
     </YASM>
+    <CustomBuildStep>
+      <Command>compile_music.bat</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>compiling music</Message>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>music/music.obj</Outputs>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
