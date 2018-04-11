@@ -9,7 +9,7 @@ namespace kampfpanzerin {
     class BuildUtils {
         public static void DoExportHeader(Project p, float length, string vertexShader, string fragmentShader, string ppShader = null) {
             string s = "// Prod shaders and config\n// Exported from 4kampf\n\n#pragma once\n\n";
-            s += "#include \"const.h\"\n\n";
+            s += "#include \"basecode/const.h\"\n\n";
             if (Properties.Settings.Default.enableStandardUniforms)
                 s += "#define USE_STANDARD_UNIFORMS\n";
             if (p.use4klangEnv)
