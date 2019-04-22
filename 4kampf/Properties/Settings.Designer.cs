@@ -194,7 +194,7 @@ namespace kampfpanzerin.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Bossman")]
         public string gitAuthor {
             get {
                 return ((string)(this["gitAuthor"]));
@@ -206,7 +206,7 @@ namespace kampfpanzerin.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("bossman@demografica.org")]
         public string gitEmail {
             get {
                 return ((string)(this["gitEmail"]));
@@ -230,7 +230,7 @@ namespace kampfpanzerin.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Bossman")]
         public string UserName {
             get {
                 return ((string)(this["UserName"]));

@@ -28,7 +28,7 @@ namespace kampfpanzerin.git {
 
         public GitHandler()
         {
-
+            
         }
 
         public static GitHandler Init(string folder, Project p, NetworkCredential credentials = null) {
@@ -50,6 +50,8 @@ namespace kampfpanzerin.git {
                     }
                 }
 
+             
+
                 Signature s = new Signature(Properties.Settings.Default.gitAuthor, Properties.Settings.Default.gitEmail, DateTime.Now);
                 Commit c = gitRepo.Commit(@"Created a new intro \o/",s, s,new CommitOptions());
                 //Commit c = gitRepo.Logger.log("Committed " + c.ToString() + "\r\n");
@@ -63,8 +65,9 @@ namespace kampfpanzerin.git {
                 }
                 Cursor.Current = Cursors.Default;
                 return ret;
-            } catch (Exception) {
+            } catch (Exception ex) {
                 Logger.log("! Bad juju guvnor, I couldn't create the repo!\r\n");
+                Logger.log(ex.Message + "\r\n");
                 Cursor.Current = Cursors.Default;
                 return null;
             }

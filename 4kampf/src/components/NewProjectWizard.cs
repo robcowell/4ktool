@@ -34,9 +34,16 @@ namespace kampfpanzerin.components {
             } else {
                 this.locationTxt.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             }
+
             this.UserName.Text = Properties.Settings.Default.UserName;
             if (this.UserName.Text == null || this.UserName.Text.Length == 0) {
                 this.UserName.Text = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+            }
+
+            this.Email.Text = Properties.Settings.Default.gitEmail;
+            if(this.Email.Text == null || this.Email.Text.Length == 0)
+            {
+                this.Email.Text = "bossman@demografica.org";
             }
         }
 
@@ -115,14 +122,19 @@ namespace kampfpanzerin.components {
                         this.DialogResult = DialogResult.OK;
                     }
                 } else {
+
                     this.DialogResult = DialogResult.OK;
                 }
             }
             this.ValidationCancels = false;
             Cursor.Current = Cursors.Default;
+            /*
             Properties.Settings.Default.UserName = this.UserName.Text;
-            git.GitHandler handler = new git.GitHandler();
+            Properties.Settings.Default.gitEmail = this.Email.Text;
+
+            git.GitHandler handler = new git.GitHandler(locationTxt.Text + @"\" + nameTxt.Text);
             handler.SetUsername(this.UserName.Text);
+            */
             
         }
 
@@ -164,5 +176,15 @@ namespace kampfpanzerin.components {
             errorProvider2.SetError((Control)sender, error);
         }
 
+        private void Email_Validating(object sender, CancelEventArgs e)
+        {
+            string error = null;
+            if (Email.Text.Length == 0)
+            {
+                error = "Please enter an email address";
+                e.Cancel = ValidationCancels;
+            }
+            errorProvider1.SetError((Control)sender, error);
+        }
     }
 }

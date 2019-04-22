@@ -45,16 +45,16 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="gitAuthor" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">Bossman</Value>
     </Setting>
     <Setting Name="gitEmail" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">bossman@demografica.org</Value>
     </Setting>
     <Setting Name="bbTeam" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="UserName" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">Bossman</Value>
     </Setting>
   </Settings>
 </SettingsFile>
