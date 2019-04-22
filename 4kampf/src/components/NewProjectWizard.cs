@@ -121,7 +121,9 @@ namespace kampfpanzerin.components {
             this.ValidationCancels = false;
             Cursor.Current = Cursors.Default;
             Properties.Settings.Default.UserName = this.UserName.Text;
-            git.GitHandler.SetUsername(this.UserName.Text);
+            git.GitHandler handler = new git.GitHandler();
+            handler.SetUsername(this.UserName.Text);
+            
         }
 
         public string ProjectLocation { get { return this.locationTxt.Text; } }

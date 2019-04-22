@@ -10,6 +10,7 @@ using System.Net;
 using RestSharp;
 using kampfpanzerin.utils;
 using System.Windows.Forms;
+using RestSharp.Authenticators;
 
 namespace kampfpanzerin.git {
     class GitHandler {
@@ -23,6 +24,11 @@ namespace kampfpanzerin.git {
 
         public GitHandler(string folder) {
             repo = new Repository(folder.NormalizePath());
+        }
+
+        public GitHandler()
+        {
+
         }
 
         public static GitHandler Init(string folder, Project p, NetworkCredential credentials = null) {
@@ -44,9 +50,9 @@ namespace kampfpanzerin.git {
                     }
                 }
 
-                //Signature s = new Signature(Properties.Settings.Default.gitAuthor, Properties.Settings.Default.gitEmail, DateTime.Now);
-                Commit c = gitRepo.Commit(@"Created a new intro \o/");
-                Logger.log("Committed " + c.ToString() + "\r\n");
+                Signature s = new Signature(Properties.Settings.Default.gitAuthor, Properties.Settings.Default.gitEmail, DateTime.Now);
+                Commit c = gitRepo.Commit(@"Created a new intro \o/",s, s,new CommitOptions());
+                //Commit c = gitRepo.Logger.log("Committed " + c.ToString() + "\r\n");
                 GitHandler ret = new GitHandler(folder);
                 if (p.gitRemote != null) {
                     if (credentials == null) {
@@ -88,7 +94,7 @@ namespace kampfpanzerin.git {
                 } else {
                     repo.Network.Push(repo.Head, options);
                 }
-                Logger.logf("Pushed {0} to {1}\r\n", repo.Head.Name, repo.Head.Remote.Name);
+                Logger.logf("Pushed {0} to {1}\r\n", repo.Head.FriendlyName, repo.Head.RemoteName);
             } catch (NonFastForwardException) {
                 Logger.logf("! Heavy Vibes Boss, someone edited the prod already, you need a pull here!\r\n");
             } catch (Exception) {
@@ -120,7 +126,7 @@ namespace kampfpanzerin.git {
             Cursor.Current = Cursors.WaitCursor;
             try {
                 RestClient r = new RestClient("https://bitbucket.org/");
-                r.Authenticator = new HttpBasicAuthenticator(credentials.UserName, credentials.Password);
+                r.Authenticator = new RestSharp.Authenticators.HttpBasicAuthenticator(credentials.UserName, credentials.Password);
                 RestRequest request = new RestRequest("api/2.0/repositories/" + data.Team + "/" + data.RepoSlug, Method.POST);
                 request.AddParameter("name", data.RepoSlug);
                 request.AddParameter("is_private", "true");
@@ -215,15 +221,17 @@ namespace kampfpanzerin.git {
                             Password = credentials.Password
                         });
 
-                Configuration config = new Configuration();
+                Configuration config = repo.Config;
                 var gitUsername = config.Get<string>("user.name", ConfigurationLevel.Global).Value;
+                
 
                 Signature s = new Signature(gitUsername, gitUsername, DateTime.Now);
-                MergeResult r = repo.Network.Pull(s, options);
-                MergeResult(r);
+                Commands.Pull(repo, s, options);
+
             } catch (Exception) {
                 Logger.logf("! Couldn't pull the repo :(\r\n");
             }
+            
 
             Cursor.Current = Cursors.Default;
         }
@@ -234,16 +242,16 @@ namespace kampfpanzerin.git {
             CommitOptions co = new CommitOptions();
             co.AllowEmptyCommit = false;
             foreach (StatusEntry e in repo.RetrieveStatus()) {
-                if (e.State == FileStatus.Modified) {
-                    repo.Stage(e.FilePath);
+                if (e.State == FileStatus.ModifiedInWorkdir) {
+                    repo.Index.Add(e.FilePath);
                 }
             }
+            Signature s = new Signature(Properties.Settings.Default.gitAuthor, Properties.Settings.Default.gitEmail, DateTime.Now);
             try {
                 if (message == null) {
-                    repo.Commit(DateTime.Now.ToString(), co);
-                } else {
-                    repo.Commit(message);
+                    message = "";
                 }
+                repo.Commit(message, s, s, co);
                 Logger.logf("Committed\r\n");
             } catch (EmptyCommitException) {
                 Logger.logf("! Nothing to commit\r\n");
@@ -264,12 +272,13 @@ namespace kampfpanzerin.git {
 
             Branch branch = repo.CreateBranch(name);
             CheckoutOptions options = new CheckoutOptions();
-            repo.Checkout(branch, options);
+            //repo.Checkout(branch, options);
+            Commands.Checkout(repo, branch);
         }
 
         internal void Merge(string branchToMerge) {
             Branch b = repo.Branches[branchToMerge];
-            Configuration config = new Configuration();
+            Configuration config = repo.Config;
             var gitUsername = config.Get<string>("user.name", ConfigurationLevel.Global).Value;
 
             Signature s = new Signature(gitUsername, gitUsername, DateTime.Now);
@@ -279,37 +288,37 @@ namespace kampfpanzerin.git {
         }
 
         internal IEnumerable<string> GetBranches() {
-            return repo.Branches.Select(b => b.Name);
+            return repo.Branches.Select(b => b.CanonicalName);
         }
 
         internal void MergeResult(MergeResult r) {
             switch (r.Status) {
                 case MergeStatus.UpToDate:
-                    Logger.logf("Up to date with {0}\r\n", repo.Head.Remote.Name);
+                    Logger.logf("Up to date with {0}\r\n", repo.Head.RemoteName);
                     break;
                 case MergeStatus.FastForward:
-                    Logger.logf("Merged all changes from {0} (fast forward)\r\n", repo.Head.Remote.Name);
+                    Logger.logf("Merged all changes from {0} (fast forward)\r\n", repo.Head.RemoteName);
                     break;
                 case MergeStatus.NonFastForward:
-                    Logger.logf("Merged all changes from {0} (merged, non fast forward)\r\n", repo.Head.Remote.Name);
+                    Logger.logf("Merged all changes from {0} (merged, non fast forward)\r\n", repo.Head.RemoteName);
                     break;
                 case MergeStatus.Conflicts:
-                    Logger.logf("! Conflict while pulling from {0}\r\n", repo.Head.Remote.Name);
+                    Logger.logf("! Conflict while pulling from {0}\r\n", repo.Head.RemoteName);
                     foreach (Conflict c in repo.Index.Conflicts) {
                         Logger.logf(" * {0}", c.Ancestor.Path);
                     }
 
-                    Logger.logf("! Eeep, please resolve and commit\r\n", repo.Head.Remote.Name);
+                    Logger.logf("! Eeep, please resolve and commit\r\n", repo.Head.RemoteName);
                     break;
             }
         }
 
         internal void Resolve(List<string> list) {
-            list.ForEach(repo.Stage);
+            list.ForEach(repo.Index.Add);
         }
 
-        internal static void SetUsername(string name) {
-            Configuration c = new Configuration();
+        internal void SetUsername(string name) {
+            Configuration c = repo.Config;
             c.Set<string>("user.name", name, ConfigurationLevel.Global);
             c.Dispose();
         }
