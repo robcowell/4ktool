@@ -11,8 +11,8 @@
 #include <GL/glu.h>
 #include <stdio.h>
 #include "glext.h"
-#include "../4klang.h"
-#include "../4kampfpanzerin.h"
+#include "4klang.h"
+#include "4kampfpanzerin.h"
 
 #define XRES 1280.
 #define YRES 720.

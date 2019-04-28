@@ -326,6 +326,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\DataSources\" />
+    <Folder Include="skel\basecode\music\" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="AxWMPLib">

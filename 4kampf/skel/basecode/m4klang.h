@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "../4kampfpanzerin.h"
-#include "../4klang.h"
+#include "4kampfpanzerin.h"
+#include "4klang.h"
 #include <windows.h>
 #include <mmsystem.h>
 #include "mmreg.h"
