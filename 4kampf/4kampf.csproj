@@ -1,116 +1,74 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\LibGit2Sharp.NativeBinaries.2.0.267\build\net46\LibGit2Sharp.NativeBinaries.props" Condition="Exists('..\packages\LibGit2Sharp.NativeBinaries.2.0.267\build\net46\LibGit2Sharp.NativeBinaries.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{BD025CDD-6203-4B5E-B4AF-A905F6A9F05E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>kampfpanzerin</RootNamespace>
     <AssemblyName>4kampf</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <FileAlignment>512</FileAlignment>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <ApplicationIcon>4kampf.ico</ApplicationIcon>
     <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup />
-  <PropertyGroup>
-    <ApplicationIcon>4kampf.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup />
-  <PropertyGroup />
-  <PropertyGroup />
+
   <ItemGroup>
-    <Reference Include="LibGit2Sharp, Version=0.26.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
-      <HintPath>..\packages\LibGit2Sharp.0.26.0\lib\net46\LibGit2Sharp.dll</HintPath>
-    </Reference>
-    <Reference Include="MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
-      <HintPath>..\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="MetroFramework.Design, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
-      <HintPath>..\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.Design.dll</HintPath>
-    </Reference>
-    <Reference Include="MetroFramework.Fonts, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
-      <HintPath>..\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.Fonts.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="RestSharp, Version=106.6.9.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
-      <HintPath>..\packages\RestSharp.106.6.9\lib\net452\RestSharp.dll</HintPath>
-    </Reference>
+    <PackageReference Include="LibGit2Sharp" Version="0.28.0" />
+    <PackageReference Include="MetroModernUI" Version="1.4.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="RestSharp" Version="110.2.0" />
+    <PackageReference Include="SharpBucket" Version="2.0.0" />
+    <PackageReference Include="Simple.CredentialManager" Version="1.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="ScintillaNET">
       <HintPath>bin\Release\ScintillaNET.dll</HintPath>
     </Reference>
-    <Reference Include="SharpBucket, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpBucket.0.10.0\lib\net452\SharpBucket.dll</HintPath>
-    </Reference>
-    <Reference Include="Simple.CredentialManager">
-      <HintPath>..\packages\Simple.CredentialManager.1.0.0\lib\net40\Simple.CredentialManager.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms.DataVisualization" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Tao.Externals, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Tao.Externals">
       <HintPath>bin\Release\Tao.Externals.dll</HintPath>
     </Reference>
-    <Reference Include="Tao.Platform.Windows, Version=1.0.0.5, Culture=neutral, PublicKeyToken=701104b2da67a104, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Tao.Platform.Windows">
       <HintPath>bin\Release\Tao.Platform.Windows.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <ItemGroup>
+    <COMReference Include="AxWMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>aximp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+    <COMReference Include="WMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+
   <ItemGroup>
     <Compile Include="src\components\BitBucketSettings.cs">
       <SubType>Form</SubType>
@@ -219,6 +177,14 @@
     <Compile Include="src\components\VUMeter.Designer.cs">
       <DependentUpon>VUMeter.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="src\components\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -267,17 +233,14 @@
       <DependentUpon>VUMeter.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <None Include="Resources\sample.gitconfig">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -301,52 +264,55 @@
     <None Include="skel\ppfrag.glsl" />
     <None Include="skel\vert.glsl" />
     <None Include="skel\wavwriter\wavwriter.vcxproj" />
+    <None Include="Resources\bareventeditbg.png" />
+    <None Include="Resources\clive.png" />
+    <None Include="Resources\bitbucket-push.png" />
+    <None Include="Resources\bitbucket-pull.png" />
+    <None Include="Resources\RenderEnable.png" />
+    <None Include="Resources\Snap.png" />
+    <None Include="Resources\Eyedropper.png" />
+    <None Include="Resources\Beat.png" />
+    <None Include="Resources\Mute.png" />
+    <None Include="Resources\Rewind.png" />
+    <None Include="Resources\Pause.png" />
+    <None Include="Resources\Play.png" />
+    <None Include="Resources\GotoFolder.png" />
+    <None Include="Resources\StandardUniforms.png" />
+    <None Include="Resources\Screenshot.png" />
+    <None Include="Resources\CleanBuild.png" />
+    <None Include="Resources\CleanProject.png" />
+    <None Include="Resources\SyncTracker.png" />
+    <None Include="Resources\Envelopes.png" />
+    <None Include="Resources\LineNumbers.png" />
+    <None Include="Resources\ZoomOut.png" />
+    <None Include="Resources\ZoomIn.png" />
+    <None Include="Resources\Walk.png" />
+    <None Include="Resources\Undo.png" />
+    <None Include="Resources\Slower.png" />
+    <None Include="Resources\Seperator.png" />
+    <None Include="Resources\SaveAll.png" />
+    <None Include="Resources\Run.png" />
+    <None Include="Resources\Remove.png" />
+    <None Include="Resources\Refresh.png" />
+    <None Include="Resources\Redo.png" />
+    <None Include="Resources\Open.png" />
+    <None Include="Resources\New.png" />
+    <None Include="Resources\Loop.png" />
+    <None Include="Resources\Lockfly.png" />
+    <None Include="Resources\Home.png" />
+    <None Include="Resources\Freefly.png" />
+    <None Include="Resources\Find.png" />
+    <None Include="Resources\Faster.png" />
+    <None Include="Resources\ExportProj.png" />
+    <None Include="Resources\ColourHelper.png" />
+    <None Include="Resources\Clear.png" />
+    <None Include="Resources\Camera.png" />
+    <None Include="Resources\BuildProd.png" />
+    <None Include="Resources\BuildAudio.png" />
+    <None Include="Resources\Add.png" />
+    <None Include="Resources\FullScreen.png" />
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\DataSources\" />
-    <Folder Include="skel\basecode\music\" />
-  </ItemGroup>
-  <ItemGroup>
-    <COMReference Include="AxWMPLib">
-      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>aximp</WrapperTool>
-      <Isolated>False</Isolated>
-    </COMReference>
-    <COMReference Include="WMPLib">
-      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
+
   <ItemGroup>
     <Content Include="4kampf.ico" />
     <Content Include="libs\AxInterop.WMPLib.dll">
@@ -371,11 +337,6 @@
     <Content Include="libs\ScintillaNET.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\bareventeditbg.png" />
-    <None Include="Resources\clive.png" />
-    <None Include="Resources\bitbucket-push.png" />
-    <None Include="Resources\bitbucket-pull.png" />
-    <None Include="Resources\RenderEnable.png" />
     <Content Include="Resources\16-9-variation.png" />
     <Content Include="skel\4klang.h" />
     <Content Include="skel\basecode\const.h" />
@@ -420,66 +381,10 @@
     <Content Include="libs\Tao.Platform.Windows.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\Snap.png" />
-    <None Include="Resources\Eyedropper.png" />
-    <None Include="Resources\Beat.png" />
-    <None Include="Resources\Mute.png" />
-    <None Include="Resources\Rewind.png" />
-    <None Include="Resources\Pause.png" />
-    <None Include="Resources\Play.png" />
-    <None Include="Resources\GotoFolder.png" />
-    <None Include="Resources\StandardUniforms.png" />
-    <None Include="Resources\Screenshot.png" />
-    <None Include="Resources\CleanBuild.png" />
-    <None Include="Resources\CleanProject.png" />
-    <None Include="Resources\SyncTracker.png" />
-    <None Include="Resources\Envelopes.png" />
-    <None Include="Resources\LineNumbers.png" />
-    <None Include="Resources\ZoomOut.png" />
-    <None Include="Resources\ZoomIn.png" />
-    <None Include="Resources\Walk.png" />
-    <None Include="Resources\Undo.png" />
-    <None Include="Resources\Slower.png" />
-    <None Include="Resources\Seperator.png" />
-    <None Include="Resources\SaveAll.png" />
-    <None Include="Resources\Run.png" />
-    <None Include="Resources\Remove.png" />
-    <None Include="Resources\Refresh.png" />
-    <None Include="Resources\Redo.png" />
-    <None Include="Resources\Open.png" />
-    <None Include="Resources\New.png" />
-    <None Include="Resources\Loop.png" />
-    <None Include="Resources\Lockfly.png" />
-    <None Include="Resources\Home.png" />
-    <None Include="Resources\Freefly.png" />
-    <None Include="Resources\Find.png" />
-    <None Include="Resources\Faster.png" />
-    <None Include="Resources\ExportProj.png" />
-    <None Include="Resources\ColourHelper.png" />
-    <None Include="Resources\Clear.png" />
-    <None Include="Resources\Camera.png" />
-    <None Include="Resources\BuildProd.png" />
-    <None Include="Resources\BuildAudio.png" />
-    <None Include="Resources\Add.png" />
-    <None Include="Resources\FullScreen.png" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>IF EXIST "$(TargetDir)skel" RMDIR /S /Q "$(TargetDir)skel"
-MKDIR "$(TargetDir)skel"
-XCOPY "$(ProjectDir)skel" "$(TargetDir)skel" /S /Y</PostBuildEvent>
-  </PropertyGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\LibGit2Sharp.NativeBinaries.2.0.267\build\net46\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\LibGit2Sharp.NativeBinaries.2.0.267\build\net46\LibGit2Sharp.NativeBinaries.props'))" />
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="IF EXIST &quot;$(TargetDir)skel&quot; RMDIR /S /Q &quot;$(TargetDir)skel&quot;&#xD;&#xA;MKDIR &quot;$(TargetDir)skel&quot;&#xD;&#xA;XCOPY &quot;$(ProjectDir)skel&quot; &quot;$(TargetDir)skel&quot; /S /Y" />
   </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

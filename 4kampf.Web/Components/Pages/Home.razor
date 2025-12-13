@@ -1,0 +1,498 @@
+﻿@page "/"
+@inject WebGLService WebGL
+@inject WebAudioService WebAudio
+@inject ProjectService ProjectService
+@inject CodeEditorService CodeEditor
+@inject CameraService Camera
+@inject IJSRuntime _jsRuntime
+@implements IAsyncDisposable
+@rendermode InteractiveServer
+
+<PageTitle>4kampf - Web Edition</PageTitle>
+
+<div class="app-container">
+    <div class="menu-bar">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">4kampf</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="fileDropdown" role="button" data-bs-toggle="dropdown">
+                                File
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" @onclick="CreateNew" @onclick:preventDefault="true">New</a></li>
+                                <li><a class="dropdown-item" href="#" @onclick="OpenProject" @onclick:preventDefault="true">Open</a></li>
+                                <li><a class="dropdown-item" href="#" @onclick="SaveAll" @onclick:preventDefault="true">Save All</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" @onclick="ExportProject" @onclick:preventDefault="true">Export to VS</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="buildDropdown" role="button" data-bs-toggle="dropdown">
+                                Build
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" @onclick="RebuildShadersAction" @onclick:preventDefault="true">Rebuild Shaders</a></li>
+                                <li><a class="dropdown-item" href="#" @onclick="RenderMusic" @onclick:preventDefault="true">Render Music</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" @onclick="DoBuild" @onclick:preventDefault="true">Build</a></li>
+                                <li><a class="dropdown-item" href="#" @onclick="Run" @onclick:preventDefault="true">Run</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="left-panel">
+            <div class="shader-editor">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="vert-tab" data-bs-toggle="tab" data-bs-target="#vert" type="button" role="tab">
+                            Vertex
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="frag-tab" data-bs-toggle="tab" data-bs-target="#frag" type="button" role="tab">
+                            Fragment
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="post-tab" data-bs-toggle="tab" data-bs-target="#post" type="button" role="tab">
+                            Post-Process
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="vert" role="tabpanel">
+                        <div id="vert-editor" class="monaco-editor-container"></div>
+                    </div>
+                    <div class="tab-pane fade" id="frag" role="tabpanel">
+                        <div id="frag-editor" class="monaco-editor-container"></div>
+                    </div>
+                    <div class="tab-pane fade" id="post" role="tabpanel">
+                        <div id="post-editor" class="monaco-editor-container"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="log-panel">
+                <div class="log-header">
+                    <span>Log</span>
+                    <button class="btn btn-sm btn-secondary" @onclick="ClearLog">Clear</button>
+                </div>
+                <div class="log-content">
+                    @foreach (var logEntry in logEntries)
+                    {
+                        <div class="log-entry">@logEntry</div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="preview-container">
+                <canvas id="preview-canvas" @ref="previewCanvas" width="1280" height="720" 
+                        tabindex="0"></canvas>
+            </div>
+            <div class="music-player-container">
+                <MusicPlayerComponent @ref="musicPlayer" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private ElementReference previewCanvas;
+    private MusicPlayerComponent? musicPlayer;
+    
+    private string vertexShaderCode = "";
+    private string fragmentShaderCode = "";
+    private string postProcessShaderCode = "";
+    
+    private List<string> logEntries = new();
+    private string? sceneProgramId;
+    private string? postProcessProgramId;
+    private bool isRendering = false;
+    private bool enableCamControls = true;
+    private bool enableStandardUniforms = true;
+    private bool shiftPressed = false;
+    private DotNetObjectReference<CodeEditorCallback>? vertCallbackRef;
+    private DotNetObjectReference<CodeEditorCallback>? fragCallbackRef;
+    private DotNetObjectReference<CodeEditorCallback>? postCallbackRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                // Wait a bit to ensure canvas is rendered
+                await Task.Delay(100);
+                await WebGL.InitializeAsync("preview-canvas");
+                await WebAudio.InitializeAsync();
+                var cameraId = await Camera.InitializeAsync("preview-canvas");
+                await CodeEditor.InitializeAsync();
+                
+                // Initialize canvas event handlers
+                await _jsRuntime.InvokeVoidAsync("canvasEvents.init", "preview-canvas", cameraId);
+                
+                AddLog("Initialized WebGL, WebAudio, Camera, and Code Editor");
+                
+                // Load default sample project
+                await LoadDefaultProject();
+                
+                // Wait a bit more for Monaco to be ready
+                await Task.Delay(500);
+                
+                // Initialize Monaco editors
+                await InitializeEditors();
+            }
+            catch (Exception ex)
+            {
+                AddLog($"Error initializing: {ex.Message}");
+                AddLog($"Stack trace: {ex.StackTrace}");
+            }
+        }
+    }
+
+    private async Task InitializeEditors()
+    {
+        try
+        {
+            // Create callbacks for shader updates (debounced)
+            vertCallbackRef = DotNetObjectReference.Create(new CodeEditorCallback(async (value) =>
+            {
+                vertexShaderCode = value;
+                await RebuildShaders();
+            }));
+            
+            fragCallbackRef = DotNetObjectReference.Create(new CodeEditorCallback(async (value) =>
+            {
+                fragmentShaderCode = value;
+                await RebuildShaders();
+            }));
+            
+            postCallbackRef = DotNetObjectReference.Create(new CodeEditorCallback(async (value) =>
+            {
+                postProcessShaderCode = value;
+                await RebuildShaders();
+            }));
+            
+            // Create editors with initial shader code
+            await CodeEditor.CreateEditorAsync("vert-editor", "glsl", vertexShaderCode, vertCallbackRef);
+            await CodeEditor.CreateEditorAsync("frag-editor", "glsl", fragmentShaderCode, fragCallbackRef);
+            await CodeEditor.CreateEditorAsync("post-editor", "glsl", postProcessShaderCode, postCallbackRef);
+            
+            AddLog("Code editors initialized");
+            
+            // Compile and build shaders after editors are ready
+            await Task.Delay(200);
+            await RebuildShaders();
+        }
+        catch (Exception ex)
+        {
+            AddLog($"Error initializing editors: {ex.Message}");
+        }
+    }
+
+    private async Task LoadDefaultProject()
+    {
+        try
+        {
+            AddLog("Loading default sample project...");
+            
+            // Load default shaders
+            vertexShaderCode = ProjectService.DefaultVertexShader;
+            fragmentShaderCode = ProjectService.DefaultFragmentShader;
+            postProcessShaderCode = ProjectService.DefaultPostProcessShader;
+            
+            StateHasChanged();
+            
+            AddLog("Default sample project loaded successfully!");
+        }
+        catch (Exception ex)
+        {
+            AddLog($"Error loading default project: {ex.Message}");
+        }
+    }
+
+    private async Task RebuildShaders()
+    {
+        try
+        {
+            AddLog("Rebuilding shaders...");
+            
+            // Compile vertex shader
+            string? vsId = await WebGL.CreateShaderAsync(35633, vertexShaderCode); // GL_VERTEX_SHADER
+            if (vsId == null)
+            {
+                AddLog("Error: Failed to compile vertex shader");
+                return;
+            }
+            
+            // Compile fragment shader
+            string? fsId = await WebGL.CreateShaderAsync(35632, fragmentShaderCode); // GL_FRAGMENT_SHADER
+            if (fsId == null)
+            {
+                AddLog("Error: Failed to compile fragment shader");
+                return;
+            }
+            
+            // Create scene program
+            sceneProgramId = await WebGL.CreateProgramAsync(vsId, fsId);
+            if (sceneProgramId == null)
+            {
+                AddLog("Error: Failed to link scene program");
+                return;
+            }
+            
+            // Compile post-process shader if we have one
+            if (!string.IsNullOrWhiteSpace(postProcessShaderCode))
+            {
+                string? ppFsId = await WebGL.CreateShaderAsync(35632, postProcessShaderCode);
+                if (ppFsId != null)
+                {
+                    // Post-process uses a simple pass-through vertex shader
+                    string? ppVsId = await WebGL.CreateShaderAsync(35633, 
+                        "#version 300 es\nprecision mediump float;\nin vec2 a_position; out vec2 uv; void main() { gl_Position = vec4(a_position, 0.0, 1.0); uv = (a_position + 1.0) / 2.0; }");
+                    if (ppVsId != null)
+                    {
+                        postProcessProgramId = await WebGL.CreateProgramAsync(ppVsId, ppFsId);
+                    }
+                }
+            }
+            
+            AddLog("Shaders compiled successfully!");
+            
+            // Start rendering loop
+            if (!isRendering)
+            {
+                isRendering = true;
+                _ = Task.Run(async () => await RenderLoop());
+            }
+        }
+        catch (Exception ex)
+        {
+            AddLog($"Error rebuilding shaders: {ex.Message}");
+        }
+    }
+
+    private async Task RenderLoop()
+    {
+        while (isRendering)
+        {
+            try
+            {
+                if (sceneProgramId != null)
+                {
+                    // Update camera
+                    if (enableCamControls)
+                    {
+                        await Camera.UpdateAsync(shiftPressed);
+                    }
+                    
+                    await WebGL.UseProgramAsync(sceneProgramId);
+                    
+                    // Set viewport
+                    await WebGL.SetViewportAsync(0, 0, 1280, 720);
+                    
+                    // Set uniforms (time, resolution, camera)
+                    float time = (float)(DateTime.Now - DateTime.Today).TotalSeconds;
+                    
+                    if (enableStandardUniforms)
+                    {
+                        await WebGL.SetUniform3fAsync(sceneProgramId, "u", 1280f, 720f, time);
+                    }
+                    
+                    if (enableCamControls)
+                    {
+                        var (cx, cy, cz) = await Camera.GetPositionAsync();
+                        var (rx, ry, rz) = await Camera.GetRotationAsync();
+                        await WebGL.SetUniform3fAsync(sceneProgramId, "cp", cx, cy, cz);
+                        await WebGL.SetUniform3fAsync(sceneProgramId, "cr", rx, ry, rz);
+                    }
+                    
+                    // Clear and render
+                    await WebGL.ClearAsync(0f, 0f, 0f, 1f);
+                    await WebGL.RenderQuadAsync();
+                }
+                
+                await Task.Delay(16); // ~60 FPS
+            }
+            catch (Exception)
+            {
+                // Silently handle errors in render loop
+                await Task.Delay(100);
+            }
+        }
+    }
+
+
+    private async Task RebuildShadersAction()
+    {
+        await RebuildShaders();
+    }
+
+    private void CreateNew() => AddLog("Create New Project");
+    private void OpenProject() => AddLog("Open Project");
+    private void SaveAll() => AddLog("Save All");
+    private void ExportProject() => AddLog("Export Project");
+    private void RenderMusic() => AddLog("Render Music");
+    private void DoBuild() => AddLog("Build");
+    private void Run() => AddLog("Run");
+    private void ClearLog() => logEntries.Clear();
+
+    private void AddLog(string message)
+    {
+        logEntries.Add($"[{DateTime.Now:HH:mm:ss}] {message}");
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        isRendering = false;
+        vertCallbackRef?.Dispose();
+        fragCallbackRef?.Dispose();
+        postCallbackRef?.Dispose();
+        await Task.CompletedTask;
+    }
+}
+
+<style>
+    .app-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        width: 100vw;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: #1e1e1e;
+        color: #d4d4d4;
+        z-index: 1000;
+    }
+
+    .menu-bar {
+        flex-shrink: 0;
+    }
+
+    .main-content {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .left-panel {
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        border-right: 1px solid #3e3e3e;
+    }
+
+    .right-panel {
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+    }
+
+    .shader-editor {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        border-bottom: 1px solid #3e3e3e;
+    }
+
+    .monaco-editor-container {
+        flex: 1;
+        width: 100%;
+        min-height: 400px;
+    }
+
+    .code-editor {
+        flex: 1;
+        width: 100%;
+        background-color: #1e1e1e;
+        color: #d4d4d4;
+        border: none;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 14px;
+        padding: 10px;
+        resize: none;
+    }
+
+    #preview-canvas {
+        cursor: crosshair;
+        outline: none;
+    }
+
+    #preview-canvas:focus {
+        outline: 2px solid #007acc;
+    }
+
+    .log-panel {
+        height: 200px;
+        display: flex;
+        flex-direction: column;
+        background-color: #252526;
+    }
+
+    .log-header {
+        padding: 5px 10px;
+        border-bottom: 1px solid #3e3e3e;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .log-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 5px 10px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 12px;
+    }
+
+    .log-entry {
+        margin-bottom: 2px;
+    }
+
+    .preview-container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #000;
+    }
+
+    #preview-canvas {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    .music-player-container {
+        height: 100px;
+        border-top: 1px solid #3e3e3e;
+    }
+
+    .nav-tabs {
+        border-bottom: 1px solid #3e3e3e;
+    }
+
+    .nav-tabs .nav-link {
+        color: #d4d4d4;
+        background-color: #2d2d30;
+        border: none;
+    }
+
+    .nav-tabs .nav-link.active {
+        background-color: #1e1e1e;
+        color: #fff;
+    }
+</style>
