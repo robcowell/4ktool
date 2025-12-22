@@ -161,13 +161,12 @@
     
     <SettingsPanel @bind-IsVisible="settingsVisible"
                    @bind-EnableStandardUniforms="enableStandardUniforms"
-                   EnableStandardUniformsChanged="OnStandardUniformsChanged"
                    @bind-EnableCamControls="enableCamControls"
-                   EnableCamControlsChanged="OnCamControlsChanged"
                    @bind-EnableEnvelopeSync="enableEnvelopeSync"
-                   EnableEnvelopeSyncChanged="OnEnvelopeSyncChanged"
                    @bind-SelectedSynth="selectedSynth"
-                   SelectedSynthChanged="OnSynthChanged" />
+                   @bind-UsePostProcess="usePostProcess"
+                   @bind-UseVertexShader="useVertexShader"
+                   @bind-EnableLooping="enableLooping" />
 </div>
 
 @code {
@@ -188,6 +187,11 @@
     private bool shiftPressed = false;
     private bool settingsVisible = false;
     private string selectedSynth = "sointu";
+    private ProjectModel? currentProject;
+    private string currentProjectName = "Untitled Project";
+    private bool usePostProcess = true;
+    private bool useVertexShader = true;
+    private bool enableLooping = false;
     private DotNetObjectReference<CodeEditorCallback>? vertCallbackRef;
     private DotNetObjectReference<CodeEditorCallback>? fragCallbackRef;
     private DotNetObjectReference<CodeEditorCallback>? postCallbackRef;

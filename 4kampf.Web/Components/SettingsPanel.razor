@@ -13,21 +13,21 @@
             <h6>Rendering</h6>
             <div class="setting-item">
                 <label>
-                    <input type="checkbox" @bind="EnableStandardUniforms" @onchange="OnStandardUniformsChanged" />
+                    <input type="checkbox" checked="@EnableStandardUniforms" @onchange="OnStandardUniformsChanged" />
                     Enable Standard Uniforms
                 </label>
                 <span class="setting-hint">vec3 u {resX, resY, time}</span>
             </div>
             <div class="setting-item">
                 <label>
-                    <input type="checkbox" @bind="EnableCamControls" @onchange="OnCamControlsChanged" />
+                    <input type="checkbox" checked="@EnableCamControls" @onchange="OnCamControlsChanged" />
                     Enable Camera Controls
                 </label>
                 <span class="setting-hint">WASD + Mouse look</span>
             </div>
             <div class="setting-item">
                 <label>
-                    <input type="checkbox" @bind="EnableEnvelopeSync" @onchange="OnEnvelopeSyncChanged" />
+                    <input type="checkbox" checked="@EnableEnvelopeSync" @onchange="OnEnvelopeSyncChanged" />
                     Enable Envelope Sync
                 </label>
                 <span class="setting-hint">float ev[MAX_INSTRUMENTS]</span>
@@ -38,7 +38,7 @@
             <h6>Music Synthesis</h6>
             <div class="setting-item">
                 <label>Synthesizer:</label>
-                <select @bind="SelectedSynth" @onchange="OnSynthChanged" class="form-select form-select-sm">
+                <select value="@SelectedSynth" @onchange="OnSynthChanged" class="form-select form-select-sm">
                     <option value="sointu">Sointu (Cross-platform)</option>
                     <option value="4klang">4klang (Windows only)</option>
                     <option value="clinkster">Clinkster (Windows only)</option>
@@ -65,13 +65,13 @@
             <h6>Shaders</h6>
             <div class="setting-item">
                 <label>
-                    <input type="checkbox" @bind="UsePostProcess" @onchange="OnPostProcessChanged" />
+                    <input type="checkbox" checked="@UsePostProcess" @onchange="OnPostProcessChanged" />
                     Use Post-Process Shader
                 </label>
             </div>
             <div class="setting-item">
                 <label>
-                    <input type="checkbox" @bind="UseVertexShader" @onchange="OnVertexShaderChanged" />
+                    <input type="checkbox" checked="@UseVertexShader" @onchange="OnVertexShaderChanged" />
                     Use Custom Vertex Shader
                 </label>
             </div>
@@ -81,7 +81,7 @@
             <h6>Playback</h6>
             <div class="setting-item">
                 <label>
-                    <input type="checkbox" @bind="EnableLooping" @onchange="OnLoopingChanged" />
+                    <input type="checkbox" checked="@EnableLooping" @onchange="OnLoopingChanged" />
                     Loop Music
                 </label>
             </div>
@@ -113,6 +113,7 @@
         IsVisibleChanged.InvokeAsync(IsVisible);
     }
     
+    // Event handlers that invoke the Changed callbacks for @bind support
     private async Task OnStandardUniformsChanged(ChangeEventArgs e)
     {
         if (bool.TryParse(e.Value?.ToString(), out bool value))
