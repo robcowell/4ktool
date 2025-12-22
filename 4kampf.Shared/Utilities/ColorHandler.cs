@@ -105,7 +105,7 @@ public static class ColorHandler
             // The color wheel consists of 6 sectors.
             // Figure out which sector you're in.
             sectorPos = h / 60;
-            sectorNumber = (int)(Math.Floor(sectorPos));
+            sectorNumber = (int)(System.Math.Floor(sectorPos));
 
             // get the fractional part of the sector.
             // That is, how many degrees into the sector
@@ -185,8 +185,8 @@ public static class ColorHandler
         double s;
         double v;
 
-        min = Math.Min(Math.Min(r, g), b);
-        max = Math.Max(Math.Max(r, g), b);
+        min = System.Math.Min(System.Math.Min(r, g), b);
+        max = System.Math.Max(System.Math.Max(r, g), b);
         v = max;
         delta = max - min;
         if (max == 0 || delta == 0)

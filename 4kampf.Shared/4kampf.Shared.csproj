@@ -8,9 +8,4 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <!-- JSON serialization support -->
-    <PackageReference Include="System.Text.Json" Version="10.0.0" />
-  </ItemGroup>
-
 </Project>

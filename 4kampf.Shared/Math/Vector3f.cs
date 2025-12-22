@@ -201,17 +201,17 @@ public class Vector3f
 
     public float Magnitude()
     {
-        return (float)Math.Sqrt(X * X + Y * Y + Z * Z);
+        return (float)System.Math.Sqrt(X * X + Y * Y + Z * Z);
     }
 
     public float Max()
     {
-        return Math.Max(X, Math.Max(Y, Z));
+        return System.Math.Max(X, System.Math.Max(Y, Z));
     }
 
     public float Min()
     {
-        return Math.Min(X, Math.Min(Y, Z));
+        return System.Math.Min(X, System.Math.Min(Y, Z));
     }
 }
 

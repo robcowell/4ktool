@@ -13,13 +13,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Ensure wwwroot is included in publish -->
-    <Content Include="wwwroot/**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <!-- AWS SDK for S3 storage support -->
-    <PackageReference Include="AWSSDK.S3" Version="3.7.400.47" />
+    <PackageReference Include="AWSSDK.S3" Version="3.7.401" />
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.300" />
   </ItemGroup>
 
