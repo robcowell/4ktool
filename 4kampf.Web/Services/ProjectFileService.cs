@@ -1,5 +1,5 @@
 using System.Text.Json;
-using _4kampf.Web.Models;
+using _4kampf.Shared.Models;
 
 namespace _4kampf.Web.Services;
 
@@ -23,7 +23,7 @@ public class ProjectFileService
     /// <summary>
     /// Saves a project to a JSON file.
     /// </summary>
-    public async Task<bool> SaveProjectAsync(ProjectModel project, string? projectPath = null)
+    public async Task<bool> SaveProjectAsync(Project project, string? projectPath = null)
     {
         try
         {
@@ -60,7 +60,7 @@ public class ProjectFileService
     /// <summary>
     /// Loads a project from a JSON file.
     /// </summary>
-    public async Task<ProjectModel?> LoadProjectAsync(string projectPath)
+    public async Task<Project?> LoadProjectAsync(string projectPath)
     {
         try
         {
@@ -77,7 +77,7 @@ public class ProjectFileService
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
             
-            var project = JsonSerializer.Deserialize<ProjectModel>(json, options);
+            var project = JsonSerializer.Deserialize<Project>(json, options);
             
             if (project != null)
             {
@@ -205,12 +205,12 @@ public class ProjectFileService
     /// <summary>
     /// Creates a new project with default settings.
     /// </summary>
-    public ProjectModel CreateNewProject(string name)
+    public Project CreateNewProject(string name)
     {
-        return new ProjectModel
+        return new Project
         {
             Name = name,
-            Synth = "sointu",
+            Synth = Synth.Sointu,
             EnableStandardUniforms = true,
             EnableCamControls = true,
             UsePostProcess = true,

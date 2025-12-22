@@ -23,4 +23,9 @@
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.300" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Reference shared library -->
+    <ProjectReference Include="..\4kampf.Shared\4kampf.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
