@@ -1,0 +1,35 @@
+Add Sointu WebAssembly integration for client-side music synthesis
+
+This commit implements client-side music rendering using Sointu compiled
+to WebAssembly, enabling real-time audio synthesis in the browser without
+requiring server-side rendering.
+
+Key features:
+- Web Worker implementation to prevent UI blocking during song compilation
+- Visual progress bar with real-time updates during rendering (0-100%)
+- Efficient audio buffer transfer from worker to main thread using Transferable objects
+- Pre-rendered audio playback with interleaved stereo Float32Array format
+- Test page (test-wasm.html) for validating WASM functionality
+
+Technical changes:
+- Modified Sointu Go code (sointu/cmd/sointu-wasm/main.go) to export functions
+  instead of running as CLI, including compileSong, renderSamples, getEnvelopeSync
+- Added helper functions (audioBufferToJSArray, envelopeDataToJSArray) to convert
+  Go audio buffers to JavaScript-compatible arrays
+- Created sointu-wasm-worker.js to run WASM compilation in background thread
+- Updated sointu-wasm-interop.js to handle worker communication and audio playback
+- Fixed progress bar CSS (removed max-width constraint) and added regression prevention
+- Implemented console.log interception to forward progress messages from worker
+
+The implementation uses Go's WebAssembly target with syscall/js for JavaScript
+interop, allowing the existing Sointu synthesis engine to run entirely in the
+browser. Audio is pre-rendered during compilation and streamed via WebAudio API
+for smooth playback.
+
+Build requirements:
+- Go 1.21+ installed
+- Sointu repository cloned in project root
+- Run build-sointu-wasm.sh to compile WASM module
+
+Tested with physics_girl_st.yml example song (79.38s, 6 instruments).
+

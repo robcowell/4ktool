@@ -192,3 +192,5 @@ ModelManifest.xml
 /4kampf/skel/oidos/easy_exe/temp/*.inc
 /4kampf/skel/oidos/easy_exe/temp/*.txt
 *.opendb
+
+.go-cache/

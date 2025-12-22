@@ -46,6 +46,13 @@
                 </select>
             </div>
             <div class="setting-item">
+                <label>
+                    <input type="checkbox" checked="@UseWasmRendering" @onchange="OnWasmRenderingChanged" />
+                    Use WebAssembly Rendering
+                </label>
+                <span class="setting-hint">Client-side real-time synthesis (requires WASM module)</span>
+            </div>
+            <div class="setting-item">
                 <div class="status-indicator">
                     <span class="status-label">Sointu Status:</span>
                     @if (Sointu.IsAvailable)
@@ -106,6 +113,8 @@
     [Parameter] public EventCallback<bool> UseVertexShaderChanged { get; set; }
     [Parameter] public bool EnableLooping { get; set; } = false;
     [Parameter] public EventCallback<bool> EnableLoopingChanged { get; set; }
+    [Parameter] public bool UseWasmRendering { get; set; } = false;
+    [Parameter] public EventCallback<bool> UseWasmRenderingChanged { get; set; }
     
     private void Toggle()
     {
@@ -171,6 +180,15 @@
         {
             EnableLooping = value;
             await EnableLoopingChanged.InvokeAsync(value);
+        }
+    }
+    
+    private async Task OnWasmRenderingChanged(ChangeEventArgs e)
+    {
+        if (bool.TryParse(e.Value?.ToString(), out bool value))
+        {
+            UseWasmRendering = value;
+            await UseWasmRenderingChanged.InvokeAsync(value);
         }
     }
 }
