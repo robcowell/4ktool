@@ -22,6 +22,9 @@ builder.Services.AddRazorComponents()
         }
     });
 
+// Add controllers for API endpoints
+builder.Services.AddControllers();
+
 // Register storage service (S3 for Heroku, local for development)
 // Check for Bucketeer (Heroku add-on) first, then direct AWS S3, then local
 var useBucketeer = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUCKETEER_BUCKET_NAME"));
@@ -73,6 +76,7 @@ builder.Services.AddScoped<CodeEditorService>();
 builder.Services.AddScoped<CameraService>();
 builder.Services.AddSingleton<ProjectService>();
 builder.Services.AddSingleton<SointuService>();
+builder.Services.AddScoped<SointuWasmService>();
 builder.Services.AddScoped<MusicEnvelopeService>();
 builder.Services.AddSingleton<ProjectFileService>();
 
@@ -96,11 +100,30 @@ if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PORT")))
 
 app.UseAntiforgery();
 
+// Enable static file serving for wwwroot (needed for example files, etc.)
+app.UseStaticFiles();
+
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 // Map API controllers for testing
 app.MapControllers();
+
+// Map test page for WASM testing
+app.MapGet("/test-wasm.html", async (HttpContext context) =>
+{
+    var filePath = Path.Combine(app.Environment.WebRootPath, "test-wasm.html");
+    if (File.Exists(filePath))
+    {
+        context.Response.ContentType = "text/html";
+        await context.Response.SendFileAsync(filePath);
+    }
+    else
+    {
+        context.Response.StatusCode = 404;
+        await context.Response.WriteAsync("Test page not found");
+    }
+});
 
 app.Run();

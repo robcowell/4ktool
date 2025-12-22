@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sointu WASM Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .test-section {
+            background: #252526;
+            border: 1px solid #3e3e3e;
+            border-radius: 4px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .test-section h2 {
+            color: #4ec9b0;
+            margin-top: 0;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background: #1e4620;
+            color: #4ec9b0;
+        }
+        .status.error {
+            background: #5a1d1d;
+            color: #f48771;
+        }
+        .status.info {
+            background: #1e3a5f;
+            color: #569cd6;
+        }
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1177bb;
+        }
+        button:disabled {
+            background: #3e3e3e;
+            cursor: not-allowed;
+        }
+        pre {
+            background: #1e1e1e;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        #progress-container {
+            position: relative !important;
+            width: 100% !important;
+            background: #3e3e3e !important;
+            border-radius: 4px !important;
+            height: 24px !important;
+            overflow: hidden !important;
+            border: 1px solid #3e3e3e !important;
+            display: block !important;
+            margin: 10px 0 !important;
+        }
+        #progress-bar {
+            box-sizing: border-box !important;
+            min-width: 0 !important;
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            height: 100% !important;
+            width: 0% !important;
+            background: #0e639c !important;
+            transition: width 0.15s ease-out !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            z-index: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+        }
+        #progress-text {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            color: #d4d4d4 !important;
+            font-size: 12px !important;
+            font-weight: bold !important;
+            pointer-events: none !important;
+            z-index: 1 !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sointu WebAssembly Test Page</h1>
+    <p>This page tests the Sointu WASM module integration.</p>
+
+    <div class="test-section">
+        <h2>1. WebAssembly Support</h2>
+        <div id="wasm-support-status" class="status info">Checking...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. WASM Module Loading</h2>
+        <div id="wasm-load-status" class="status info">Not loaded</div>
+        <button id="load-wasm-btn" onclick="loadWasm()">Load WASM Module</button>
+    </div>
+
+    <div class="test-section">
+        <h2>3. JavaScript Interop</h2>
+        <div id="interop-status" class="status info">Not tested</div>
+        <button id="test-interop-btn" onclick="testInterop()" disabled>Test Interop</button>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Audio Context</h2>
+        <div id="audio-status" class="status info">Not initialized</div>
+        <button id="init-audio-btn" onclick="initAudio()">Initialize Audio</button>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Load and Play Sample Song</h2>
+        <div id="song-status" class="status info">Not loaded</div>
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+            <div id="progress-text">0%</div>
+        </div>
+        <button id="load-song-btn" onclick="loadAndPlaySong()" disabled>Load & Play Sample Song</button>
+        <button id="stop-song-btn" onclick="stopSong()" disabled>Stop</button>
+        <div style="margin-top: 10px;">
+            <label>
+                <input type="checkbox" id="loop-checkbox" checked> Loop
+            </label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>6. Console Output</h2>
+        <pre id="console-output"></pre>
+    </div>
+
+    <script src="/js/sointu-wasm-interop.js"></script>
+    <script>
+               const consoleOutput = document.getElementById('console-output');
+               const originalLog = console.log;
+               const originalError = console.error;
+               const originalWarn = console.warn;
+
+               function addLog(message, type = 'log') {
+                   const timestamp = new Date().toLocaleTimeString();
+                   const prefix = type === 'error' ? '❌' : type === 'warn' ? '⚠️' : 'ℹ️';
+                   consoleOutput.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+                   consoleOutput.scrollTop = consoleOutput.scrollHeight;
+               }
+
+               // Track current progress to prevent regressions
+               let currentProgressPercent = 0;
+               
+               // Progress bar update function
+               function updateProgress(percent, text) {
+                   const progressBar = document.getElementById('progress-bar');
+                   const progressText = document.getElementById('progress-text');
+                   const progressContainer = document.getElementById('progress-container');
+                   
+                   if (!progressBar || !progressText || !progressContainer) {
+                       console.warn('Progress bar elements not found:', {
+                           progressBar: !!progressBar,
+                           progressText: !!progressText,
+                           progressContainer: !!progressContainer
+                       });
+                       return;
+                   }
+                   
+                   // Clamp percent to 0-100
+                   const clampedPercent = Math.max(0, Math.min(100, percent));
+                   
+                   // Only update if progress increased OR if it's a completion message (100%)
+                   // This prevents "Starting compilation..." from resetting progress
+                   if (clampedPercent < currentProgressPercent && clampedPercent !== 100 && clampedPercent !== 0) {
+                       // Don't update if progress would regress (unless it's completion or reset)
+                       return;
+                   }
+                   
+                   // Update current progress
+                   currentProgressPercent = clampedPercent;
+                   
+                   // Ensure container is visible - use important styles to override any CSS
+                   progressContainer.style.setProperty('display', 'block', 'important');
+                   progressContainer.style.setProperty('visibility', 'visible', 'important');
+                   progressContainer.style.setProperty('opacity', '1', 'important');
+                   
+                   // Ensure progress bar is visible
+                   progressBar.style.setProperty('visibility', 'visible', 'important');
+                   progressBar.style.setProperty('opacity', '1', 'important');
+                   progressBar.style.setProperty('display', 'block', 'important');
+                   
+                   // Remove max-width constraint that might be preventing width updates
+                   progressBar.style.removeProperty('max-width');
+                   
+                   // Set width using percentage
+                   const widthValue = clampedPercent + '%';
+                   progressBar.style.width = widthValue;
+                   progressBar.style.setProperty('width', widthValue, 'important');
+                   
+                   // Force immediate reflow to apply styles
+                   void progressBar.offsetWidth;
+                   
+                   // Update text
+                   const displayText = text || (clampedPercent.toFixed(0) + '%');
+                   if (progressText) {
+                       progressText.textContent = displayText;
+                   }
+                   
+                   // Force a reflow to ensure the update is visible
+                   void progressContainer.offsetHeight;
+                   void progressBar.offsetWidth;
+               }
+
+               function hideProgress() {
+                   const progressContainer = document.getElementById('progress-container');
+                   if (progressContainer) {
+                       progressContainer.style.setProperty('display', 'none', 'important');
+                   }
+               }
+
+               // Intercept console.log to detect progress messages
+               console.log = function(...args) {
+                   originalLog.apply(console, args);
+                   const message = args.join(' ');
+                   addLog(message, 'log');
+                   
+                   // Check for render progress messages - Go's fmt.Printf outputs to console.log
+                   // Pattern: "DEBUG: Render progress: 10%" or "Render progress: 10%"
+                   // Try multiple patterns to catch different formats
+                   let progressMatch = message.match(/Render progress:\s*(\d+)%/i);
+                   if (!progressMatch) {
+                       progressMatch = message.match(/progress:\s*(\d+)%/i);
+                   }
+                   if (!progressMatch) {
+                       progressMatch = message.match(/(\d+)%/);
+                   }
+                   
+                   if (progressMatch) {
+                       const percent = parseInt(progressMatch[1]);
+                       // Only update if it's a render progress message (not just any percentage)
+                       if (message.includes('Render progress') || message.includes('progress:')) {
+                           // Use setTimeout to ensure DOM updates happen asynchronously (not blocked by Go WASM)
+                           setTimeout(() => {
+                               updateProgress(percent, `Rendering: ${percent}%`);
+                           }, 0);
+                       }
+                   } else if (message.includes('Starting song render')) {
+                       // Only set to 0 if we're actually starting (not if progress is already > 0)
+                       setTimeout(() => {
+                           if (currentProgressPercent === 0) {
+                               updateProgress(0, 'Starting compilation...');
+                           }
+                       }, 0);
+                   } else if (message.includes('Song render complete') || message.includes('Compilation complete')) {
+                       setTimeout(() => {
+                           updateProgress(100, 'Compilation complete!');
+                       }, 0);
+                   }
+               };
+
+               console.error = function(...args) {
+                   originalError.apply(console, args);
+                   addLog(args.join(' '), 'error');
+               };
+
+               console.warn = function(...args) {
+                   originalWarn.apply(console, args);
+                   addLog(args.join(' '), 'warn');
+               };
+
+        // Test 1: WebAssembly Support
+        function checkWasmSupport() {
+            const statusEl = document.getElementById('wasm-support-status');
+            if (typeof WebAssembly === 'undefined') {
+                statusEl.className = 'status error';
+                statusEl.textContent = '❌ WebAssembly is not supported in this browser';
+                return false;
+            } else {
+                statusEl.className = 'status success';
+                statusEl.textContent = '✓ WebAssembly is supported';
+                return true;
+            }
+        }
+
+        // Test 2: Load WASM Module
+        async function loadWasm() {
+            const statusEl = document.getElementById('wasm-load-status');
+            const btn = document.getElementById('load-wasm-btn');
+            btn.disabled = true;
+            statusEl.className = 'status info';
+            statusEl.textContent = 'Loading WASM module...';
+
+            try {
+                const result = await window.sointuWasmInterop.init('/wasm/sointu.wasm');
+                if (result) {
+                    statusEl.className = 'status success';
+                    statusEl.textContent = '✓ WASM module loaded successfully';
+                    document.getElementById('test-interop-btn').disabled = false;
+                    document.getElementById('load-song-btn').disabled = false;
+                } else {
+                    statusEl.className = 'status error';
+                    statusEl.textContent = '❌ Failed to load WASM module (check console for details)';
+                }
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = `❌ Error loading WASM: ${error.message}`;
+                console.error('WASM load error:', error);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // Test 3: Test Interop
+        async function testInterop() {
+            const statusEl = document.getElementById('interop-status');
+            const btn = document.getElementById('test-interop-btn');
+            btn.disabled = true;
+            statusEl.className = 'status info';
+            statusEl.textContent = 'Testing interop...';
+
+            try {
+                if (!window.sointuWasmInterop.isAvailable()) {
+                    throw new Error('WASM module not initialized');
+                }
+
+                // Test basic functions
+                const isAvailable = window.sointuWasmInterop.isAvailable();
+                const position = window.sointuWasmInterop.getPosition();
+
+                statusEl.className = 'status success';
+                statusEl.textContent = `✓ Interop working: available=${isAvailable}, position=${position}`;
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = `❌ Interop test failed: ${error.message}`;
+                console.error('Interop test error:', error);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // Test 4: Initialize Audio
+        function initAudio() {
+            const statusEl = document.getElementById('audio-status');
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                statusEl.className = 'status success';
+                statusEl.textContent = `✓ AudioContext created: state=${audioContext.state}, sampleRate=${audioContext.sampleRate}Hz`;
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = `❌ Failed to create AudioContext: ${error.message}`;
+                console.error('Audio init error:', error);
+            }
+        }
+
+        // Test 5: Load and Play Sample Song
+        let isPlaying = false;
+        async function loadAndPlaySong() {
+            const statusEl = document.getElementById('song-status');
+            const loadBtn = document.getElementById('load-song-btn');
+            const stopBtn = document.getElementById('stop-song-btn');
+            const loopCheckbox = document.getElementById('loop-checkbox');
+            
+            loadBtn.disabled = true;
+            statusEl.className = 'status info';
+            statusEl.textContent = 'Loading sample song...';
+
+                try {
+                    if (!window.sointuWasmInterop.isAvailable()) {
+                        throw new Error('WASM module not initialized');
+                    }
+
+                    // Load example song from Sointu repository
+                    // Source: https://github.com/vsariola/sointu/blob/master/examples/patches/physics_girl_st.yml
+                    statusEl.textContent = 'Loading example song from file...';
+                    
+                    const response = await fetch('/examples/physics_girl_st.yml');
+                    if (!response.ok) {
+                        throw new Error(`Failed to load example song: ${response.status} ${response.statusText}`);
+                    }
+                    
+                    const sampleSongYaml = await response.text();
+                    console.log('Loaded example song from physics_girl_st.yml');
+                    console.log('Song YAML length:', sampleSongYaml.length, 'characters');
+                    
+                    // Load song via interop - this will compile and set up playback in one step
+                    // Note: compileSong runs in a Web Worker, so it won't block the UI
+                    // For complex songs like physics_girl_st, this may take 10-30 seconds
+                    const songName = 'physics_girl_st';
+                    statusEl.textContent = 'Loading song file...';
+                    statusEl.className = 'status info';
+                    
+                    // Show progress bar immediately and ensure it's visible
+                    const progressContainer = document.getElementById('progress-container');
+                    if (progressContainer) {
+                        progressContainer.style.display = 'block';
+                    }
+                    updateProgress(0, 'Loading song file...');
+                    
+                    // loadSong internally calls compileSong, so we don't need to call it separately
+                    // Check browser console for "DEBUG:" messages showing progress
+                    const loadResult = await window.sointuWasmInterop.loadSong(sampleSongYaml);
+                    
+                    if (!loadResult) {
+                        // If loadSong failed, try to get more details by calling compileSong directly
+                        console.warn('loadSong returned false, checking compileSong directly...');
+                        const compileResult = window.compileSong(sampleSongYaml);
+                        console.error('Direct compileSong result:', compileResult);
+                        const errorMsg = compileResult?.error || 'Unknown compilation error';
+                        hideProgress();
+                        throw new Error(`Failed to compile song: ${errorMsg}`);
+                    }
+
+                const duration = window.sointuWasmInterop.songDuration || 0;
+                const numInstruments = window.sointuWasmInterop.numInstruments || 0;
+                statusEl.className = 'status success';
+                statusEl.textContent = `✓ Song loaded (${numInstruments} instruments, ${duration.toFixed(2)}s). Starting playback...`;
+                updateProgress(100, 'Starting playback...');
+
+                // Set loop preference
+                window.sointuWasmInterop.loop = loopCheckbox.checked;
+
+                // Start playback
+                const playResult = await window.sointuWasmInterop.play();
+                if (playResult) {
+                    isPlaying = true;
+                    const loopText = loopCheckbox.checked ? ' (looping)' : '';
+                    statusEl.textContent = `Now Playing: ${songName}${loopText}`;
+                    statusEl.className = 'status success';
+                    hideProgress(); // Hide progress bar when playing
+                    stopBtn.disabled = false;
+                    console.log(`Song playback started: ${duration.toFixed(2)}s duration, ${numInstruments} instruments`);
+                } else {
+                    hideProgress();
+                    throw new Error('Failed to start playback');
+                }
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = `❌ Error: ${error.message}`;
+                hideProgress();
+                console.error('Song load/play error:', error);
+            } finally {
+                loadBtn.disabled = false;
+            }
+        }
+
+        function stopSong() {
+            const statusEl = document.getElementById('song-status');
+            const stopBtn = document.getElementById('stop-song-btn');
+            
+            try {
+                window.sointuWasmInterop.stop();
+                isPlaying = false;
+                statusEl.className = 'status info';
+                statusEl.textContent = 'Stopped.';
+                stopBtn.disabled = true;
+                document.getElementById('load-song-btn').disabled = false;
+                hideProgress();
+                console.log('Song playback stopped');
+            } catch (error) {
+                console.error('Error stopping song:', error);
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            checkWasmSupport();
+            console.log('Sointu WASM test page loaded');
+        });
+    </script>
+</body>
+</html>
+

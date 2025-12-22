@@ -7,6 +7,7 @@
 @inject CodeEditorService CodeEditor
 @inject CameraService Camera
 @inject SointuService Sointu
+@inject SointuWasmService SointuWasm
 @inject MusicEnvelopeService MusicEnvelope
 @inject ProjectFileService ProjectFile
 @inject IJSRuntime _jsRuntime
@@ -76,6 +77,17 @@
             else
             {
                 <span class="status-badge status-error">✗</span>
+            }
+        </div>
+        <div class="status-item">
+            <span class="status-label">WASM:</span>
+            @if (SointuWasm.IsAvailable)
+            {
+                <span class="status-badge status-success">✓</span>
+            }
+            else
+            {
+                <span class="status-badge status-neutral">—</span>
             }
         </div>
         <div class="status-item">
@@ -167,7 +179,8 @@
                    @bind-SelectedSynth="selectedSynth"
                    @bind-UsePostProcess="usePostProcess"
                    @bind-UseVertexShader="useVertexShader"
-                   @bind-EnableLooping="enableLooping" />
+                   @bind-EnableLooping="enableLooping"
+                   @bind-UseWasmRendering="useWasmRendering" />
 </div>
 
 @code {
@@ -193,6 +206,7 @@
     private bool usePostProcess = true;
     private bool useVertexShader = true;
     private bool enableLooping = false;
+    private bool useWasmRendering = false;
     private DotNetObjectReference<CodeEditorCallback>? vertCallbackRef;
     private DotNetObjectReference<CodeEditorCallback>? fragCallbackRef;
     private DotNetObjectReference<CodeEditorCallback>? postCallbackRef;
@@ -215,15 +229,28 @@
                 
                 AddLog("Initialized WebGL, WebAudio, Camera, and Code Editor");
                 
-                // Check Sointu availability
+                // Check Sointu availability (server-side)
                 if (Sointu.IsAvailable)
                 {
-                    AddLog("✓ Sointu is available");
+                    AddLog("✓ Sointu (server-side) is available");
                 }
                 else
                 {
-                    AddLog("⚠ Sointu is not available - music synthesis will be unavailable");
+                    AddLog("⚠ Sointu (server-side) is not available");
                     AddLog("See README_SOINTU.md for installation instructions");
+                }
+                
+                // Initialize Sointu WASM (client-side)
+                AddLog("Initializing Sointu WebAssembly...");
+                bool wasmInitialized = await SointuWasm.InitializeAsync("/wasm/sointu.wasm");
+                if (wasmInitialized)
+                {
+                    AddLog("✓ Sointu WebAssembly initialized successfully");
+                }
+                else
+                {
+                    AddLog("⚠ Sointu WebAssembly not available - using server-side rendering");
+                    AddLog("Note: WASM module not found at /wasm/sointu.wasm");
                 }
                 
                 // Load default sample project
@@ -583,9 +610,112 @@
         {
             AddLog("Rendering music...");
             
+            // Ensure we have a project
+            if (currentProject == null)
+            {
+                currentProject = ProjectFile.CreateNewProject(currentProjectName);
+            }
+            
+            // Check if we should use WASM rendering
+            bool useWasm = currentProject.UseWasmRendering && SointuWasm.IsAvailable;
+            
+            if (useWasm)
+            {
+                await RenderMusicWasm();
+            }
+            else
+            {
+                await RenderMusicServer();
+            }
+        }
+        catch (Exception ex)
+        {
+            AddLog($"Error rendering music: {ex.Message}");
+            AddLog($"Stack trace: {ex.StackTrace}");
+        }
+    }
+    
+    private async Task RenderMusicWasm()
+    {
+        try
+        {
+            AddLog("Using WebAssembly rendering (client-side)...");
+            
+            // Ensure we have a project
+            if (currentProject == null)
+            {
+                AddLog("Error: No project loaded");
+                return;
+            }
+            
+            // Get Sointu song file content
+            string? songYamlContent = null;
+            if (!string.IsNullOrEmpty(currentProject.SointuSongFile))
+            {
+                songYamlContent = await ProjectFile.LoadSointuSongAsync(currentProject.Name, currentProject.SointuSongFile);
+            }
+            else
+            {
+                songYamlContent = await ProjectFile.LoadSointuSongAsync(currentProject.Name, "song.yml");
+            }
+            
+            if (string.IsNullOrEmpty(songYamlContent))
+            {
+                AddLog("Error: No Sointu song file found.");
+                AddLog("Please create or select a Sointu YAML song file first.");
+                return;
+            }
+            
+            // Load song into WASM module
+            AddLog("Loading song into WASM module...");
+            bool loaded = await SointuWasm.LoadSongAsync(songYamlContent);
+            if (!loaded)
+            {
+                AddLog("Error: Failed to load song into WASM module");
+                return;
+            }
+            
+            // Get number of instruments for envelope sync
+            int numInstruments = await SointuWasm.GetNumInstrumentsAsync();
+            if (numInstruments > 0)
+            {
+                enableEnvelopeSync = true;
+                currentProject.EnableEnvelopeSync = true;
+                AddLog($"Song loaded: {numInstruments} instrument(s)");
+            }
+            
+            // Start playback
+            AddLog("Starting real-time synthesis...");
+            bool playing = await SointuWasm.PlayAsync();
+            if (playing)
+            {
+                AddLog("✓ Real-time music synthesis started!");
+                AddLog("Note: Envelope sync will work automatically during playback");
+            }
+            else
+            {
+                AddLog("Error: Failed to start playback");
+            }
+            
+            // Save project with updated settings
+            await ProjectFile.SaveProjectAsync(currentProject);
+        }
+        catch (Exception ex)
+        {
+            AddLog($"Error in WASM rendering: {ex.Message}");
+        }
+    }
+    
+    private async Task RenderMusicServer()
+    {
+        try
+        {
+            AddLog("Using server-side rendering...");
+            
             if (!Sointu.IsAvailable)
             {
-                AddLog("Error: Sointu is not available. Please install Sointu to render music.");
+                AddLog("Error: Sointu (server-side) is not available.");
+                AddLog("Please install Sointu or enable WASM rendering.");
                 AddLog("See README_SOINTU.md for installation instructions.");
                 return;
             }
@@ -593,7 +723,8 @@
             // Ensure we have a project
             if (currentProject == null)
             {
-                currentProject = ProjectFile.CreateNewProject(currentProjectName);
+                AddLog("Error: No project loaded");
+                return;
             }
             
             // Get Sointu song file path
@@ -604,9 +735,8 @@
             }
             else
             {
-                // Try to find any YAML file in the project
                 songYamlPath = ProjectFile.GetSointuSongPath(currentProject.Name, "song.yml");
-                if (!File.Exists(songYamlPath))
+                if (!await ProjectFile.HasSointuSongAsync(currentProject.Name, "song.yml"))
                 {
                     AddLog("Error: No Sointu song file found.");
                     AddLog("Please create or select a Sointu YAML song file first.");
@@ -614,19 +744,8 @@
                 }
             }
             
-            if (!File.Exists(songYamlPath))
-            {
-                AddLog($"Error: Song file not found: {songYamlPath}");
-                return;
-            }
-            
             // Set up output paths
-            string projectDir = Path.Combine("wwwroot", "projects", currentProject.Name);
-            if (!Directory.Exists(projectDir))
-            {
-                Directory.CreateDirectory(projectDir);
-            }
-            
+            string projectDir = ProjectFile.GetProjectDirectory(currentProject.Name);
             string outputAsm = Path.Combine(projectDir, "music.asm");
             string outputWav = Path.Combine(projectDir, "music.wav");
             
@@ -647,10 +766,6 @@
                 AddLog("Error: Failed to render audio");
                 return;
             }
-            
-            // Copy WAV to wwwroot for serving
-            string wwwrootWav = Path.Combine("wwwroot", "music.wav");
-            File.Copy(outputWav, wwwrootWav, overwrite: true);
             
             // Generate envelope data
             AddLog("Generating envelope data...");
@@ -685,7 +800,7 @@
             // Load audio into player
             if (musicPlayer != null)
             {
-                await musicPlayer.LoadAudio("/music.wav");
+                await musicPlayer.LoadAudio($"/projects/{currentProject.Name}/music.wav");
                 AddLog("Music rendered and loaded successfully!");
             }
             else
@@ -695,8 +810,7 @@
         }
         catch (Exception ex)
         {
-            AddLog($"Error rendering music: {ex.Message}");
-            AddLog($"Stack trace: {ex.StackTrace}");
+            AddLog($"Error in server-side rendering: {ex.Message}");
         }
     }
     
@@ -735,6 +849,17 @@
         selectedSynth = value;
         AddLog($"Synthesizer changed to: {value}");
         await Task.CompletedTask;
+    }
+    
+    private async Task OnUseWasmRenderingChanged(bool value)
+    {
+        useWasmRendering = value;
+        if (currentProject != null)
+        {
+            currentProject.UseWasmRendering = value;
+            await ProjectFile.SaveProjectAsync(currentProject);
+        }
+        AddLog($"WASM rendering: {(value ? "enabled" : "disabled")}");
     }
 
     private void AddLog(string message)

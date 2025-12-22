@@ -219,4 +219,14 @@ public class ProjectFileService
             ModifiedAt = DateTime.UtcNow
         };
     }
+
+    /// <summary>
+    /// Gets the project directory path (logical path for storage).
+    /// For local storage, this is relative to the base directory.
+    /// For S3, this is a prefix path.
+    /// </summary>
+    public string GetProjectDirectory(string projectName)
+    {
+        return projectName;
+    }
 }

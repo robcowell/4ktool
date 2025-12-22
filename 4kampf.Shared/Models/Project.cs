@@ -64,6 +64,12 @@ public class Project
     public bool EnableLooping { get; set; } = false;
 
     /// <summary>
+    /// Use WebAssembly for client-side music rendering (instead of server-side)
+    /// </summary>
+    [JsonPropertyName("useWasmRendering")]
+    public bool UseWasmRendering { get; set; } = false;
+
+    /// <summary>
     /// Vertex shader code
     /// </summary>
     [JsonPropertyName("vertexShader")]
