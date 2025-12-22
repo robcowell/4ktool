@@ -1,4 +1,5 @@
 using _4kampf.Web.Components;
+using _4kampf.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,12 +15,14 @@ builder.Services.AddRazorComponents()
     });
 
 // Register custom services
-builder.Services.AddScoped<_4kampf.Web.Services.WebGLService>();
-builder.Services.AddScoped<_4kampf.Web.Services.WebAudioService>();
-builder.Services.AddScoped<_4kampf.Web.Services.CodeEditorService>();
-builder.Services.AddScoped<_4kampf.Web.Services.CameraService>();
-builder.Services.AddSingleton<_4kampf.Web.Services.ProjectService>();
-builder.Services.AddSingleton<_4kampf.Web.Services.ProjectService>();
+builder.Services.AddScoped<WebGLService>();
+builder.Services.AddScoped<WebAudioService>();
+builder.Services.AddScoped<CodeEditorService>();
+builder.Services.AddScoped<CameraService>();
+builder.Services.AddSingleton<ProjectService>();
+builder.Services.AddSingleton<SointuService>();
+builder.Services.AddScoped<MusicEnvelopeService>();
+builder.Services.AddSingleton<ProjectFileService>();
 
 var app = builder.Build();
 

@@ -1,9 +1,13 @@
 ﻿@page "/"
+@using _4kampf.Web.Models
 @inject WebGLService WebGL
 @inject WebAudioService WebAudio
 @inject ProjectService ProjectService
 @inject CodeEditorService CodeEditor
 @inject CameraService Camera
+@inject SointuService Sointu
+@inject MusicEnvelopeService MusicEnvelope
+@inject ProjectFileService ProjectFile
 @inject IJSRuntime _jsRuntime
 @implements IAsyncDisposable
 @rendermode InteractiveServer
@@ -29,6 +33,8 @@
                                 <li><a class="dropdown-item" href="#" @onclick="OpenProject" @onclick:preventDefault="true">Open</a></li>
                                 <li><a class="dropdown-item" href="#" @onclick="SaveAll" @onclick:preventDefault="true">Save All</a></li>
                                 <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" @onclick="ManageSointuSong" @onclick:preventDefault="true">Manage Sointu Song...</a></li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="#" @onclick="ExportProject" @onclick:preventDefault="true">Export to VS</a></li>
                             </ul>
                         </li>
@@ -44,10 +50,56 @@
                                 <li><a class="dropdown-item" href="#" @onclick="Run" @onclick:preventDefault="true">Run</a></li>
                             </ul>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" @onclick="ToggleSettings" @onclick:preventDefault="true">
+                                Settings
+                                @if (settingsVisible)
+                                {
+                                    <span class="badge bg-primary">●</span>
+                                }
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
         </nav>
+    </div>
+    
+    <div class="status-bar">
+        <div class="status-item">
+            <span class="status-label">Sointu:</span>
+            @if (Sointu.IsAvailable)
+            {
+                <span class="status-badge status-success">✓</span>
+            }
+            else
+            {
+                <span class="status-badge status-error">✗</span>
+            }
+        </div>
+        <div class="status-item">
+            <span class="status-label">Envelopes:</span>
+            @if (MusicEnvelope.HasEnvelopes)
+            {
+                <span class="status-badge status-success">@MusicEnvelope.NumInstruments</span>
+            }
+            else
+            {
+                <span class="status-badge status-neutral">—</span>
+            }
+        </div>
+        <div class="status-item">
+            <span class="status-label">Camera:</span>
+            <span class="status-badge @(enableCamControls ? "status-success" : "status-neutral")">
+                @(enableCamControls ? "ON" : "OFF")
+            </span>
+        </div>
+        <div class="status-item">
+            <span class="status-label">Uniforms:</span>
+            <span class="status-badge @(enableStandardUniforms ? "status-success" : "status-neutral")">
+                @(enableStandardUniforms ? "ON" : "OFF")
+            </span>
+        </div>
     </div>
 
     <div class="main-content">
@@ -106,6 +158,16 @@
             </div>
         </div>
     </div>
+    
+    <SettingsPanel @bind-IsVisible="settingsVisible"
+                   @bind-EnableStandardUniforms="enableStandardUniforms"
+                   EnableStandardUniformsChanged="OnStandardUniformsChanged"
+                   @bind-EnableCamControls="enableCamControls"
+                   EnableCamControlsChanged="OnCamControlsChanged"
+                   @bind-EnableEnvelopeSync="enableEnvelopeSync"
+                   EnableEnvelopeSyncChanged="OnEnvelopeSyncChanged"
+                   @bind-SelectedSynth="selectedSynth"
+                   SelectedSynthChanged="OnSynthChanged" />
 </div>
 
 @code {
@@ -122,7 +184,10 @@
     private bool isRendering = false;
     private bool enableCamControls = true;
     private bool enableStandardUniforms = true;
+    private bool enableEnvelopeSync = false; // Enable when music with envelopes is loaded
     private bool shiftPressed = false;
+    private bool settingsVisible = false;
+    private string selectedSynth = "sointu";
     private DotNetObjectReference<CodeEditorCallback>? vertCallbackRef;
     private DotNetObjectReference<CodeEditorCallback>? fragCallbackRef;
     private DotNetObjectReference<CodeEditorCallback>? postCallbackRef;
@@ -319,6 +384,26 @@
                         await WebGL.SetUniform3fAsync(sceneProgramId, "cr", rx, ry, rz);
                     }
                     
+                    // Set envelope sync uniforms if available and enabled
+                    if (enableEnvelopeSync && MusicEnvelope.HasEnvelopes && musicPlayer != null)
+                    {
+                        try
+                        {
+                            double currentPos = await WebAudio.GetPositionAsync();
+                            float[]? envelopeSync = MusicEnvelope.GetEnvelopeSync(currentPos);
+                            if (envelopeSync != null && envelopeSync.Length > 0)
+                            {
+                                // Pass envelope values to shader as uniform array
+                                // Shader expects: uniform float ev[MAX_INSTRUMENTS];
+                                await WebGL.SetUniform1fvAsync(sceneProgramId, "ev", envelopeSync);
+                            }
+                        }
+                        catch
+                        {
+                            // Silently ignore envelope errors
+                        }
+                    }
+                    
                     // Clear and render
                     await WebGL.ClearAsync(0f, 0f, 0f, 1f);
                     await WebGL.RenderQuadAsync();
@@ -340,14 +425,291 @@
         await RebuildShaders();
     }
 
-    private void CreateNew() => AddLog("Create New Project");
-    private void OpenProject() => AddLog("Open Project");
-    private void SaveAll() => AddLog("Save All");
+    private async Task CreateNew()
+    {
+        try
+        {
+            currentProject = ProjectFile.CreateNewProject("New Project");
+            currentProjectName = currentProject.Name;
+            
+            // Load default shaders
+            vertexShaderCode = ProjectService.DefaultVertexShader;
+            fragmentShaderCode = ProjectService.DefaultFragmentShader;
+            postProcessShaderCode = ProjectService.DefaultPostProcessShader;
+            
+            // Update editors
+            await CodeEditor.SetValueAsync("vert-editor", vertexShaderCode);
+            await CodeEditor.SetValueAsync("frag-editor", fragmentShaderCode);
+            await CodeEditor.SetValueAsync("post-editor", postProcessShaderCode);
+            
+            AddLog("New project created");
+        }
+        catch (Exception ex)
+        {
+            AddLog($"Error creating project: {ex.Message}");
+        }
+    }
+    
+    private async Task OpenProject()
+    {
+        try
+        {
+            // For now, just log - in a real implementation, this would show a file picker
+            AddLog("Open Project - File picker not yet implemented");
+            AddLog("Projects are stored in wwwroot/projects/");
+            
+            // List available projects
+            var projects = ProjectFile.ListProjects();
+            if (projects.Any())
+            {
+                AddLog("Available projects:");
+                foreach (var project in projects)
+                {
+                    AddLog($"  - {project}");
+                }
+            }
+            else
+            {
+                AddLog("No projects found");
+            }
+        }
+        catch (Exception ex)
+        {
+            AddLog($"Error opening project: {ex.Message}");
+        }
+    }
+    
+    private async Task SaveAll()
+    {
+        try
+        {
+            if (currentProject == null)
+            {
+                currentProject = ProjectFile.CreateNewProject(currentProjectName);
+            }
+            
+            // Update project with current shader code
+            currentProject.VertexShader = await CodeEditor.GetValueAsync("vert-editor");
+            currentProject.FragmentShader = await CodeEditor.GetValueAsync("frag-editor");
+            currentProject.PostProcessShader = await CodeEditor.GetValueAsync("post-editor");
+            
+            // Update project settings
+            currentProject.EnableStandardUniforms = enableStandardUniforms;
+            currentProject.EnableCamControls = enableCamControls;
+            currentProject.EnableEnvelopeSync = enableEnvelopeSync;
+            currentProject.Synth = selectedSynth;
+            
+            bool saved = await ProjectFile.SaveProjectAsync(currentProject);
+            if (saved)
+            {
+                AddLog("Project saved successfully");
+            }
+            else
+            {
+                AddLog("Error: Failed to save project");
+            }
+        }
+        catch (Exception ex)
+        {
+            AddLog($"Error saving project: {ex.Message}");
+        }
+    }
+    
+    private async Task ManageSointuSong()
+    {
+        try
+        {
+            if (currentProject == null)
+            {
+                currentProject = ProjectFile.CreateNewProject(currentProjectName);
+            }
+            
+            // Check if song file exists
+            bool hasSong = ProjectFile.HasSointuSong(currentProject.Name);
+            if (hasSong)
+            {
+                string? songContent = await ProjectFile.LoadSointuSongAsync(currentProject.Name);
+                if (songContent != null)
+                {
+                    AddLog($"Sointu song file found ({songContent.Length} bytes)");
+                    AddLog("Song file management UI not yet implemented");
+                    AddLog("Song file location: wwwroot/projects/{currentProject.Name}/song.yml");
+                }
+            }
+            else
+            {
+                AddLog("No Sointu song file found for this project");
+                AddLog("Create a song.yml file in the project directory");
+                AddLog("Or use Sointu tracker to create one");
+            }
+        }
+        catch (Exception ex)
+        {
+            AddLog($"Error managing Sointu song: {ex.Message}");
+        }
+    }
+    
     private void ExportProject() => AddLog("Export Project");
-    private void RenderMusic() => AddLog("Render Music");
+    
+    private async Task RenderMusic()
+    {
+        try
+        {
+            AddLog("Rendering music...");
+            
+            if (!Sointu.IsAvailable)
+            {
+                AddLog("Error: Sointu is not available. Please install Sointu to render music.");
+                AddLog("See README_SOINTU.md for installation instructions.");
+                return;
+            }
+            
+            // Ensure we have a project
+            if (currentProject == null)
+            {
+                currentProject = ProjectFile.CreateNewProject(currentProjectName);
+            }
+            
+            // Get Sointu song file path
+            string? songYamlPath = null;
+            if (!string.IsNullOrEmpty(currentProject.SointuSongFile))
+            {
+                songYamlPath = ProjectFile.GetSointuSongPath(currentProject.Name, currentProject.SointuSongFile);
+            }
+            else
+            {
+                // Try to find any YAML file in the project
+                songYamlPath = ProjectFile.GetSointuSongPath(currentProject.Name, "song.yml");
+                if (!File.Exists(songYamlPath))
+                {
+                    AddLog("Error: No Sointu song file found.");
+                    AddLog("Please create or select a Sointu YAML song file first.");
+                    return;
+                }
+            }
+            
+            if (!File.Exists(songYamlPath))
+            {
+                AddLog($"Error: Song file not found: {songYamlPath}");
+                return;
+            }
+            
+            // Set up output paths
+            string projectDir = Path.Combine("wwwroot", "projects", currentProject.Name);
+            if (!Directory.Exists(projectDir))
+            {
+                Directory.CreateDirectory(projectDir);
+            }
+            
+            string outputAsm = Path.Combine(projectDir, "music.asm");
+            string outputWav = Path.Combine(projectDir, "music.wav");
+            
+            // Compile song to assembly
+            AddLog("Compiling song to assembly...");
+            bool compiled = await Sointu.CompileSongAsync(songYamlPath, outputAsm);
+            if (!compiled)
+            {
+                AddLog("Error: Failed to compile song");
+                return;
+            }
+            
+            // Render to WAV
+            AddLog("Rendering audio to WAV...");
+            bool rendered = await Sointu.RenderAudioAsync(outputAsm, outputWav);
+            if (!rendered)
+            {
+                AddLog("Error: Failed to render audio");
+                return;
+            }
+            
+            // Copy WAV to wwwroot for serving
+            string wwwrootWav = Path.Combine("wwwroot", "music.wav");
+            File.Copy(outputWav, wwwrootWav, overwrite: true);
+            
+            // Generate envelope data
+            AddLog("Generating envelope data...");
+            bool envelopesGenerated = await Sointu.GenerateEnvelopesAsync(songYamlPath, projectDir, 16);
+            if (envelopesGenerated)
+            {
+                AddLog("Envelope generation completed");
+            }
+            else
+            {
+                AddLog("Warning: Could not generate envelopes automatically");
+            }
+            
+            // Load envelope data
+            AddLog("Loading envelope data...");
+            await MusicEnvelope.LoadEnvelopesAsync(projectDir);
+            
+            if (MusicEnvelope.HasEnvelopes)
+            {
+                enableEnvelopeSync = true;
+                currentProject.EnableEnvelopeSync = true;
+                AddLog($"Loaded {MusicEnvelope.NumInstruments} instrument envelope(s)");
+            }
+            else
+            {
+                AddLog("No envelope data found");
+            }
+            
+            // Save project with updated settings
+            await ProjectFile.SaveProjectAsync(currentProject);
+            
+            // Load audio into player
+            if (musicPlayer != null)
+            {
+                await musicPlayer.LoadAudio("/music.wav");
+                AddLog("Music rendered and loaded successfully!");
+            }
+            else
+            {
+                AddLog("Music rendered, but player not initialized");
+            }
+        }
+        catch (Exception ex)
+        {
+            AddLog($"Error rendering music: {ex.Message}");
+            AddLog($"Stack trace: {ex.StackTrace}");
+        }
+    }
+    
     private void DoBuild() => AddLog("Build");
     private void Run() => AddLog("Run");
     private void ClearLog() => logEntries.Clear();
+    
+    private void ToggleSettings()
+    {
+        settingsVisible = !settingsVisible;
+    }
+    
+    private async Task OnStandardUniformsChanged(bool value)
+    {
+        enableStandardUniforms = value;
+        AddLog($"Standard uniforms: {(value ? "enabled" : "disabled")}");
+        await Task.CompletedTask;
+    }
+    
+    private async Task OnCamControlsChanged(bool value)
+    {
+        enableCamControls = value;
+        AddLog($"Camera controls: {(value ? "enabled" : "disabled")}");
+        await Task.CompletedTask;
+    }
+    
+    private async Task OnEnvelopeSyncChanged(bool value)
+    {
+        enableEnvelopeSync = value;
+        AddLog($"Envelope sync: {(value ? "enabled" : "disabled")}");
+        await Task.CompletedTask;
+    }
+    
+    private async Task OnSynthChanged(string value)
+    {
+        selectedSynth = value;
+        AddLog($"Synthesizer changed to: {value}");
+        await Task.CompletedTask;
+    }
 
     private void AddLog(string message)
     {
@@ -381,6 +743,49 @@
 
     .menu-bar {
         flex-shrink: 0;
+    }
+    
+    .status-bar {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 5px 15px;
+        background-color: #252526;
+        border-bottom: 1px solid #3e3e3e;
+        font-size: 12px;
+    }
+    
+    .status-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .status-label {
+        color: #858585;
+    }
+    
+    .status-badge {
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+    
+    .status-success {
+        background-color: #1e4620;
+        color: #4ec9b0;
+    }
+    
+    .status-error {
+        background-color: #5a1d1d;
+        color: #f48771;
+    }
+    
+    .status-neutral {
+        background-color: #3e3e3e;
+        color: #858585;
     }
 
     .main-content {

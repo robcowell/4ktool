@@ -1,0 +1,319 @@
+@using _4kampf.Web.Services
+@inject SointuService Sointu
+@rendermode InteractiveServer
+
+<div class="settings-panel @(IsVisible ? "visible" : "")">
+    <div class="settings-header">
+        <h5>Settings</h5>
+        <button class="btn-close" @onclick="Toggle">×</button>
+    </div>
+    
+    <div class="settings-content">
+        <div class="settings-section">
+            <h6>Rendering</h6>
+            <div class="setting-item">
+                <label>
+                    <input type="checkbox" @bind="EnableStandardUniforms" @onchange="OnStandardUniformsChanged" />
+                    Enable Standard Uniforms
+                </label>
+                <span class="setting-hint">vec3 u {resX, resY, time}</span>
+            </div>
+            <div class="setting-item">
+                <label>
+                    <input type="checkbox" @bind="EnableCamControls" @onchange="OnCamControlsChanged" />
+                    Enable Camera Controls
+                </label>
+                <span class="setting-hint">WASD + Mouse look</span>
+            </div>
+            <div class="setting-item">
+                <label>
+                    <input type="checkbox" @bind="EnableEnvelopeSync" @onchange="OnEnvelopeSyncChanged" />
+                    Enable Envelope Sync
+                </label>
+                <span class="setting-hint">float ev[MAX_INSTRUMENTS]</span>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <h6>Music Synthesis</h6>
+            <div class="setting-item">
+                <label>Synthesizer:</label>
+                <select @bind="SelectedSynth" @onchange="OnSynthChanged" class="form-select form-select-sm">
+                    <option value="sointu">Sointu (Cross-platform)</option>
+                    <option value="4klang">4klang (Windows only)</option>
+                    <option value="clinkster">Clinkster (Windows only)</option>
+                    <option value="oidos">Oidos (Windows only)</option>
+                </select>
+            </div>
+            <div class="setting-item">
+                <div class="status-indicator">
+                    <span class="status-label">Sointu Status:</span>
+                    @if (Sointu.IsAvailable)
+                    {
+                        <span class="status-badge status-success">✓ Available</span>
+                    }
+                    else
+                    {
+                        <span class="status-badge status-error">✗ Not Available</span>
+                        <a href="/README_SOINTU.md" target="_blank" class="status-help">Install</a>
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <h6>Shaders</h6>
+            <div class="setting-item">
+                <label>
+                    <input type="checkbox" @bind="UsePostProcess" @onchange="OnPostProcessChanged" />
+                    Use Post-Process Shader
+                </label>
+            </div>
+            <div class="setting-item">
+                <label>
+                    <input type="checkbox" @bind="UseVertexShader" @onchange="OnVertexShaderChanged" />
+                    Use Custom Vertex Shader
+                </label>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <h6>Playback</h6>
+            <div class="setting-item">
+                <label>
+                    <input type="checkbox" @bind="EnableLooping" @onchange="OnLoopingChanged" />
+                    Loop Music
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public bool IsVisible { get; set; } = false;
+    [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
+    [Parameter] public bool EnableStandardUniforms { get; set; } = true;
+    [Parameter] public EventCallback<bool> EnableStandardUniformsChanged { get; set; }
+    [Parameter] public bool EnableCamControls { get; set; } = true;
+    [Parameter] public EventCallback<bool> EnableCamControlsChanged { get; set; }
+    [Parameter] public bool EnableEnvelopeSync { get; set; } = false;
+    [Parameter] public EventCallback<bool> EnableEnvelopeSyncChanged { get; set; }
+    [Parameter] public string SelectedSynth { get; set; } = "sointu";
+    [Parameter] public EventCallback<string> SelectedSynthChanged { get; set; }
+    [Parameter] public bool UsePostProcess { get; set; } = true;
+    [Parameter] public EventCallback<bool> UsePostProcessChanged { get; set; }
+    [Parameter] public bool UseVertexShader { get; set; } = true;
+    [Parameter] public EventCallback<bool> UseVertexShaderChanged { get; set; }
+    [Parameter] public bool EnableLooping { get; set; } = false;
+    [Parameter] public EventCallback<bool> EnableLoopingChanged { get; set; }
+    
+    private void Toggle()
+    {
+        IsVisible = !IsVisible;
+        IsVisibleChanged.InvokeAsync(IsVisible);
+    }
+    
+    private async Task OnStandardUniformsChanged(ChangeEventArgs e)
+    {
+        if (bool.TryParse(e.Value?.ToString(), out bool value))
+        {
+            EnableStandardUniforms = value;
+            await EnableStandardUniformsChanged.InvokeAsync(value);
+        }
+    }
+    
+    private async Task OnCamControlsChanged(ChangeEventArgs e)
+    {
+        if (bool.TryParse(e.Value?.ToString(), out bool value))
+        {
+            EnableCamControls = value;
+            await EnableCamControlsChanged.InvokeAsync(value);
+        }
+    }
+    
+    private async Task OnEnvelopeSyncChanged(ChangeEventArgs e)
+    {
+        if (bool.TryParse(e.Value?.ToString(), out bool value))
+        {
+            EnableEnvelopeSync = value;
+            await EnableEnvelopeSyncChanged.InvokeAsync(value);
+        }
+    }
+    
+    private async Task OnSynthChanged(ChangeEventArgs e)
+    {
+        SelectedSynth = e.Value?.ToString() ?? "sointu";
+        await SelectedSynthChanged.InvokeAsync(SelectedSynth);
+    }
+    
+    private async Task OnPostProcessChanged(ChangeEventArgs e)
+    {
+        if (bool.TryParse(e.Value?.ToString(), out bool value))
+        {
+            UsePostProcess = value;
+            await UsePostProcessChanged.InvokeAsync(value);
+        }
+    }
+    
+    private async Task OnVertexShaderChanged(ChangeEventArgs e)
+    {
+        if (bool.TryParse(e.Value?.ToString(), out bool value))
+        {
+            UseVertexShader = value;
+            await UseVertexShaderChanged.InvokeAsync(value);
+        }
+    }
+    
+    private async Task OnLoopingChanged(ChangeEventArgs e)
+    {
+        if (bool.TryParse(e.Value?.ToString(), out bool value))
+        {
+            EnableLooping = value;
+            await EnableLoopingChanged.InvokeAsync(value);
+        }
+    }
+}
+
+<style>
+    .settings-panel {
+        position: fixed;
+        top: 0;
+        right: -400px;
+        width: 400px;
+        height: 100vh;
+        background-color: #252526;
+        border-left: 1px solid #3e3e3e;
+        z-index: 2000;
+        transition: right 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+    }
+    
+    .settings-panel.visible {
+        right: 0;
+    }
+    
+    .settings-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid #3e3e3e;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #2d2d30;
+    }
+    
+    .settings-header h5 {
+        margin: 0;
+        color: #d4d4d4;
+        font-size: 16px;
+    }
+    
+    .btn-close {
+        background: none;
+        border: none;
+        color: #d4d4d4;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+    }
+    
+    .btn-close:hover {
+        background-color: #3e3e3e;
+        border-radius: 3px;
+    }
+    
+    .settings-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+    }
+    
+    .settings-section {
+        margin-bottom: 30px;
+    }
+    
+    .settings-section h6 {
+        color: #4ec9b0;
+        margin-bottom: 15px;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .setting-item {
+        margin-bottom: 15px;
+    }
+    
+    .setting-item label {
+        color: #d4d4d4;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    
+    .setting-item input[type="checkbox"] {
+        margin-right: 10px;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+    
+    .setting-item select {
+        width: 100%;
+        margin-top: 5px;
+    }
+    
+    .setting-hint {
+        display: block;
+        color: #858585;
+        font-size: 12px;
+        margin-top: 5px;
+        font-family: 'Consolas', 'Monaco', monospace;
+    }
+    
+    .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .status-label {
+        color: #d4d4d4;
+        font-size: 14px;
+    }
+    
+    .status-badge {
+        padding: 4px 8px;
+        border-radius: 3px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    
+    .status-success {
+        background-color: #1e4620;
+        color: #4ec9b0;
+    }
+    
+    .status-error {
+        background-color: #5a1d1d;
+        color: #f48771;
+    }
+    
+    .status-help {
+        color: #4ec9b0;
+        text-decoration: none;
+        font-size: 12px;
+    }
+    
+    .status-help:hover {
+        text-decoration: underline;
+    }
+</style>
+
