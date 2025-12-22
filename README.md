@@ -7,7 +7,8 @@ A cross-platform web-based development environment for creating 4k intros (demos
 4kampf Web Edition brings the power of 4k intro development to any platform with a modern web browser. It combines:
 - **WebGL** for real-time 3D graphics rendering
 - **WebAudio** for music playback and synchronization
-- **Sointu** (cross-platform 4klang fork) for music synthesis
+- **Sointu WebAssembly** for browser-based client-side music synthesis
+- **Sointu** (cross-platform 4klang fork) for server-side music synthesis
 - **Monaco Editor** (VS Code's editor) for syntax-highlighted shader editing
 - **Blazor Server** for a responsive, interactive UI
 
@@ -34,10 +35,13 @@ A cross-platform web-based development environment for creating 4k intros (demos
 
 - **Music Synthesis & Playback**
   - **Sointu** integration (cross-platform 4klang fork)
+  - **Sointu WebAssembly** for browser-based client-side synthesis
+  - Server-side rendering fallback for compatibility
   - YAML-based song files
   - Automatic envelope generation
   - WebAudio playback with synchronization
   - Envelope data for shader sync
+  - Visual progress bar during song compilation (test page)
 
 - **Project Management**
   - JSON-based project files
@@ -54,7 +58,6 @@ A cross-platform web-based development environment for creating 4k intros (demos
 
 ### 🚧 In Progress / Planned
 
-- Sointu WebAssembly support for browser-based synthesis
 - Full project import/export
 - Git integration (BitBucket)
 - Advanced camera controls (freefly, lockfly, etc.)
@@ -79,6 +82,8 @@ A cross-platform web-based development environment for creating 4k intros (demos
 - **Audio**: WebAudio API (via JavaScript interop)
 - **Editor**: Monaco Editor (VS Code's editor engine)
 - **Music**: Sointu (cross-platform 4klang fork)
+  - **Client-side**: Sointu compiled to WebAssembly (Go → WASM)
+  - **Server-side**: Sointu command-line tools (fallback)
 
 ### Design Decisions
 
@@ -107,10 +112,13 @@ A cross-platform web-based development environment for creating 4k intros (demos
    - **Benefit**: Better web compatibility, easier debugging
    - **Migration**: Can convert from original `.kml` format if needed
 
-#### 6. **Server-Side Music Rendering (MVP)**
-   - **Reason**: Faster to implement, leverages existing Sointu tools
-   - **Future**: Add WebAssembly support for client-side rendering
-   - **Benefit**: Works immediately, no browser compatibility issues
+#### 6. **Dual Music Rendering (Server-Side + WebAssembly)**
+   - **Server-Side**: Uses Sointu command-line tools (fallback, always available)
+   - **WebAssembly**: Client-side synthesis in browser (preferred, faster, no server load)
+   - **Architecture**: Web Worker prevents UI blocking during compilation
+   - **Pre-rendered Audio**: Entire song rendered upfront for smooth playback
+   - **Progress Feedback**: Visual progress bar in test page (`/test-wasm.html`)
+   - **Benefit**: Best of both worlds - fast client-side with server fallback
 
 ### Project Structure
 
@@ -131,7 +139,8 @@ A cross-platform web-based development environment for creating 4k intros (demos
 
 - **.NET SDK 10.0** or later
 - **Node.js** (optional, for development tools)
-- **Sointu** (for music synthesis) - see [Sointu Installation](#sointu-installation)
+- **Sointu** (for server-side music synthesis) - see [Sointu Installation](#sointu-installation)
+- **Go 1.21+** (for building Sointu WebAssembly) - see [Sointu WASM Build](#sointu-wasm-build)
 
 ### Building the Project
 
@@ -198,6 +207,30 @@ cd 4kampf.Web
 
 **Manual Installation**: See [INSTALL_SOINTU.md](4kampf.Web/INSTALL_SOINTU.md) for step-by-step instructions.
 
+### Sointu WASM Build
+
+For client-side browser-based music synthesis, build Sointu to WebAssembly:
+
+**macOS / Linux**:
+```bash
+cd 4kampf.Web
+./build-sointu-wasm.sh
+```
+
+**Windows**:
+```cmd
+cd 4kampf.Web
+build-sointu-wasm.bat
+```
+
+**Requirements**:
+- Go 1.21 or later (download from [go.dev/dl](https://go.dev/dl/))
+- The build script will clone Sointu repository if needed
+
+**Note**: Server-side rendering works without WASM, but WASM enables faster client-side synthesis and reduces server load.
+
+See [BUILD_WASM_INSTRUCTIONS.md](4kampf.Web/BUILD_WASM_INSTRUCTIONS.md) for detailed instructions.
+
 ## 📖 Usage Instructions
 
 ### Getting Started
@@ -226,8 +259,12 @@ cd 4kampf.Web
 5. **Render Music**
    - Create or select a Sointu YAML song file
    - Go to **Build → Render Music**
+   - Choose rendering mode:
+     - **WebAssembly** (if available): Client-side, faster compilation
+     - **Server-side**: Uses Sointu command-line tools (fallback)
    - Envelopes are automatically generated
    - Music loads into the player
+   - **Note**: Progress bar is available in the WASM test page (`/test-wasm.html`)
 
 ### Project Workflow
 
@@ -243,6 +280,7 @@ cd 4kampf.Web
 3. **Configure Settings**
    - Click **Settings** in the menu bar
    - Toggle standard uniforms, camera controls, envelope sync
+   - Enable **Use WebAssembly Rendering** for client-side synthesis (if WASM is built)
    - Select synthesizer (Sointu/4klang/Clinkster/Oidos)
 
 4. **Save Project**
@@ -251,8 +289,11 @@ cd 4kampf.Web
 
 5. **Render Music**
    - **Build → Render Music** compiles and renders audio
-   - Generates WAV file and envelope data
+   - If WASM is enabled: Compiles in browser (Web Worker prevents UI blocking), pre-renders audio
+   - If server-side: Uses Sointu command-line tools
+   - Generates audio buffer and envelope data
    - Music loads into player automatically
+   - **Test Page**: Visit `/test-wasm.html` to see progress bar visualization during compilation
 
 ### Keyboard Shortcuts
 
@@ -271,8 +312,10 @@ Access via **Settings** menu item:
   - Enable Envelope Sync: `float ev[MAX_INSTRUMENTS]`
 
 - **Music Synthesis**
+  - **Use WebAssembly Rendering**: Enable client-side synthesis (requires WASM build)
   - Synthesizer selection (Sointu/4klang/Clinkster/Oidos)
-  - Sointu availability status
+  - Sointu availability status (server-side)
+  - WASM availability status (client-side)
 
 - **Shaders**
   - Use Post-Process Shader
@@ -353,32 +396,41 @@ See [4kampf.Web/TROUBLESHOOTING.md](4kampf.Web/TROUBLESHOOTING.md) for common is
 
 ### Common Issues
 
-1. **Sointu Not Found**
+1. **Sointu Not Found** (Server-side rendering)
    - Install Sointu and add to PATH
    - Or configure path in `appsettings.json`
+   - **Note**: Not required if using WebAssembly rendering
 
-2. **WebGL Not Initializing**
+2. **WASM Module Not Loading** (Client-side rendering)
+   - Build WASM module: `./build-sointu-wasm.sh` (or `.bat` on Windows)
+   - Verify `sointu.wasm` exists at `wwwroot/wasm/sointu.wasm`
+   - Check browser console for errors
+   - Ensure Go 1.21+ is installed for building
+
+3. **WebGL Not Initializing**
    - Check browser console for errors
    - Ensure WebGL2 is supported
    - Try a different browser
 
-3. **Shader Compilation Errors**
+4. **Shader Compilation Errors**
    - Check log panel for error messages
    - Ensure GLSL ES 300 syntax
    - Verify precision qualifiers are set
 
-4. **Permission Errors (macOS)**
+5. **Permission Errors (macOS)**
    - See TROUBLESHOOTING.md for .NET SDK permission fixes
 
 ## 📋 TODO List
 
 ### High Priority
 
-- [ ] **Sointu WebAssembly Support**
-  - Build Sointu to WebAssembly
-  - Create JavaScript wrapper
-  - Integrate with WebAudio for real-time synthesis
-  - Enable offline music rendering
+- [x] **Sointu WebAssembly Support** ✅ **COMPLETE**
+  - ✅ Built Sointu to WebAssembly with function exports
+  - ✅ Created JavaScript wrapper with Web Worker support
+  - ✅ Integrated with WebAudio for pre-rendered playback
+  - ✅ Visual progress bar during compilation (test page)
+  - ✅ Efficient audio buffer transfer from worker to main thread
+  - 🚧 Future: Progress bar in main application, real-time synthesis option, AudioWorklet migration
 
 - [ ] **Project Import/Export**
   - Import from original `.kml` format
@@ -441,7 +493,7 @@ See [4kampf.Web/TROUBLESHOOTING.md](4kampf.Web/TROUBLESHOOTING.md) for common is
 
 Contributions are welcome! Areas that need help:
 
-1. **Sointu Integration**: WebAssembly support, envelope generation improvements
+1. **Sointu Integration**: Envelope generation improvements, AudioWorklet migration
 2. **UI/UX**: Matching original functionality, new features
 3. **Documentation**: Examples, tutorials, API docs
 4. **Testing**: Unit tests, integration tests
@@ -451,6 +503,9 @@ Contributions are welcome! Areas that need help:
 
 - [Sointu Integration Guide](4kampf.Web/README_SOINTU.md) - Sointu setup and usage
 - [Sointu Integration Plan](4kampf.Web/SOINTU_INTEGRATION.md) - Technical integration details
+- [Sointu WebAssembly Guide](4kampf.Web/SOINTU_WASM.md) - WASM integration details
+- [Build WASM Instructions](4kampf.Web/BUILD_WASM_INSTRUCTIONS.md) - Building Sointu to WebAssembly
+- [WASM Testing Guide](4kampf.Web/WASM_TESTING.md) - Testing WASM functionality
 - [Troubleshooting Guide](4kampf.Web/TROUBLESHOOTING.md) - Common issues and solutions
 
 ## 🔗 Links
@@ -472,5 +527,5 @@ Contributions are welcome! Areas that need help:
 
 ---
 
-**Status**: 🟢 Active Development - Core features implemented, enhancements in progress
+**Status**: 🟢 Active Development - Core features implemented including Sointu WebAssembly, enhancements in progress
 
