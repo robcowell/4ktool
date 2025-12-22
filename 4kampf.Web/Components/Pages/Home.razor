@@ -1,5 +1,6 @@
 ﻿@page "/"
-@using _4kampf.Web.Models
+@using _4kampf.Shared.Models
+@using _4kampf.Shared.Utilities
 @inject WebGLService WebGL
 @inject WebAudioService WebAudio
 @inject ProjectService ProjectService
@@ -187,7 +188,7 @@
     private bool shiftPressed = false;
     private bool settingsVisible = false;
     private string selectedSynth = "sointu";
-    private ProjectModel? currentProject;
+    private Project? currentProject;
     private string currentProjectName = "Untitled Project";
     private bool usePostProcess = true;
     private bool useVertexShader = true;
@@ -452,6 +453,15 @@
             fragmentShaderCode = ProjectService.DefaultFragmentShader;
             postProcessShaderCode = ProjectService.DefaultPostProcessShader;
             
+            // Update UI state from project
+            selectedSynth = currentProject.Synth.ToStringIdentifier();
+            enableStandardUniforms = currentProject.EnableStandardUniforms;
+            enableCamControls = currentProject.EnableCamControls;
+            enableEnvelopeSync = currentProject.EnableEnvelopeSync;
+            usePostProcess = currentProject.UsePostProcess;
+            useVertexShader = currentProject.UseVertexShader;
+            enableLooping = currentProject.EnableLooping;
+            
             // Update editors
             await CodeEditor.SetValueAsync("vert-editor", vertexShaderCode);
             await CodeEditor.SetValueAsync("frag-editor", fragmentShaderCode);
@@ -512,7 +522,8 @@
             currentProject.EnableStandardUniforms = enableStandardUniforms;
             currentProject.EnableCamControls = enableCamControls;
             currentProject.EnableEnvelopeSync = enableEnvelopeSync;
-            currentProject.Synth = selectedSynth;
+            // Convert string to enum
+            currentProject.Synth = selectedSynth.ToSynthEnum();
             
             bool saved = await ProjectFile.SaveProjectAsync(currentProject);
             if (saved)
