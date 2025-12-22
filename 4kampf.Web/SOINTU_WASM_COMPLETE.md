@@ -11,36 +11,48 @@ The Sointu source code has been successfully modified to export functions for We
 A new Go program was created that:
 - Exports JavaScript functions using `syscall/js`
 - Uses Sointu's library API (`sointu.Play`, `sointu.Song`, etc.)
-- Pre-renders songs for real-time playback
+- **Pre-renders entire songs** during compilation (not real-time synthesis)
 - Generates envelope data for shader synchronization
+- Includes progress logging for UI feedback
+- Implements Web Worker architecture to prevent UI blocking
 
 ### 2. Exported Functions
 
 The following functions are now available in JavaScript:
 
-- **`compileSong(yamlContent)`**: Compiles a YAML song string
-  - Returns: `{success: bool, numInstruments: int, duration: float, error?: string}`
-  
-- **`renderSamples(startTime, numSamples)`**: Generates audio samples
-  - Returns: `Float32Array` of stereo samples (interleaved L/R)
+- **`compileSong(yamlContent)`**: Compiles a YAML song string and pre-renders audio
+  - Returns: `{success: bool, numInstruments: int, duration: float, audioBuffer: Float32Array, envelopeData: Float32Array, error?: string}`
+  - Pre-renders entire song during compilation
+  - Generates envelope data simultaneously
   
 - **`getNumInstruments()`**: Returns number of instruments
   - Returns: `int`
   
-- **`getEnvelopeSync(time)`**: Gets envelope values for shader sync
-  - Returns: `Float32Array` of envelope values per instrument
+- **`renderSamples(...)`**: Legacy function (not used - audio is pre-rendered)
+  
+- **`getEnvelopeSync(...)`**: Legacy function (not used - envelope data is pre-rendered)
   
 - **`resetPlayback()`**: Resets playback position
 
 ### 3. Updated JavaScript Interop
 
 The `sointu-wasm-interop.js` file was updated to:
-- Use exported Go functions via `window.compileSong`, etc.
-- Handle real-time audio synthesis with `ScriptProcessorNode`
-- Support envelope synchronization for shaders
+- Use Web Worker for WASM compilation (prevents UI blocking)
+- Handle pre-rendered audio playback with `ScriptProcessorNode`
+- Read audio from pre-rendered buffer (not real-time synthesis)
+- Support envelope synchronization from pre-rendered data
 - Manage playback state and timing
+- Update progress bar during compilation
 
-### 4. Updated Build Scripts
+### 4. Created Web Worker (`sointu-wasm-worker.js`)
+
+A new Web Worker was created to:
+- Load and initialize WASM module in background thread
+- Handle song compilation without blocking UI
+- Transfer audio and envelope data to main thread
+- Forward progress messages for UI updates
+
+### 5. Updated Build Scripts
 
 Both `build-sointu-wasm.sh` and `build-sointu-wasm.bat` now:
 - Prefer building `sointu-wasm` (with exported functions)
@@ -89,13 +101,11 @@ ls -lh 4kampf.Web/wwwroot/wasm/sointu.wasm
    - Should see: `"Sointu WASM module loaded successfully"`
    - Should NOT see CLI help text
 
-4. Verify exports:
-   ```javascript
-   console.log(typeof window.compileSong); // Should be "function"
-   console.log(typeof window.renderSamples); // Should be "function"
-   console.log(typeof window.getNumInstruments); // Should be "function"
-   console.log(typeof window.getEnvelopeSync); // Should be "function"
-   ```
+4. Test song loading and playback:
+   - Click "Load & Play Sample Song"
+   - Verify progress bar updates (0-100%)
+   - Verify audio plays correctly
+   - Check console for progress messages
 
 ### 2. Test in Main Application
 
@@ -120,60 +130,76 @@ ls -lh 4kampf.Web/wwwroot/wasm/sointu.wasm
 
 ### How It Works
 
-1. **Song Compilation**: 
-   - YAML song is parsed and validated
-   - Synth is compiled from the patch
-   - Entire song is pre-rendered to an audio buffer
-   - Envelope data is generated from audio amplitude
+1. **Song Compilation (Web Worker)**:
+   - YAML song is sent to Web Worker
+   - Worker calls `compileSong()` in WASM module
+   - Song is parsed, validated, and compiled
+   - **Entire song is pre-rendered** to an audio buffer (Float32Array, interleaved stereo)
+   - Envelope data is generated simultaneously (Float32Array, per-instrument per-sample)
+   - Progress is logged: `"DEBUG: Render progress: X%"`
+   - Audio and envelope buffers are transferred to main thread
 
-2. **Real-Time Playback**:
+2. **Audio Playback (Main Thread)**:
    - `ScriptProcessorNode` requests audio samples
-   - `renderSamples()` extracts samples from pre-rendered buffer
+   - Samples are read from pre-rendered buffer (not synthesized in real-time)
    - Samples are sent to WebAudio API
    - Playback position is tracked
 
 3. **Envelope Synchronization**:
-   - `getEnvelopeSync()` returns envelope values for current time
-   - Values are passed to shaders as uniform arrays
+   - Envelope values are read from pre-rendered buffer based on playback position
+   - Values are passed to shaders as uniform arrays (`ev[]`)
    - Shaders can react to music in real-time
 
 ## Limitations
 
 1. **Pre-Rendered Audio**: The entire song is rendered upfront, which:
-   - Requires memory for full song buffer
+   - Requires memory for full song buffer (can be large for long songs)
    - Limits to songs that fit in memory
    - Doesn't support real-time parameter changes
+   - Compilation takes 10-30 seconds for complex songs
 
 2. **Envelope Approximation**: Current envelope data is:
    - Derived from audio amplitude (not actual synth envelopes)
    - Simplified per-instrument distribution
    - May not match actual synth envelope outputs
+   - Pre-rendered (not extracted in real-time)
 
 3. **ScriptProcessorNode**: Uses deprecated API:
    - Consider migrating to `AudioWorkletNode` for better performance
    - Current implementation works but may be removed in future browsers
 
+4. **Web Worker Communication**: 
+   - Audio buffer transfer can be large (several MB for long songs)
+   - Progress messages are forwarded but may be delayed
+
 ## Future Improvements
 
-1. **Real-Time Synthesis**: Instead of pre-rendering, synthesize on-demand
-   - Would require more complex state management
-   - Would support real-time parameter changes
-   - Would reduce memory usage
-
-2. **True Envelope Extraction**: Extract actual envelope data from synth
-   - Requires access to synth internal state
-   - Would provide accurate envelope values
-   - Would match server-side envelope generation
-
-3. **AudioWorklet Migration**: Replace ScriptProcessorNode
+1. **AudioWorklet Migration**: Replace ScriptProcessorNode
    - Better performance (off main thread)
    - More reliable timing
-   - Future-proof
+   - Future-proof (ScriptProcessorNode is deprecated)
+
+2. **Streaming Synthesis**: For very long songs, render in chunks
+   - Would reduce memory usage
+   - Would allow playback to start before full render completes
+   - Would require chunked buffer management
+
+3. **Real-Time Synthesis Option**: Allow users to choose pre-rendered vs real-time
+   - Real-time would use less memory but may have audio glitches
+   - Would support real-time parameter changes
+   - Would require more complex state management
+
+4. **True Envelope Extraction**: Extract actual envelope data from synth
+   - Requires access to synth internal state during rendering
+   - Would provide accurate envelope values
+   - Would match server-side envelope generation
 
 ## Files Modified/Created
 
 - **Created**: `sointu/cmd/sointu-wasm/main.go` - WASM entry point with exported functions
-- **Updated**: `4kampf.Web/wwwroot/js/sointu-wasm-interop.js` - JavaScript interop for exported functions
+- **Created**: `4kampf.Web/wwwroot/js/sointu-wasm-worker.js` - Web Worker for background compilation
+- **Updated**: `4kampf.Web/wwwroot/js/sointu-wasm-interop.js` - Main thread interop with Web Worker
+- **Updated**: `4kampf.Web/wwwroot/test-wasm.html` - Comprehensive test page with progress bar
 - **Updated**: `4kampf.Web/build-sointu-wasm.sh` - Build script to use `sointu-wasm`
 - **Updated**: `4kampf.Web/build-sointu-wasm.bat` - Windows build script
 

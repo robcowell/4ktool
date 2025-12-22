@@ -1,164 +1,173 @@
-# Sointu WASM - Next Steps
+# Sointu WASM - Current Status and Next Steps
 
-## ✅ Completed
+## ✅ COMPLETED
 
-1. **WASM File Built**: `sointu.wasm` (5.1MB) successfully compiled
-2. **JavaScript Interop**: Updated to support Go WASM runtime
-3. **Test Page**: Created `/test-wasm.html` for testing
-4. **Documentation**: Created comprehensive guides
+1. **WASM Module Built**: `sointu.wasm` successfully compiled with function exports
+2. **Function Exports**: Sointu modified to export JavaScript functions (not CLI)
+3. **Web Worker Implementation**: Background thread prevents UI blocking during compilation
+4. **Progress Bar**: Visual progress updates during song rendering (0-100%)
+5. **Pre-Rendered Audio**: Entire song rendered during compilation for smooth playback
+6. **Audio Buffer Transfer**: Efficient transfer from worker to main thread
+7. **Test Page**: Comprehensive test page (`/test-wasm.html`) with example song playback
+8. **Documentation**: Complete guides and instructions
 
-## ✅ Current Status
+## ✅ Current Status: FULLY FUNCTIONAL
 
-**WASM Module Loading**: ✅ **SUCCESS**
-- Go WASM runtime loads correctly
-- Sointu WASM module loads successfully
-- Module is running (shows CLI help text, which is expected)
+The Sointu WASM integration is **complete and working**:
 
-**Issue Identified**: Sointu's WASM build is a **command-line program**, not a library with exported functions. This means:
-- It runs `main()` which executes the CLI interface
-- It doesn't export functions like `compile_song`, `render_samples`, etc.
-- We need to modify Sointu's source code to export functions instead
+- ✅ WASM module loads successfully via Web Worker
+- ✅ Songs compile and pre-render correctly
+- ✅ Progress bar updates during compilation
+- ✅ Audio plays back smoothly from pre-rendered buffer
+- ✅ Envelope data is generated and accessible
+- ✅ Test page demonstrates full functionality
 
-## ✅ Current Status: WASM Loads Successfully!
+### Tested With
 
-The WASM module is loading correctly! However, Sointu is running as a **command-line program** (you can see the CLI help text in the console), not as a library with exported functions.
+- ✅ Simple test songs (C major scale)
+- ✅ Complex example songs (`physics_girl_st.yml` - 79.38s, 6 instruments)
+- ✅ Progress reporting works correctly
+- ✅ Audio playback verified
 
-**Next Step**: Modify Sointu's source code to export functions instead of running as CLI. See `SOINTU_WASM_MODIFICATION.md` for detailed instructions.
+## Architecture Overview
 
-## ⚠️ Important Notes
+### Web Worker Architecture
 
-### Go WASM Runtime Required
-
-Go programs compiled to WASM require `wasm_exec.js`. The build script should have copied it, but verify:
-
-```bash
-ls -lh 4kampf.Web/wwwroot/js/wasm_exec.js
+```
+Main Thread                    Web Worker
+-----------                    -----------
+sointu-wasm-interop.js  <--->  sointu-wasm-worker.js
+  - UI updates                  - WASM initialization
+  - Audio playback              - Song compilation
+  - Progress bar                - Audio pre-rendering
+  - User interaction            - Envelope generation
 ```
 
-If missing, copy it manually:
-```bash
-cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" 4kampf.Web/wwwroot/js/
-```
+### Pre-Rendered Audio Flow
 
-### Function Exports
+1. **User loads song** → YAML content sent to worker
+2. **Worker compiles** → `compileSong()` called in WASM
+3. **Audio pre-rendered** → Entire song rendered to buffer
+4. **Envelope generated** → Envelope data created simultaneously
+5. **Transfer to main** → Audio + envelope transferred via `Transferable`
+6. **Playback** → Main thread reads from pre-rendered buffer
 
-**Critical**: The current JavaScript interop (`sointu-wasm-interop.js`) is a **template** that assumes specific function exports. Go programs don't automatically export custom functions.
+## Implementation Details
 
-**Current Situation**: Sointu's WASM build runs as a CLI program (you can see the help text in the console). To use it for real-time synthesis, you need to modify Sointu's source code.
+### Exported Functions
 
-You have two options:
+The WASM module exports:
+- `compileSong(yamlContent)` - Compiles and pre-renders song
+- `getNumInstruments()` - Returns instrument count
+- `resetPlayback()` - Resets playback position
 
-#### Option 1: Modify Sointu's Go Code (Recommended)
+### Progress Reporting
 
-Add exports in Sointu's Go code:
-
+Go code logs progress during rendering:
 ```go
-import "syscall/js"
-
-func main() {
-    // Export functions to JavaScript
-    js.Global().Set("compileSong", js.FuncOf(compileSong))
-    js.Global().Set("renderSamples", js.FuncOf(renderSamples))
-    js.Global().Set("getNumInstruments", js.FuncOf(getNumInstruments))
-    js.Global().Set("getEnvelopeData", js.FuncOf(getEnvelopeData))
-    
-    // Keep Go program running
-    select {}
-}
-
-func compileSong(this js.Value, args []js.Value) interface{} {
-    // Implementation
-    return js.ValueOf(true)
-}
+fmt.Printf("DEBUG: Render progress: %d%%\n", percent)
 ```
 
-Then rebuild:
-```bash
-cd sointu
-export GOOS=js
-export GOARCH=wasm
-go build -o ../4kampf.Web/wwwroot/wasm/sointu.wasm ./cmd/sointu-play
-```
+JavaScript intercepts these messages and updates the UI progress bar.
 
-#### Option 2: Use Command-Line Interface
+### Memory Management
 
-If Sointu's WASM is a command-line program, you may need to:
-- Pass arguments via Go's runtime
-- Read output from stdout
-- Use a different approach for real-time synthesis
+- **Audio Buffer**: `Float32Array` (interleaved stereo)
+- **Envelope Data**: `Float32Array` (per-instrument, per-sample)
+- **Transfer**: Uses `Transferable` objects for efficient worker communication
+
+## Future Enhancements
+
+### High Priority
+
+1. **AudioWorklet Support**
+   - Replace deprecated `ScriptProcessorNode`
+   - Better performance and lower latency
+   - More reliable across browsers
+
+2. **Error Handling**
+   - Better error messages for compilation failures
+   - Graceful fallback to server-side rendering
+   - User-friendly error dialogs
+
+### Medium Priority
+
+3. **Streaming Synthesis**
+   - For very long songs (>5 minutes), render in chunks
+   - Reduces memory usage
+   - Allows playback to start before full render completes
+
+4. **WASM Size Optimization**
+   - Use TinyGo for smaller builds (currently ~5MB)
+   - Faster initial load
+   - Better for slower connections
+
+5. **Real-time Synthesis Option**
+   - Allow users to choose pre-rendered vs real-time
+   - Real-time uses less memory but may have audio glitches
+   - Useful for live editing scenarios
+
+### Low Priority
+
+6. **Pre-compiled Song Cache**
+   - Cache compiled song data in IndexedDB
+   - Faster reload times for previously compiled songs
+   - Reduce compilation overhead
+
+7. **Multi-threaded Rendering**
+   - Use multiple Web Workers for parallel rendering
+   - Faster compilation for complex songs
+   - Better CPU utilization
+
+8. **WebAssembly SIMD**
+   - Use SIMD instructions for faster audio processing
+   - Requires browser support
+   - Significant performance improvement
 
 ## Testing Checklist
 
-### 1. Basic Loading Test
+### Basic Functionality
 
-```bash
-cd 4kampf.Web
-dotnet run
-```
+- [x] WASM module loads
+- [x] Songs compile successfully
+- [x] Progress bar updates
+- [x] Audio plays correctly
+- [x] Envelope data accessible
 
-Navigate to: `http://localhost:5000/test-wasm.html`
+### Edge Cases
 
-**Expected**:
-- ✅ WebAssembly support detected
-- ✅ WASM module loads (may show warnings about missing exports)
-- ✅ Audio context initializes
+- [ ] Very long songs (>10 minutes)
+- [ ] Very short songs (<1 second)
+- [ ] Songs with many instruments (>20)
+- [ ] Songs with complex patterns
+- [ ] Invalid YAML handling
+- [ ] Network errors during WASM load
 
-### 2. Check Browser Console
+### Browser Compatibility
 
-After loading, check console for:
-- `"Sointu WASM module loaded successfully"` ✅
-- Available exports: `Object.keys(window.sointuWasmInterop.wasmInstance.exports)`
-- Any error messages ❌
+- [x] Chrome/Edge (Chromium)
+- [ ] Firefox
+- [ ] Safari
+- [ ] Mobile browsers
 
-### 3. Inspect Exports
+### Performance
 
-In browser console:
-```javascript
-const interop = window.sointuWasmInterop;
-console.log('Exports:', Object.keys(interop.wasmInstance.exports));
-console.log('Go globals:', typeof window.compileSong, typeof window.renderSamples);
-```
+- [ ] Memory usage for long songs
+- [ ] Compilation time benchmarks
+- [ ] Playback latency measurements
+- [ ] CPU usage during playback
 
-### 4. Test in Main Application
+## Known Limitations
 
-1. Open: `http://localhost:5000`
-2. Check status bar - "WASM" indicator
-3. Enable WASM rendering in Settings
-4. Try rendering music
-
-## Common Issues & Solutions
-
-### Issue: "Go is not defined"
-
-**Solution**: Ensure `wasm_exec.js` is loaded before WASM module
-- Check `App.razor` includes the script
-- Verify file exists: `wwwroot/js/wasm_exec.js`
-
-### Issue: "Functions not exported"
-
-**Solution**: Sointu needs to export functions. See "Function Exports" above.
-
-### Issue: "WASM loads but functions don't work"
-
-**Solution**: 
-1. Check what functions are actually exported
-2. Update `sointu-wasm-interop.js` to match actual exports
-3. Or modify Sointu to export expected functions
-
-## Recommended Path Forward
-
-1. **Test Current Build**: Run test page and check console
-2. **Inspect Exports**: See what Sointu actually exports
-3. **Decide Approach**:
-   - If Sointu exports functions → Update interop to match
-   - If Sointu is CLI → Create wrapper or use different approach
-   - If no exports → Modify Sointu to export functions
-4. **Iterate**: Update code and test until working
+1. **Memory Usage**: Entire song must fit in memory (pre-rendered)
+2. **Compilation Time**: Complex songs take 10-30 seconds to compile
+3. **WASM Size**: Module is ~5MB (could be optimized with TinyGo)
+4. **ScriptProcessorNode**: Deprecated API (should migrate to AudioWorklet)
 
 ## Resources
 
-- [Go WebAssembly Documentation](https://go.dev/doc/asm)
 - [Sointu Repository](https://github.com/vsariola/sointu)
-- [WASM Testing Guide](./WASM_TESTING.md)
-- [Build Instructions](./BUILD_WASM_INSTRUCTIONS.md)
-
+- [Go WebAssembly Documentation](https://go.dev/doc/asm)
+- [Web Workers API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API)
+- [WebAudio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
+- [AudioWorklet Guide](https://developer.mozilla.org/en-US/docs/Web/API/AudioWorklet)

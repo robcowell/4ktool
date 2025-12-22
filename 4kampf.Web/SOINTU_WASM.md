@@ -2,16 +2,18 @@
 
 ## Overview
 
-This document describes the WebAssembly (WASM) integration for Sointu, enabling browser-based real-time music synthesis without server-side rendering.
+This document describes the WebAssembly (WASM) integration for Sointu, enabling browser-based music synthesis without server-side rendering. The implementation uses a Web Worker to prevent UI blocking during song compilation and pre-renders the entire song for smooth playback.
 
 ## Architecture
 
 The WASM integration consists of:
 
 1. **Sointu WASM Module** (`/wasm/sointu.wasm`): Compiled Sointu synthesizer for browser execution
-2. **JavaScript Interop** (`/js/sointu-wasm-interop.js`): Wrapper for loading and using the WASM module
-3. **C# Service** (`SointuWasmService`): Blazor service for interacting with WASM from C#
-4. **WebAudio Integration**: Real-time audio synthesis using WebAudio API
+2. **Web Worker** (`/js/sointu-wasm-worker.js`): Background thread for WASM compilation to prevent UI blocking
+3. **JavaScript Interop** (`/js/sointu-wasm-interop.js`): Main thread wrapper for loading and using the WASM module
+4. **Go WASM Runtime** (`/js/wasm_exec.js`): Required runtime for Go programs compiled to WASM
+5. **C# Service** (`SointuWasmService`): Blazor service for interacting with WASM from C#
+6. **WebAudio Integration**: Pre-rendered audio playback using WebAudio API
 
 ## Building Sointu to WebAssembly
 
@@ -64,8 +66,8 @@ The script will:
    export GOOS=js
    export GOARCH=wasm
    
-   # Build the synthesizer library
-   go build -o sointu.wasm ./cmd/sointu-play
+   # Build the WASM-specific wrapper (exports functions instead of CLI)
+   go build -o sointu.wasm ./cmd/sointu-wasm
    ```
 
 4. **Copy WASM files to project**:
@@ -89,16 +91,17 @@ For smaller WASM builds, you can use [TinyGo](https://tinygo.org/):
 tinygo build -o sointu.wasm -target wasi ./cmd/sointu-play
 ```
 
-### WASM Module Requirements
+### WASM Module Exports
 
-The compiled WASM module should export the following functions:
+The compiled WASM module exports the following JavaScript functions (via Go's `syscall/js`):
 
-- `compile_song(yamlPtr, yamlLen) -> songDataPtr`: Compile YAML song to internal format
-- `render_samples(songDataPtr, time, bufferSize) -> samplesPtr`: Generate audio samples
-- `get_num_instruments() -> int`: Get number of instruments in loaded song
-- `get_envelope_data() -> envelopePtr`: Get envelope data for shader sync
-- `allocate(size) -> ptr`: Allocate memory in WASM heap
-- `deallocate(ptr)`: Free memory in WASM heap
+- `compileSong(yamlContent) -> {success, numInstruments, duration, audioBuffer, envelopeData}`: Compile YAML song and pre-render audio
+- `renderSamples(...)`: Legacy function (not used - audio is pre-rendered)
+- `getNumInstruments() -> int`: Get number of instruments in loaded song
+- `getEnvelopeSync(...)`: Legacy function (not used - envelope data is pre-rendered)
+- `resetPlayback()`: Reset playback position
+
+**Note**: The implementation uses **pre-rendered audio** - the entire song is rendered during compilation and stored in memory for efficient playback.
 
 ## Usage
 
@@ -115,35 +118,52 @@ When WASM rendering is enabled:
 1. Click "Build > Render Music"
 2. The application will:
    - Load the Sointu YAML song file
-   - Compile it in the browser using WASM
-   - Start real-time synthesis via WebAudio
-   - Generate envelope data for shader synchronization
+   - **Compile and pre-render** the entire song in a Web Worker (prevents UI blocking)
+   - Show a **progress bar** (0-100%) during compilation
+   - Transfer the pre-rendered audio buffer to the main thread
+   - Start playback via WebAudio API using the pre-rendered buffer
+   - Generate envelope data for shader synchronization during compilation
 
 ### Envelope Synchronization
 
 With WASM rendering, envelope sync works automatically:
 
-- Envelope data is generated during song compilation
-- Real-time envelope values are extracted during playback
-- Shader uniforms (`ev[]`) are updated each frame
+- Envelope data is **pre-rendered** during song compilation (along with audio)
+- Envelope values are read from the pre-rendered buffer during playback
+- Shader uniforms (`ev[]`) are updated each frame based on playback position
 
-## Limitations
+## Implementation Details
 
-### Current Implementation
+### Web Worker Architecture
 
-The current JavaScript interop (`sointu-wasm-interop.js`) is a **template** that assumes:
+To prevent UI blocking during song compilation (which can take 10-30 seconds for complex songs), the implementation uses a **Web Worker**:
 
-1. Sointu WASM exports match the expected function signatures
-2. Memory management functions (`allocate`/`deallocate`) are available
-3. The WASM module uses a compatible memory layout
+1. **Worker Thread** (`sointu-wasm-worker.js`):
+   - Loads and initializes the WASM module
+   - Handles song compilation in the background
+   - Pre-renders the entire audio buffer
+   - Transfers audio and envelope data to the main thread
 
-### Actual Sointu WASM Build
+2. **Main Thread** (`sointu-wasm-interop.js`):
+   - Manages WebAudio playback
+   - Reads from the pre-rendered buffer
+   - Updates progress bar during compilation
+   - Handles user interactions
 
-**Note**: The actual Sointu repository may not yet have full WASM support or may require different build steps. You may need to:
+### Pre-Rendered Audio
 
-1. Modify Sointu's Go code to export WASM-compatible functions
-2. Create a custom WASM wrapper
-3. Use a different approach (e.g., TinyGo for smaller WASM builds)
+The implementation uses **pre-rendered audio** rather than real-time synthesis:
+
+- **Advantages**: Smooth playback, no audio glitches, efficient envelope sync
+- **Trade-off**: Requires full song compilation before playback starts
+- **Memory**: Entire song is stored in memory (Float32Array, interleaved stereo)
+
+### Progress Reporting
+
+During compilation, the Go code logs progress messages that are intercepted and displayed:
+- Progress messages: `"DEBUG: Render progress: X%"`
+- Completion: `"DEBUG: Song render complete"`
+- These are forwarded from the worker to the main thread for UI updates
 
 ### Fallback
 
@@ -152,25 +172,31 @@ If WASM is not available, the application automatically falls back to server-sid
 ## Future Improvements
 
 1. **AudioWorklet Support**: Replace deprecated `ScriptProcessorNode` with `AudioWorkletNode` for better performance
-2. **Streaming Synthesis**: Implement streaming audio generation for longer songs
+2. **Streaming Synthesis**: For very long songs, implement chunked rendering to reduce memory usage
 3. **Pre-compiled Songs**: Cache compiled song data to reduce load times
-4. **WASM Size Optimization**: Use TinyGo or other tools to reduce WASM file size
+4. **WASM Size Optimization**: Use TinyGo or other tools to reduce WASM file size (currently ~5MB)
 5. **Error Handling**: Better error messages when WASM module fails to load
+6. **Real-time Synthesis**: Option to use real-time synthesis instead of pre-rendering for lower memory usage
 
 ## Testing
 
 ### Test Page
 
-A test page is available at `/test-wasm.html` to verify WASM integration:
+A comprehensive test page is available at `/test-wasm.html` to verify WASM integration:
 
 1. Build the WASM module (see Build Steps above)
 2. Run the application: `dotnet run`
 3. Navigate to: `http://localhost:5000/test-wasm.html`
-4. Click through the test buttons to verify:
-   - WebAssembly support
-   - WASM module loading
-   - JavaScript interop
-   - Audio context initialization
+4. Click through the test sections to verify:
+   - ✅ WebAssembly support detection
+   - ✅ WASM module loading (via Web Worker)
+   - ✅ JavaScript interop (function exports)
+   - ✅ Audio context initialization
+   - ✅ **Song loading and playback** (loads `physics_girl_st.yml` example)
+   - ✅ **Progress bar** (visual updates during compilation)
+   - ✅ **Console output** (real-time logging)
+
+The test page loads the `physics_girl_st.yml` example song from the Sointu repository and plays it back, demonstrating the full integration.
 
 ### Manual Testing in Application
 
@@ -220,9 +246,23 @@ A test page is available at `/test-wasm.html` to verify WASM integration:
 
 ### Envelope Sync Not Working
 
-- Ensure song has been loaded into WASM module
-- Check that `getEnvelopeSync` is being called during render loop
-- Verify envelope data was generated during song compilation
+- Ensure song has been loaded and compiled (envelope data is pre-rendered)
+- Check that `preRenderedBuffer` and `envelopeData` are populated after compilation
+- Verify envelope data is being read from the pre-rendered buffer during playback
+
+### Progress Bar Not Updating
+
+- Check browser console for progress messages (`"DEBUG: Render progress: X%"`)
+- Ensure progress bar container is visible (not `display: none`)
+- Verify `updateProgress()` function is being called (check console logs)
+- Check that CSS allows the progress bar to expand (no `max-width: 100%` constraint)
+
+### Audio Not Playing
+
+- Check that `audioBuffer` and `envelopeData` are present in the compile result
+- Verify `preRenderedBuffer` is populated after `loadSong()` completes
+- Check browser console for audio processing errors
+- Ensure audio context is not suspended (may require user interaction)
 
 ## References
 

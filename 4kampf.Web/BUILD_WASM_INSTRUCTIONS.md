@@ -53,14 +53,11 @@ cd sointu
 export GOOS=js
 export GOARCH=wasm
 
-# Build
-go build -o sointu.wasm ./cmd/sointu-play
+# Build the WASM-specific wrapper (exports functions instead of CLI)
+go build -o sointu.wasm ./cmd/sointu-wasm
 ```
 
-**Note**: If `./cmd/sointu-play` doesn't exist, try:
-- `./cmd/sointu`
-- `./cmd/sointu-render`
-- Check available commands: `ls cmd/`
+**Note**: The `sointu-wasm` command is a custom entry point that exports JavaScript functions. If it doesn't exist, you may need to create it (see `SOINTU_WASM_MODIFICATION.md`).
 
 ### Step 3: Copy to Project
 
@@ -127,18 +124,13 @@ sudo apt install golang  # Debian/Ubuntu
 sudo yum install golang  # RHEL/CentOS
 ```
 
-### "command not found: sointu-play"
+### "command not found: sointu-wasm"
 
-**Solution**: The Sointu repository structure may have changed. Check available commands:
-```bash
-cd sointu
-ls cmd/
-```
+**Solution**: The `sointu-wasm` command should exist in the Sointu repository. If it doesn't:
 
-Then build the appropriate command:
-```bash
-go build -o sointu.wasm ./cmd/[command-name]
-```
+1. Check if it exists: `ls sointu/cmd/sointu-wasm/`
+2. If missing, it may need to be created (see `SOINTU_WASM_MODIFICATION.md`)
+3. The build script should handle this automatically
 
 ### "WASM file is too large"
 
@@ -158,18 +150,22 @@ tinygo build -o sointu.wasm -target wasi ./cmd/sointu-play
 
 ### "Functions not exported"
 
-**Solution**: The JavaScript interop (`sointu-wasm-interop.js`) expects specific function exports. You may need to:
-1. Modify Sointu's Go code to export the required functions
-2. Create a wrapper that bridges Sointu's API to the expected interface
-3. Update `sointu-wasm-interop.js` to match Sointu's actual exports
+**Solution**: The `sointu-wasm` command should export the required functions. If you see this error:
+
+1. Verify `sointu/cmd/sointu-wasm/main.go` exists and exports functions
+2. Check that the build completed successfully
+3. Verify `wasm_exec.js` is loaded (required for Go WASM)
+4. Check browser console for specific error messages
 
 ## Next Steps
 
 After building the WASM module:
 
-1. **Test the integration**: Use `/test-wasm.html` to verify loading
-2. **Enable WASM rendering**: Check "Use WebAssembly Rendering" in Settings
-3. **Render music**: Create a project with a Sointu YAML song and render it
+1. **Test the integration**: Use `/test-wasm.html` to verify loading and playback
+2. **Check progress bar**: Verify visual progress updates during compilation
+3. **Test audio playback**: Load and play the example song (`physics_girl_st.yml`)
+4. **Enable WASM rendering**: Check "Use WebAssembly Rendering" in Settings
+5. **Render music**: Create a project with a Sointu YAML song and render it
 
 ## Additional Resources
 

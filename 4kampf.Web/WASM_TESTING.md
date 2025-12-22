@@ -58,7 +58,27 @@ The test page will:
    - `"Sointu WASM module loaded successfully"` ✅
    - Any error messages ❌
 
-### 5. Test Real-Time Synthesis
+### 5. Test Song Loading and Playback
+
+The test page includes a section to load and play a sample song:
+
+1. **Click "Load & Play Sample Song"**:
+   - Loads `physics_girl_st.yml` from `/examples/`
+   - Compiles the song in a Web Worker (shows progress bar)
+   - Pre-renders the entire audio buffer
+   - Starts playback automatically
+
+2. **Verify Progress Bar**:
+   - Progress bar should update from 0% to 100%
+   - Status text should show "Now Playing: physics_girl_st"
+   - Console should show progress messages
+
+3. **Test Audio Playback**:
+   - Audio should play smoothly
+   - No clicks or glitches
+   - Can stop/restart playback
+
+### 6. Test in Main Application
 
 1. **Enable WASM Rendering**:
    - Open Settings panel
@@ -72,7 +92,7 @@ The test page will:
 3. **Render Music**:
    - Click "Build > Render Music"
    - Check console for messages
-   - Verify real-time synthesis starts
+   - Verify compilation and playback start
 
 ## Expected Behavior
 
@@ -85,7 +105,7 @@ Sointu WASM module loaded with Go runtime
 Sointu WASM module loaded successfully
 ```
 
-**Note**: If you see CLI help text (like "Usage: js [flags]"), this is expected - Sointu is running as a CLI program. To use it for synthesis, you need to modify Sointu to export functions (see `SOINTU_WASM_MODIFICATION.md`).
+**Note**: The WASM module should export functions (`compileSong`, `getNumInstruments`, etc.). If you see CLI help text, the wrong build target was used - ensure you're building `./cmd/sointu-wasm` (not `./cmd/sointu-play`).
 
 **Status Bar**:
 - WASM: ✓ (green checkmark)
@@ -114,20 +134,13 @@ Sointu WASM module loaded successfully
 
 #### Issue: "Functions not exported"
 
-**Cause**: Go WASM programs don't directly export custom functions unless explicitly done
+**Cause**: Wrong build target or WASM module not initialized correctly
 
 **Solution**:
-The current JavaScript interop is a template. You may need to:
-
-1. **Modify Sointu's Go code** to export functions via `js.Global().Set()`:
-   ```go
-   js.Global().Set("compileSong", js.FuncOf(compileSong))
-   js.Global().Set("renderSamples", js.FuncOf(renderSamples))
-   ```
-
-2. **Or create a wrapper** that bridges Sointu's command-line interface to WASM exports
-
-3. **Or use a different approach**: Call Sointu's functions through Go's runtime
+1. **Verify build target**: Ensure you're building `./cmd/sointu-wasm` (not `./cmd/sointu-play`)
+2. **Check WASM module**: Verify `sointu.wasm` was built from the correct source
+3. **Check worker initialization**: Ensure `sointu-wasm-worker.js` is loading correctly
+4. **Check browser console**: Look for specific error messages about function availability
 
 #### Issue: "Audio not playing"
 
@@ -145,17 +158,24 @@ The current JavaScript interop is a template. You may need to:
 
 Once basic loading works:
 
-1. **Verify Function Exports**: Check what functions Sointu actually exports
-   ```javascript
-   // In browser console after WASM loads
-   console.log(Object.keys(window.sointuWasmInterop.wasmInstance.exports));
-   ```
+1. **Test Song Compilation**: Load a Sointu YAML song and verify it compiles
+   - Check progress bar updates
+   - Verify compilation completes successfully
+   - Check console for any errors
 
-2. **Update Interop**: Modify `sointu-wasm-interop.js` to match actual exports
+2. **Test Audio Playback**: Verify audio plays correctly
+   - Check that audio buffer is populated
+   - Verify playback starts without errors
+   - Test stop/restart functionality
 
-3. **Test Song Loading**: Try loading a simple Sointu YAML song
+3. **Test Envelope Data**: Verify envelope data is accessible
+   - Check that `envelopeData` is populated after compilation
+   - Verify envelope values can be read during playback
 
-4. **Test Synthesis**: Verify audio generation works
+4. **Test in Main Application**: Integrate with the full application
+   - Enable WASM rendering in Settings
+   - Load a project with a Sointu song
+   - Render music and verify shader synchronization
 
 ## Debugging Tips
 
