@@ -474,7 +474,7 @@
             AddLog("Projects are stored in wwwroot/projects/");
             
             // List available projects
-            var projects = ProjectFile.ListProjects();
+            var projects = await ProjectFile.ListProjectsAsync();
             if (projects.Any())
             {
                 AddLog("Available projects:");
@@ -540,7 +540,7 @@
             }
             
             // Check if song file exists
-            bool hasSong = ProjectFile.HasSointuSong(currentProject.Name);
+            bool hasSong = await ProjectFile.HasSointuSongAsync(currentProject.Name);
             if (hasSong)
             {
                 string? songContent = await ProjectFile.LoadSointuSongAsync(currentProject.Name);

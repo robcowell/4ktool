@@ -5,29 +5,19 @@ namespace _4kampf.Web.Services;
 
 /// <summary>
 /// Service for managing project files, including Sointu YAML song files.
+/// Uses IStorageService abstraction to support both S3 (Heroku) and local storage (development).
 /// </summary>
 public class ProjectFileService
 {
     private readonly ILogger<ProjectFileService>? _logger;
-    private readonly string _projectsDirectory;
+    private readonly IStorageService _storage;
 
-    public ProjectFileService(ILogger<ProjectFileService>? logger = null)
+    public ProjectFileService(IStorageService storage, ILogger<ProjectFileService>? logger = null)
     {
         _logger = logger;
+        _storage = storage;
         
-        // In a web app, projects could be stored in:
-        // 1. Server file system (for server-side storage)
-        // 2. Browser localStorage (for client-side storage)
-        // 3. Database (for multi-user scenarios)
-        
-        // For now, we'll use a projects directory relative to wwwroot
-        _projectsDirectory = Path.Combine("wwwroot", "projects");
-        
-        // Ensure directory exists
-        if (!Directory.Exists(_projectsDirectory))
-        {
-            Directory.CreateDirectory(_projectsDirectory);
-        }
+        _logger?.LogInformation("ProjectFileService initialized with storage: {StorageType}", _storage.StorageType);
     }
 
     /// <summary>
@@ -39,7 +29,7 @@ public class ProjectFileService
         {
             if (string.IsNullOrEmpty(projectPath))
             {
-                projectPath = Path.Combine(_projectsDirectory, $"{project.Name}.json");
+                projectPath = $"{project.Name}/{project.Name}.json";
             }
 
             project.ModifiedAt = DateTime.UtcNow;
@@ -51,10 +41,14 @@ public class ProjectFileService
             };
             
             string json = JsonSerializer.Serialize(project, options);
-            await File.WriteAllTextAsync(projectPath, json);
+            bool success = await _storage.SaveTextAsync(projectPath, json);
             
-            _logger?.LogInformation("Project saved: {ProjectPath}", projectPath);
-            return true;
+            if (success)
+            {
+                _logger?.LogInformation("Project saved: {ProjectPath} ({StorageType})", projectPath, _storage.StorageType);
+            }
+            
+            return success;
         }
         catch (Exception ex)
         {
@@ -70,13 +64,12 @@ public class ProjectFileService
     {
         try
         {
-            if (!File.Exists(projectPath))
+            string? json = await _storage.LoadTextAsync(projectPath);
+            if (json == null)
             {
                 _logger?.LogWarning("Project file not found: {ProjectPath}", projectPath);
                 return null;
             }
-
-            string json = await File.ReadAllTextAsync(projectPath);
             
             var options = new JsonSerializerOptions
             {
@@ -88,7 +81,7 @@ public class ProjectFileService
             
             if (project != null)
             {
-                _logger?.LogInformation("Project loaded: {ProjectPath}", projectPath);
+                _logger?.LogInformation("Project loaded: {ProjectPath} ({StorageType})", projectPath, _storage.StorageType);
             }
             
             return project;
@@ -103,15 +96,20 @@ public class ProjectFileService
     /// <summary>
     /// Lists all available projects.
     /// </summary>
-    public IEnumerable<string> ListProjects()
+    public async Task<IEnumerable<string>> ListProjectsAsync()
     {
-        if (!Directory.Exists(_projectsDirectory))
+        try
+        {
+            var files = await _storage.ListFilesAsync(".", "*.json");
+            return files.Select(f => Path.GetFileNameWithoutExtension(f))
+                .Where(name => !string.IsNullOrEmpty(name))
+                .Cast<string>();
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "Error listing projects");
             return Enumerable.Empty<string>();
-
-        return Directory.GetFiles(_projectsDirectory, "*.json")
-            .Select(Path.GetFileNameWithoutExtension)
-            .Where(name => !string.IsNullOrEmpty(name))
-            .Cast<string>();
+        }
     }
 
     /// <summary>
@@ -121,22 +119,20 @@ public class ProjectFileService
     {
         try
         {
-            string projectDir = Path.Combine(_projectsDirectory, projectName);
-            if (!Directory.Exists(projectDir))
-            {
-                Directory.CreateDirectory(projectDir);
-            }
-
             if (string.IsNullOrEmpty(fileName))
             {
                 fileName = "song.yml";
             }
 
-            string filePath = Path.Combine(projectDir, fileName);
-            await File.WriteAllTextAsync(filePath, yamlContent);
+            string filePath = $"{projectName}/{fileName}";
+            bool success = await _storage.SaveTextAsync(filePath, yamlContent);
             
-            _logger?.LogInformation("Sointu song saved: {FilePath}", filePath);
-            return true;
+            if (success)
+            {
+                _logger?.LogInformation("Sointu song saved: {FilePath} ({StorageType})", filePath, _storage.StorageType);
+            }
+            
+            return success;
         }
         catch (Exception ex)
         {
@@ -152,15 +148,13 @@ public class ProjectFileService
     {
         try
         {
-            string projectDir = Path.Combine(_projectsDirectory, projectName);
-            
             if (string.IsNullOrEmpty(fileName))
             {
                 // Try to find any .yml file in the project directory
-                var ymlFiles = Directory.GetFiles(projectDir, "*.yml");
-                if (ymlFiles.Length > 0)
+                var ymlFiles = await _storage.ListFilesAsync(projectName, "*.yml");
+                if (ymlFiles.Any())
                 {
-                    fileName = Path.GetFileName(ymlFiles[0]);
+                    fileName = ymlFiles.First();
                 }
                 else
                 {
@@ -168,15 +162,14 @@ public class ProjectFileService
                 }
             }
 
-            string filePath = Path.Combine(projectDir, fileName);
-            if (!File.Exists(filePath))
+            string filePath = $"{projectName}/{fileName}";
+            string? content = await _storage.LoadTextAsync(filePath);
+            
+            if (content != null)
             {
-                _logger?.LogWarning("Sointu song file not found: {FilePath}", filePath);
-                return null;
+                _logger?.LogInformation("Sointu song loaded: {FilePath} ({StorageType})", filePath, _storage.StorageType);
             }
-
-            string content = await File.ReadAllTextAsync(filePath);
-            _logger?.LogInformation("Sointu song loaded: {FilePath}", filePath);
+            
             return content;
         }
         catch (Exception ex)
@@ -187,27 +180,26 @@ public class ProjectFileService
     }
 
     /// <summary>
-    /// Gets the full path to a Sointu song file.
+    /// Gets the storage path for a Sointu song file (for compatibility with SointuService).
+    /// Note: For S3, this returns a logical path, not a physical file path.
     /// </summary>
     public string GetSointuSongPath(string projectName, string? fileName = null)
     {
-        string projectDir = Path.Combine(_projectsDirectory, projectName);
-        
         if (string.IsNullOrEmpty(fileName))
         {
             fileName = "song.yml";
         }
         
-        return Path.Combine(projectDir, fileName);
+        return $"{projectName}/{fileName}";
     }
 
     /// <summary>
     /// Checks if a Sointu song file exists for a project.
     /// </summary>
-    public bool HasSointuSong(string projectName, string? fileName = null)
+    public async Task<bool> HasSointuSongAsync(string projectName, string? fileName = null)
     {
         string path = GetSointuSongPath(projectName, fileName);
-        return File.Exists(path);
+        return await _storage.FileExistsAsync(path);
     }
 
     /// <summary>
@@ -228,4 +220,3 @@ public class ProjectFileService
         };
     }
 }
-

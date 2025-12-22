@@ -62,6 +62,13 @@ A cross-platform web-based development environment for creating 4k intros (demos
 - Screenshot functionality
 - Color helper tools
 
+### ✅ Storage Features
+
+- **AWS S3 Integration**: Automatic S3 storage for Heroku deployments
+- **Local Storage**: File system storage for local development
+- **Automatic Selection**: Chooses storage backend based on configuration
+- **Persistent Storage**: Projects persist across dyno restarts on Heroku
+
 ## 🏗️ Architecture & Design Choices
 
 ### Technology Stack

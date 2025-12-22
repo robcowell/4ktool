@@ -1,0 +1,33 @@
+# Ignore files that shouldn't be deployed to Heroku
+bin/
+obj/
+*.user
+*.suo
+*.cache
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Development files
+*.md
+!README.md
+install-sointu.*
+*.bat
+*.ps1
+*.sh
+
+# Test files
+test/
+tests/
+*.test.cs
+
+# Documentation
+docs/
+*.md
+!README.md
+

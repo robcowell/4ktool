@@ -7,6 +7,20 @@
     <RootNamespace>_4kampf.Web</RootNamespace>
     <AssemblyName>$(AssemblyName.Replace(' ', '_'))</AssemblyName>
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+    <!-- Heroku/Production optimizations -->
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishTrimmed>false</PublishTrimmed>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Ensure wwwroot is included in publish -->
+    <Content Include="wwwroot/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- AWS SDK for S3 storage support -->
+    <PackageReference Include="AWSSDK.S3" Version="3.7.400.47" />
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.300" />
+  </ItemGroup>
 
 </Project>
