@@ -167,16 +167,29 @@ dotnet watch run
 
 ### Sointu Installation
 
-Sointu is required for music synthesis. See [4kampf.Web/README_SOINTU.md](4kampf.Web/README_SOINTU.md) for detailed instructions.
+Sointu is required for music synthesis. See [4kampf.Web/INSTALL_SOINTU.md](4kampf.Web/INSTALL_SOINTU.md) for detailed cross-platform instructions.
 
 **Quick Install**:
-```bash
-git clone https://github.com/vsariola/sointu.git
-cd sointu
-go build ./cmd/sointu-compile
-go build ./cmd/sointu-play
-# Add to PATH or configure in appsettings.json
+
+**Windows (PowerShell)**:
+```powershell
+cd 4kampf.Web
+.\install-sointu.ps1
 ```
+
+**Windows (Command Prompt)**:
+```cmd
+cd 4kampf.Web
+install-sointu.bat
+```
+
+**macOS / Linux**:
+```bash
+cd 4kampf.Web
+./install-sointu.sh
+```
+
+**Manual Installation**: See [INSTALL_SOINTU.md](4kampf.Web/INSTALL_SOINTU.md) for step-by-step instructions.
 
 ## 📖 Usage Instructions
 

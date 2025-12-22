@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
 namespace _4kampf.Web.Services;
 
@@ -14,22 +15,33 @@ public class SointuService
     private readonly string? _sointuPath;
     private bool _isAvailable = false;
 
-    public SointuService(ILogger<SointuService>? logger = null)
+    public SointuService(IConfiguration configuration, ILogger<SointuService>? logger = null)
     {
         _logger = logger;
         
-        // Try to find Sointu in common locations
-        // In production, this would be configured via appsettings.json
-        _sointuPath = FindSointuPath();
-        _isAvailable = _sointuPath != null;
+        // Check appsettings.json for custom path
+        var configuredPath = configuration["Sointu:Path"];
+        if (!string.IsNullOrEmpty(configuredPath) && Directory.Exists(configuredPath))
+        {
+            _sointuPath = configuredPath;
+            _isAvailable = File.Exists(Path.Combine(configuredPath, "sointu-compile")) || 
+                          IsCommandAvailable("sointu-compile");
+        }
+        else
+        {
+            // Try to find Sointu in common locations
+            _sointuPath = FindSointuPath();
+            _isAvailable = _sointuPath != null || IsCommandAvailable("sointu-compile");
+        }
         
         if (_isAvailable)
         {
-            _logger?.LogInformation("Sointu found at: {Path}", _sointuPath);
+            _logger?.LogInformation("Sointu found at: {Path}", _sointuPath ?? "PATH");
         }
         else
         {
             _logger?.LogWarning("Sointu not found. Music synthesis will be unavailable.");
+            _logger?.LogInformation("Install Sointu: Run ./install-sointu.sh or see README_SOINTU.md");
         }
     }
 
@@ -54,9 +66,14 @@ public class SointuService
 
         try
         {
+            string commandName = OperatingSystem.IsWindows() ? "sointu-compile.exe" : "sointu-compile";
+            string commandPath = _sointuPath != null 
+                ? Path.Combine(_sointuPath, commandName)
+                : commandName;
+            
             var processStartInfo = new ProcessStartInfo
             {
-                FileName = Path.Combine(_sointuPath, "sointu-compile"),
+                FileName = commandPath,
                 Arguments = $"-o \"{outputPath}\" \"{yamlPath}\"",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -111,9 +128,14 @@ public class SointuService
         {
             // Sointu uses sointu-play or sointu-render to generate WAV files
             // The exact command depends on Sointu's API
+            string commandName = OperatingSystem.IsWindows() ? "sointu-play.exe" : "sointu-play";
+            string commandPath = _sointuPath != null 
+                ? Path.Combine(_sointuPath, commandName)
+                : commandName;
+            
             var processStartInfo = new ProcessStartInfo
             {
-                FileName = Path.Combine(_sointuPath, "sointu-play"), // or sointu-render
+                FileName = commandPath,
                 Arguments = $"-o \"{outputWavPath}\" \"{songPath}\"",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -223,6 +245,7 @@ public class SointuService
             // - sointu-envelope command
             // - sointu-compile --envelopes flag
 
+            string exeExtension = OperatingSystem.IsWindows() ? ".exe" : "";
             var commands = new[]
             {
                 new { Command = "sointu-play", Args = $"--envelopes -o \"{outputDirectory}\" \"{songPath}\"" },
@@ -232,9 +255,10 @@ public class SointuService
 
             foreach (var cmd in commands)
             {
+                string commandName = cmd.Command + exeExtension;
                 string commandPath = _sointuPath != null 
-                    ? Path.Combine(_sointuPath, cmd.Command)
-                    : cmd.Command;
+                    ? Path.Combine(_sointuPath, commandName)
+                    : commandName;
 
                 if (!File.Exists(commandPath) && !IsCommandAvailable(cmd.Command))
                     continue;
@@ -468,22 +492,34 @@ public class SointuService
     /// </summary>
     private string? FindSointuPath()
     {
-        // Check common installation locations
-        var possiblePaths = new[]
+        // Check common installation locations (cross-platform)
+        var possiblePaths = new List<string>();
+        
+        // Windows paths
+        if (OperatingSystem.IsWindows())
         {
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "sointu"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "sointu"),
-            "/usr/local/bin", // macOS/Linux
-            "/opt/sointu", // Linux
-            "sointu", // In PATH
-        };
+            possiblePaths.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "sointu"));
+            possiblePaths.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "bin"));
+            possiblePaths.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "bin"));
+            possiblePaths.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "sointu"));
+            possiblePaths.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "sointu"));
+        }
+        // macOS/Linux paths
+        else
+        {
+            possiblePaths.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "bin"));
+            possiblePaths.Add("/usr/local/bin");
+            possiblePaths.Add("/opt/sointu");
+            possiblePaths.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "bin"));
+        }
 
         foreach (var path in possiblePaths)
         {
             if (Directory.Exists(path))
             {
-                var compilePath = Path.Combine(path, "sointu-compile");
-                if (File.Exists(compilePath) || IsCommandAvailable("sointu-compile"))
+                string compileName = OperatingSystem.IsWindows() ? "sointu-compile.exe" : "sointu-compile";
+                var compilePath = Path.Combine(path, compileName);
+                if (File.Exists(compilePath))
                 {
                     return path;
                 }
@@ -506,9 +542,16 @@ public class SointuService
     {
         try
         {
+            // On Windows, try with .exe extension if not provided
+            string commandToCheck = command;
+            if (OperatingSystem.IsWindows() && !command.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+            {
+                commandToCheck = command + ".exe";
+            }
+            
             var processStartInfo = new ProcessStartInfo
             {
-                FileName = command,
+                FileName = commandToCheck,
                 Arguments = "--version", // Most tools support this
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,

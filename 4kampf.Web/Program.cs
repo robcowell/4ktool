@@ -42,4 +42,7 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+// Map API controllers for testing
+app.MapControllers();
+
 app.Run();

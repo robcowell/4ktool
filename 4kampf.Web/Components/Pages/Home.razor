@@ -214,6 +214,17 @@
                 
                 AddLog("Initialized WebGL, WebAudio, Camera, and Code Editor");
                 
+                // Check Sointu availability
+                if (Sointu.IsAvailable)
+                {
+                    AddLog("✓ Sointu is available");
+                }
+                else
+                {
+                    AddLog("⚠ Sointu is not available - music synthesis will be unavailable");
+                    AddLog("See README_SOINTU.md for installation instructions");
+                }
+                
                 // Load default sample project
                 await LoadDefaultProject();
                 
