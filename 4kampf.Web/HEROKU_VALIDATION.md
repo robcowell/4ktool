@@ -129,7 +129,7 @@ Before deploying to production, test:
 - [ ] App starts successfully
 - [ ] Static files load (CSS, JS, images)
 - [ ] WebGL canvas renders
-- [ ] Monaco editor loads
+- [ ] CodeMirror editor loads
 - [ ] Shader compilation works
 - [ ] Camera controls function
 - [ ] Project creation/saving (ephemeral)

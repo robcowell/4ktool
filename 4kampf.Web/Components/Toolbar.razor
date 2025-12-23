@@ -4,12 +4,15 @@
     <div class="toolbar-group">
         <button class="toolbar-btn" @onclick="OnNew" title="New Project" type="button">
             <span class="toolbar-icon">📄</span>
+            <span class="toolbar-label">New</span>
         </button>
         <button class="toolbar-btn" @onclick="OnOpen" title="Open Project" type="button">
             <span class="toolbar-icon">📂</span>
+            <span class="toolbar-label">Open</span>
         </button>
         <button class="toolbar-btn" @onclick="OnSave" title="Save All" type="button">
             <span class="toolbar-icon">💾</span>
+            <span class="toolbar-label">Save</span>
         </button>
     </div>
     
@@ -18,12 +21,15 @@
     <div class="toolbar-group">
         <button class="toolbar-btn" @onclick="OnUndo" title="Undo" type="button" disabled="@(!CanUndo)">
             <span class="toolbar-icon">↶</span>
+            <span class="toolbar-label">Undo</span>
         </button>
         <button class="toolbar-btn" @onclick="OnRedo" title="Redo" type="button" disabled="@(!CanRedo)">
             <span class="toolbar-icon">↷</span>
+            <span class="toolbar-label">Redo</span>
         </button>
         <button class="toolbar-btn" @onclick="OnFind" title="Find" type="button">
             <span class="toolbar-icon">🔍</span>
+            <span class="toolbar-label">Find</span>
         </button>
     </div>
     
@@ -32,15 +38,19 @@
     <div class="toolbar-group">
         <button class="toolbar-btn @(ShowLineNumbers ? "active" : "")" @onclick="OnToggleLineNumbers" title="Toggle Line Numbers" type="button">
             <span class="toolbar-icon">#</span>
+            <span class="toolbar-label">Lines</span>
         </button>
         <button class="toolbar-btn @(EnableStandardUniforms ? "active" : "")" @onclick="OnToggleStandardUniforms" title="Standard Uniforms" type="button">
             <span class="toolbar-icon">U</span>
+            <span class="toolbar-label">Uniforms</span>
         </button>
         <button class="toolbar-btn @(EnableEnvelopeSync ? "active" : "")" @onclick="OnToggleEnvelopes" title="Envelope Sync" type="button">
             <span class="toolbar-icon">📊</span>
+            <span class="toolbar-label">Envelopes</span>
         </button>
         <button class="toolbar-btn @(EnableCamControls ? "active" : "")" @onclick="OnToggleCamera" title="Camera Controls" type="button">
             <span class="toolbar-icon">📷</span>
+            <span class="toolbar-label">Camera</span>
         </button>
     </div>
     
@@ -49,12 +59,15 @@
     <div class="toolbar-group">
         <button class="toolbar-btn" @onclick="OnBuild" title="Build" type="button">
             <span class="toolbar-icon">🔨</span>
+            <span class="toolbar-label">Build</span>
         </button>
         <button class="toolbar-btn" @onclick="OnRun" title="Run" type="button">
             <span class="toolbar-icon">▶</span>
+            <span class="toolbar-label">Run</span>
         </button>
         <button class="toolbar-btn" @onclick="OnRenderMusic" title="Render Music" type="button">
             <span class="toolbar-icon">🎵</span>
+            <span class="toolbar-label">Render</span>
         </button>
     </div>
     
@@ -63,12 +76,15 @@
     <div class="toolbar-group">
         <button class="toolbar-btn" @onclick="OnScreenshot" title="Screenshot (Shift+Click for JPG)" type="button">
             <span class="toolbar-icon">📸</span>
+            <span class="toolbar-label">Screenshot</span>
         </button>
         <button class="toolbar-btn" @onclick="OnColorHelper" title="Color Helper" type="button">
             <span class="toolbar-icon">🎨</span>
+            <span class="toolbar-label">Color</span>
         </button>
         <button class="toolbar-btn" @onclick="OnFullscreen" title="Fullscreen" type="button">
             <span class="toolbar-icon">⛶</span>
+            <span class="toolbar-label">Fullscreen</span>
         </button>
     </div>
     
@@ -77,12 +93,15 @@
     <div class="toolbar-group">
         <button class="toolbar-btn @(CameraMode == "freefly" ? "active" : "")" @onclick="OnFreefly" title="Freefly Camera" type="button">
             <span class="toolbar-icon">🕊</span>
+            <span class="toolbar-label">Freefly</span>
         </button>
         <button class="toolbar-btn @(CameraMode == "lockfly" ? "active" : "")" @onclick="OnLockfly" title="Lockfly Camera" type="button">
             <span class="toolbar-icon">🔒</span>
+            <span class="toolbar-label">Lockfly</span>
         </button>
         <button class="toolbar-btn" @onclick="OnResetCamera" title="Reset Camera" type="button">
             <span class="toolbar-icon">↺</span>
+            <span class="toolbar-label">Reset</span>
         </button>
     </div>
 </div>
@@ -150,10 +169,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 28px;
+    gap: 6px;
+    min-width: auto;
     height: 28px;
-    font-size: 14px;
+    font-size: 13px;
     transition: all 0.15s;
+    white-space: nowrap;
 }
 
 .toolbar-btn:hover:not(:disabled) {
@@ -178,6 +199,14 @@
 .toolbar-icon {
     display: inline-block;
     line-height: 1;
+    font-size: 14px;
+}
+
+.toolbar-label {
+    display: inline-block;
+    line-height: 1;
+    font-size: 12px;
+    color: #d4d4d4;
 }
 </style>
 

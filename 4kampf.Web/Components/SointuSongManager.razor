@@ -110,6 +110,68 @@
     private string? editingContent;
     private bool editorInitialized = false;
     private DotNetObjectReference<CodeEditorCallback>? editorCallbackRef;
+    private string? pendingEditSong;
+    private bool _isInitializing = false;
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        // Refresh song list when project changes
+        if (IsVisible && CurrentProject != null)
+        {
+            await LoadSongFilesAsync();
+        }
+        await base.OnParametersSetAsync();
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // After DOM updates, initialize editor if we have a pending edit
+        // Use a flag to prevent multiple simultaneous initializations
+        if (pendingEditSong != null && editingSong != null && IsVisible && !_isInitializing)
+        {
+            _isInitializing = true;
+            
+            try
+            {
+                // Wait for sidebar animation (300ms) plus buffer, then poll for container
+                await Task.Delay(400);
+                
+                // Poll for container to appear (with timeout)
+                bool containerReady = false;
+                for (int i = 0; i < 10; i++)
+                {
+                    try
+                    {
+                        containerReady = await JSRuntime.InvokeAsync<bool>("eval", 
+                            "document.getElementById('song-editor') !== null");
+                        if (containerReady) break;
+                        await Task.Delay(100);
+                    }
+                    catch
+                    {
+                        // Ignore errors during polling
+                    }
+                }
+                
+                if (containerReady)
+                {
+                    await InitializeEditorAsync();
+                }
+                else
+                {
+                    await LogAsync("Error: song-editor container never appeared in DOM");
+                }
+            }
+            finally
+            {
+                pendingEditSong = null;
+                _isInitializing = false;
+                // Force another render to ensure UI updates
+                StateHasChanged();
+            }
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
     
     public bool IsVisible
     {
@@ -130,6 +192,11 @@
     public void Show()
     {
         IsVisible = true;
+        // Force refresh when shown to ensure we detect the current song
+        if (CurrentProject != null)
+        {
+            _ = LoadSongFilesAsync();
+        }
     }
     
     public void Close()
@@ -137,10 +204,13 @@
         IsVisible = false;
         editingSong = null;
         editingContent = null;
+        pendingEditSong = null;
         if (editorInitialized)
         {
             _ = CodeEditor.DestroyEditorAsync("song-editor");
             editorInitialized = false;
+            editorCallbackRef?.Dispose();
+            editorCallbackRef = null;
         }
     }
     
@@ -152,7 +222,35 @@
         try
         {
             songFiles = (await ProjectFile.ListSointuSongsAsync(CurrentProject.Name)).ToList();
-            selectedSong = CurrentProject.SointuSongFile ?? (songFiles.FirstOrDefault() ?? "song.yml");
+            
+            // Prioritize the project's current song file, or first available, or default
+            if (!string.IsNullOrEmpty(CurrentProject.SointuSongFile))
+            {
+                // Check if the current song file exists in the list
+                if (songFiles.Contains(CurrentProject.SointuSongFile))
+                {
+                    selectedSong = CurrentProject.SointuSongFile;
+                }
+                else if (songFiles.Any())
+                {
+                    // Current song file not found, use first available
+                    selectedSong = songFiles.First();
+                }
+                else
+                {
+                    // No songs found, use the project's song file name (it might exist but not be listed)
+                    selectedSong = CurrentProject.SointuSongFile;
+                }
+            }
+            else if (songFiles.Any())
+            {
+                selectedSong = songFiles.First();
+            }
+            else
+            {
+                selectedSong = "song.yml";
+            }
+            
             StateHasChanged();
         }
         catch (Exception ex)
@@ -315,6 +413,7 @@ patch:
         
         try
         {
+            await LogAsync($"Loading song file: {songFile}");
             string? content = await ProjectFile.LoadSointuSongAsync(CurrentProject.Name, songFile);
             if (content == null)
             {
@@ -322,31 +421,117 @@ patch:
                 return;
             }
             
+            await LogAsync($"Loaded song file: {songFile} ({content.Length} characters)");
+            
             editingSong = songFile;
             editingContent = content;
+            pendingEditSong = songFile;
             
-            // Initialize Monaco editor if not already done
-            if (!editorInitialized)
-            {
-                await CodeEditor.InitializeAsync();
-                editorCallbackRef = DotNetObjectReference.Create(new CodeEditorCallback(async (value) =>
-                {
-                    editingContent = value;
-                    await InvokeAsync(StateHasChanged);
-                }));
-                await CodeEditor.CreateEditorAsync("song-editor", "yaml", content, editorCallbackRef);
-                editorInitialized = true;
-            }
-            else
-            {
-                await CodeEditor.SetValueAsync("song-editor", content);
-            }
-            
+            // Trigger DOM update - editor will be initialized in OnAfterRenderAsync
             StateHasChanged();
         }
         catch (Exception ex)
         {
             await LogAsync($"Error loading song for editing: {ex.Message}");
+            await LogAsync($"Stack trace: {ex.StackTrace}");
+        }
+    }
+    
+    private async Task InitializeEditorAsync()
+    {
+        if (editingSong == null || editingContent == null)
+        {
+            await LogAsync($"Warning: InitializeEditorAsync called but editingSong={editingSong}, editingContent is {(editingContent == null ? "null" : "not null")}");
+            return;
+        }
+        
+        try
+        {
+            await LogAsync($"Initializing editor for: {editingSong} (content length: {editingContent.Length})");
+            
+            // Ensure CodeMirror is initialized
+            await CodeEditor.InitializeAsync();
+            
+            // Always destroy existing editor before creating a new one
+            if (editorInitialized)
+            {
+                await LogAsync("Destroying existing editor before creating new one");
+                try
+                {
+                    await CodeEditor.DestroyEditorAsync("song-editor");
+                }
+                catch (Exception ex)
+                {
+                    await LogAsync($"Warning: Error destroying editor: {ex.Message}");
+                }
+                editorInitialized = false;
+                editorCallbackRef?.Dispose();
+                editorCallbackRef = null;
+            }
+            
+            // Also check if editor exists in JavaScript (in case our state is out of sync)
+            bool jsEditorExists = await JSRuntime.InvokeAsync<bool>("eval", 
+                "window.monacoLoader && window.monacoLoader.editors && window.monacoLoader.editors.has('song-editor')");
+            
+            if (jsEditorExists)
+            {
+                await LogAsync("Found existing editor in JavaScript, destroying it");
+                await CodeEditor.DestroyEditorAsync("song-editor");
+            }
+            
+            // Additional wait to ensure DOM element is fully rendered
+            await Task.Delay(100);
+            
+            // Verify container exists and is visible via JavaScript
+            bool containerReady = await JSRuntime.InvokeAsync<bool>("eval", 
+                @"(function() {
+                    const el = document.getElementById('song-editor');
+                    return el !== null && el.offsetParent !== null;
+                })()");
+            
+            if (!containerReady)
+            {
+                await LogAsync("Error: song-editor container not found or not visible in DOM");
+                return;
+            }
+            
+            await LogAsync("Container found and visible, creating editor...");
+            
+            editorCallbackRef = DotNetObjectReference.Create(new CodeEditorCallback(async (value) =>
+            {
+                editingContent = value;
+                await InvokeAsync(StateHasChanged);
+            }));
+            
+            await LogAsync($"Creating CodeMirror editor with content length: {editingContent.Length}");
+            await CodeEditor.CreateEditorAsync("song-editor", "yaml", editingContent, editorCallbackRef);
+            editorInitialized = true;
+            
+            // Refresh editor to ensure proper rendering
+            await Task.Delay(200);
+            await CodeEditor.RefreshEditorAsync("song-editor");
+            
+            // Verify content was set
+            string? verifyContent = await CodeEditor.GetValueAsync("song-editor");
+            await LogAsync($"Editor created. Content length in editor: {(verifyContent?.Length ?? 0)}");
+            
+            if (string.IsNullOrEmpty(verifyContent))
+            {
+                await LogAsync("Warning: Editor created but content is empty. Attempting to set value again...");
+                await CodeEditor.SetValueAsync("song-editor", editingContent);
+                await Task.Delay(100);
+                await CodeEditor.RefreshEditorAsync("song-editor");
+                verifyContent = await CodeEditor.GetValueAsync("song-editor");
+                await LogAsync($"After retry, content length: {(verifyContent?.Length ?? 0)}");
+            }
+            
+            // Force state update to ensure UI reflects changes
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            await LogAsync($"Error initializing editor: {ex.Message}");
+            await LogAsync($"Stack trace: {ex.StackTrace}");
         }
     }
     
@@ -382,6 +567,7 @@ patch:
     {
         editingSong = null;
         editingContent = null;
+        pendingEditSong = null;
         StateHasChanged();
     }
     
@@ -494,6 +680,8 @@ patch:
     border-radius: 4px;
     background: #1e1e1e;
 }
+
+/* CodeMirror editor styles are in shared css/code-editor.css */
 
 .list-group-item {
     background: #1e1e1e;
