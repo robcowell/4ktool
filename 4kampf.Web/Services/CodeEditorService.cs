@@ -16,7 +16,7 @@ public class CodeEditorService : IAsyncDisposable
     {
         if (_isInitialized) return;
         
-        // Call the global monacoLoader.init function directly
+        // Call the global monacoLoader.init function (CodeMirror loader)
         await _jsRuntime.InvokeVoidAsync("monacoLoader.init");
         _isInitialized = true;
     }
@@ -89,6 +89,18 @@ public class CodeEditorService : IAsyncDisposable
     {
         if (!_isInitialized) return;
         await _jsRuntime.InvokeVoidAsync("monacoLoader.gotoLine", containerId, lineNumber);
+    }
+
+    public async Task RefreshEditorAsync(string containerId)
+    {
+        if (!_isInitialized) return;
+        await _jsRuntime.InvokeVoidAsync("monacoLoader.refresh", containerId);
+    }
+
+    public async Task RefreshAllEditorsAsync()
+    {
+        if (!_isInitialized) return;
+        await _jsRuntime.InvokeVoidAsync("monacoLoader.refreshAll");
     }
 
     public async ValueTask DisposeAsync()

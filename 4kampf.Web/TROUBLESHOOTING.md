@@ -84,9 +84,9 @@ If `SointuService` reports that Sointu is not available:
 - Check browser console for errors
 - Verify `webgl-interop.js` is loaded in `App.razor`
 
-### Monaco Editor Not Loading
+### CodeMirror Editor Not Loading
 
 - Check browser console for CDN errors
-- Verify internet connection (Monaco loads from CDN)
-- Check that `monaco-loader.js` is included in `App.razor`
+- Verify internet connection (CodeMirror loads from CDN)
+- Check that `codemirror-loader.js` is included in `App.razor`
 

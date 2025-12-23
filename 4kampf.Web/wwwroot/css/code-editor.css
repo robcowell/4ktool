@@ -1,0 +1,58 @@
+/* CodeMirror Editor Styles for 4kampf Web Edition */
+/* Note: Class name "monaco-editor-container" kept for backward compatibility with existing Razor components */
+
+/* Base container styles */
+.monaco-editor-container {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    min-height: 400px; /* Ensure minimum height */
+}
+
+/* CodeMirror editor styles */
+.monaco-editor-container .CodeMirror {
+    height: 100%;
+    font-size: 14px;
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+}
+
+/* Line numbers */
+.monaco-editor-container .CodeMirror-linenumber {
+    color: #858585;
+    min-width: 3em;
+}
+
+/* Gutter */
+.monaco-editor-container .CodeMirror-gutters {
+    background-color: #1e1e1e;
+    border-right: 1px solid #3e3e3e;
+}
+
+/* Cursor */
+.monaco-editor-container .CodeMirror-cursor {
+    border-left: 1px solid #d4d4d4;
+}
+
+/* Selected text */
+.monaco-editor-container .CodeMirror-selected {
+    background-color: #264f78;
+}
+
+/* Focused line */
+.monaco-editor-container .CodeMirror-activeline-background {
+    background-color: #2a2d2e;
+}
+
+/* Scrollbar */
+.monaco-editor-container .CodeMirror-scrollbar-filler {
+    background-color: #1e1e1e;
+}
+
+/* Ensure editor fills container */
+.monaco-editor-container .CodeMirror-scroll {
+    height: 100%;
+    overflow: auto;
+}
+

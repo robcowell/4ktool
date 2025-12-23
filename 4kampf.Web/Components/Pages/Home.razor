@@ -20,34 +20,6 @@
 <PageTitle>4kampf - Web Edition</PageTitle>
 
 <div class="app-container">
-    <Toolbar @ref="toolbar"
-             OnNew="CreateNew"
-             OnOpen="OpenProject"
-             OnSave="SaveAll"
-             OnUndo="UndoAction"
-             OnRedo="RedoAction"
-             OnFind="FindAction"
-             OnToggleLineNumbers="ToggleLineNumbers"
-             OnToggleStandardUniforms="ToggleStandardUniforms"
-             OnToggleEnvelopes="ToggleEnvelopes"
-             OnToggleCamera="ToggleCamera"
-             OnBuild="DoBuild"
-             OnRun="Run"
-             OnRenderMusic="RenderMusic"
-             OnScreenshot="ScreenshotAction"
-             OnColorHelper="ColorHelperAction"
-             OnFullscreen="FullscreenAction"
-             OnFreefly="FreeflyAction"
-             OnLockfly="LockflyAction"
-             OnResetCamera="ResetCameraAction"
-             CanUndo="@canUndo"
-             CanRedo="@canRedo"
-             ShowLineNumbers="@showLineNumbers"
-             EnableStandardUniforms="@enableStandardUniforms"
-             EnableEnvelopeSync="@enableEnvelopeSync"
-             EnableCamControls="@enableCamControls"
-             CameraMode="@cameraMode" />
-    
     <div class="menu-bar">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
@@ -100,6 +72,34 @@
             </div>
         </nav>
     </div>
+    
+    <Toolbar @ref="toolbar"
+             OnNew="CreateNew"
+             OnOpen="OpenProject"
+             OnSave="SaveAll"
+             OnUndo="UndoAction"
+             OnRedo="RedoAction"
+             OnFind="FindAction"
+             OnToggleLineNumbers="ToggleLineNumbers"
+             OnToggleStandardUniforms="ToggleStandardUniforms"
+             OnToggleEnvelopes="ToggleEnvelopes"
+             OnToggleCamera="ToggleCamera"
+             OnBuild="DoBuild"
+             OnRun="Run"
+             OnRenderMusic="RenderMusic"
+             OnScreenshot="ScreenshotAction"
+             OnColorHelper="ColorHelperAction"
+             OnFullscreen="FullscreenAction"
+             OnFreefly="FreeflyAction"
+             OnLockfly="LockflyAction"
+             OnResetCamera="ResetCameraAction"
+             CanUndo="@canUndo"
+             CanRedo="@canRedo"
+             ShowLineNumbers="@showLineNumbers"
+             EnableStandardUniforms="@enableStandardUniforms"
+             EnableEnvelopeSync="@enableEnvelopeSync"
+             EnableCamControls="@enableCamControls"
+             CameraMode="@cameraMode" />
     
     <div class="status-bar">
         <div class="status-item">
@@ -333,10 +333,10 @@
                 // Load default sample project
                 await LoadDefaultProject();
                 
-                // Wait a bit more for Monaco to be ready
+                // Wait a bit more for CodeMirror to be ready
                 await Task.Delay(500);
                 
-                // Initialize Monaco editors
+                // Initialize CodeMirror editors
                 await InitializeEditors();
             }
             catch (Exception ex)
@@ -713,23 +713,17 @@
                 currentProject = ProjectFile.CreateNewProject(currentProjectName);
             }
             
-            // Check if song file exists
-            bool hasSong = await ProjectFile.HasSointuSongAsync(currentProject.Name);
-            if (hasSong)
+            // Ensure project is saved with current state
+            await ProjectFile.SaveProjectAsync(currentProject);
+            
+            // Show the song manager
+            if (songManager != null)
             {
-                string? songContent = await ProjectFile.LoadSointuSongAsync(currentProject.Name);
-                if (songContent != null)
-                {
-                    AddLog($"Sointu song file found ({songContent.Length} bytes)");
-                    AddLog("Song file management UI not yet implemented");
-                    AddLog("Song file location: wwwroot/projects/{currentProject.Name}/song.yml");
-                }
+                songManager.Show();
             }
             else
             {
-                AddLog("No Sointu song file found for this project");
-                AddLog("Create a song.yml file in the project directory");
-                AddLog("Or use Sointu tracker to create one");
+                AddLog("Song manager not available");
             }
         }
         catch (Exception ex)
@@ -1240,7 +1234,7 @@
         string activeEditor = GetActiveEditorId();
         if (!string.IsNullOrEmpty(activeEditor))
         {
-            // Monaco editor insert text at cursor
+            // CodeMirror editor insert text at cursor
             await _jsRuntime.InvokeVoidAsync("monacoLoader.insertText", activeEditor, colorValue);
         }
     }
@@ -1294,7 +1288,7 @@
     
     private string? GetSelectedText()
     {
-        // Get selected text from active Monaco editor
+        // Get selected text from active CodeMirror editor
         // This would need JavaScript interop
         return null;
     }
