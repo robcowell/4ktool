@@ -67,7 +67,7 @@ public class Project
     /// Use WebAssembly for client-side music rendering (instead of server-side)
     /// </summary>
     [JsonPropertyName("useWasmRendering")]
-    public bool UseWasmRendering { get; set; } = false;
+    public bool UseWasmRendering { get; set; } = true; // Default to WASM rendering
 
     /// <summary>
     /// Vertex shader code

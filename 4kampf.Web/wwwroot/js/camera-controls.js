@@ -10,6 +10,7 @@ window.cameraControls = {
             right: { x: 0, y: 0, z: 0 },
             up: { x: 0, y: 0, z: 0 },
             editStep: 0.1,
+            mode: 'freefly', // 'freefly' or 'lockfly'
             keys: {},
             mouseDown: false,
             mouseStartPos: { x: 0, y: 0 },
@@ -123,6 +124,17 @@ window.cameraControls = {
         cam.mouseCurrentPos = { x, y };
     },
     
+    setMode: function(cameraId, mode) {
+        const cam = this.cameras.get(cameraId);
+        if (!cam) return;
+        cam.mode = mode; // 'freefly' or 'lockfly'
+    },
+    
+    getMode: function(cameraId) {
+        const cam = this.cameras.get(cameraId);
+        return cam ? cam.mode : 'freefly';
+    },
+    
     update: function(cameraId, shiftPressed) {
         const cam = this.cameras.get(cameraId);
         if (!cam) return;
@@ -156,7 +168,15 @@ window.cameraControls = {
         if (cam.mouseDown) {
             const deltaX = (cam.mouseCurrentPos.x - cam.mouseStartPos.x) * speedLook;
             const deltaY = (cam.mouseCurrentPos.y - cam.mouseStartPos.y) * speedLook;
-            this.mouselook(cameraId, deltaX, deltaY);
+            
+            // Lockfly mode: lock Y rotation (horizontal only)
+            if (cam.mode === 'lockfly') {
+                this.mouselook(cameraId, deltaX, 0);
+            } else {
+                // Freefly mode: full rotation
+                this.mouselook(cameraId, deltaX, deltaY);
+            }
+            
             cam.mouseStartPos = { ...cam.mouseCurrentPos };
         }
         

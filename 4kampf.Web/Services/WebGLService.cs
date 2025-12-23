@@ -109,6 +109,13 @@ public class WebGLService : IAsyncDisposable
         await _jsRuntime.InvokeVoidAsync("webglInterop.resize", _contextId, width, height);
     }
 
+    public async Task<byte[]?> CaptureScreenshotAsync(string format = "png")
+    {
+        if (_contextId == null) return null;
+        
+        return await _jsRuntime.InvokeAsync<byte[]>("webglInterop.captureScreenshot", _contextId, format);
+    }
+
     public async ValueTask DisposeAsync()
     {
         if (_contextId != null)

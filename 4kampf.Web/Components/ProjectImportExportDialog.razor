@@ -18,11 +18,9 @@
                 <h6>Import Project</h6>
                 <div class="mb-3">
                     <label class="form-label">Import from .kml file (original format)</label>
-                    <input type="file" 
-                           accept=".kml" 
-                           @ref="importFileInput" 
-                           @onchange="OnImportFileSelected" 
-                           class="form-control" />
+                    <InputFile OnChange="OnImportFileSelected" 
+                               accept=".kml" 
+                               class="form-control" />
                     <small class="form-text text-muted">Select a .kml project file from the original 4kampf application</small>
                 </div>
                 @if (!string.IsNullOrEmpty(importError))
@@ -69,7 +67,6 @@
     [Parameter] public EventCallback<string> OnLog { get; set; }
     
     private bool isVisible = false;
-    private ElementReference importFileInput;
     private string? importError;
     private string? importSuccess;
     private string? exportError;

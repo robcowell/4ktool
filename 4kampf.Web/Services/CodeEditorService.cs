@@ -43,6 +43,54 @@ public class CodeEditorService : IAsyncDisposable
         return await _jsRuntime.InvokeAsync<string>("monacoLoader.getValue", containerId) ?? string.Empty;
     }
 
+    public async Task DestroyEditorAsync(string containerId)
+    {
+        if (!_isInitialized) return;
+        await _jsRuntime.InvokeVoidAsync("monacoLoader.destroyEditor", containerId);
+    }
+
+    public async Task UndoAsync(string containerId)
+    {
+        if (!_isInitialized) return;
+        await _jsRuntime.InvokeVoidAsync("monacoLoader.undo", containerId);
+    }
+
+    public async Task RedoAsync(string containerId)
+    {
+        if (!_isInitialized) return;
+        await _jsRuntime.InvokeVoidAsync("monacoLoader.redo", containerId);
+    }
+
+    public async Task<bool> CanUndoAsync(string containerId)
+    {
+        if (!_isInitialized) return false;
+        return await _jsRuntime.InvokeAsync<bool>("monacoLoader.canUndo", containerId);
+    }
+
+    public async Task<bool> CanRedoAsync(string containerId)
+    {
+        if (!_isInitialized) return false;
+        return await _jsRuntime.InvokeAsync<bool>("monacoLoader.canRedo", containerId);
+    }
+
+    public async Task ShowFindAsync(string containerId)
+    {
+        if (!_isInitialized) return;
+        await _jsRuntime.InvokeVoidAsync("monacoLoader.showFind", containerId);
+    }
+
+    public async Task SetLineNumbersAsync(string containerId, bool visible)
+    {
+        if (!_isInitialized) return;
+        await _jsRuntime.InvokeVoidAsync("monacoLoader.setLineNumbers", containerId, visible);
+    }
+
+    public async Task GotoLineAsync(string containerId, int lineNumber)
+    {
+        if (!_isInitialized) return;
+        await _jsRuntime.InvokeVoidAsync("monacoLoader.gotoLine", containerId, lineNumber);
+    }
+
     public async ValueTask DisposeAsync()
     {
         // Nothing to dispose for global scripts

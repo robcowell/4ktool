@@ -1,11 +1,12 @@
 @using _4kampf.Web.Services
 @inject WebAudioService WebAudio
+@inject SointuWasmService SointuWasm
 @rendermode InteractiveServer
 @implements IAsyncDisposable
 
 <div class="music-player">
     <div class="player-controls">
-        <button class="btn-play" @onclick="PlayPause">
+        <button class="btn-play" @onclick="PlayPause" disabled="@(!IsMusicReady)">
             @if (isPlaying)
             {
                 <span>⏸</span>
@@ -50,6 +51,10 @@
 </div>
 
 @code {
+    [Parameter] public EventCallback<bool> OnPlayPause { get; set; }
+    [Parameter] public bool IsWasmMode { get; set; } = false;
+    [Parameter] public bool IsMusicReady { get; set; } = false;
+    
     private bool isPlaying = false;
     private bool isMuted = false;
     private double currentTime = 0;
@@ -91,15 +96,49 @@
 
     private async Task PlayPause()
     {
+        if (!IsMusicReady)
+        {
+            return;
+        }
+        
         if (isPlaying)
         {
-            await WebAudio.PauseAsync();
+            // Stop/pause playback
+            if (IsWasmMode && SointuWasm.IsAvailable)
+            {
+                await SointuWasm.StopAsync();
+            }
+            else
+            {
+                await WebAudio.PauseAsync();
+            }
+            isPlaying = false;
         }
         else
         {
-            await WebAudio.PlayAsync();
+            // Start playback
+            if (IsWasmMode && SointuWasm.IsAvailable)
+            {
+                bool started = await SointuWasm.PlayAsync();
+                if (started)
+                {
+                    isPlaying = true;
+                }
+            }
+            else
+            {
+                await WebAudio.PlayAsync();
+                isPlaying = true;
+            }
         }
-        isPlaying = !isPlaying;
+        
+        // Notify parent component
+        if (OnPlayPause.HasDelegate)
+        {
+            await OnPlayPause.InvokeAsync(isPlaying);
+        }
+        
+        StateHasChanged();
     }
 
     private async Task Rewind()
@@ -136,20 +175,40 @@
     {
         try
         {
-            currentTime = await WebAudio.GetPositionAsync();
-            duration = await WebAudio.GetDurationAsync();
-            
-            if (duration > 0)
+            if (IsWasmMode && SointuWasm.IsAvailable && isPlaying)
             {
-                transportValue = (int)((currentTime / duration) * 100);
+                // Use WASM position and duration
+                currentTime = await SointuWasm.GetPositionAsync();
+                // For WASM, we need to get duration from the loaded song
+                // This could be stored in the service or passed as a parameter
+                // For now, use a default or get from service if available
+                
+                // Update VU levels from WASM envelope data
+                var envelopeData = await SointuWasm.GetEnvelopeSyncAsync(16);
+                if (envelopeData != null)
+                {
+                    vuLevels = envelopeData;
+                    showVU = true;
+                }
             }
-            
-            // Update VU levels if available
-            var envelopeData = await WebAudio.GetEnvelopeDataAsync(16);
-            if (envelopeData != null)
+            else
             {
-                vuLevels = envelopeData;
-                showVU = true;
+                // Use WebAudio for pre-rendered audio
+                currentTime = await WebAudio.GetPositionAsync();
+                duration = await WebAudio.GetDurationAsync();
+                
+                if (duration > 0)
+                {
+                    transportValue = (int)((currentTime / duration) * 100);
+                }
+                
+                // Update VU levels if available
+                var envelopeData = await WebAudio.GetEnvelopeDataAsync(16);
+                if (envelopeData != null)
+                {
+                    vuLevels = envelopeData;
+                    showVU = true;
+                }
             }
             
             await InvokeAsync(StateHasChanged);

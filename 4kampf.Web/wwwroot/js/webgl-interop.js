@@ -222,6 +222,65 @@ window.webglInterop = {
         ctx.gl.viewport(0, 0, width, height);
     },
     
+    captureScreenshot: function(contextId, format) {
+        const ctx = this.contexts.get(contextId);
+        if (!ctx) return null;
+        
+        const gl = ctx.gl;
+        const canvas = ctx.canvas;
+        const width = canvas.width;
+        const height = canvas.height;
+        
+        // Read pixels from WebGL context
+        const pixels = new Uint8Array(width * height * 4);
+        gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+        
+        // Flip vertically (WebGL has origin at bottom-left, canvas at top-left)
+        const flipped = new Uint8Array(width * height * 4);
+        for (let y = 0; y < height; y++) {
+            const srcRow = (height - 1 - y) * width * 4;
+            const dstRow = y * width * 4;
+            flipped.set(pixels.subarray(srcRow, srcRow + width * 4), dstRow);
+        }
+        
+        // Convert to ImageData
+        const imageData = new ImageData(
+            new Uint8ClampedArray(flipped),
+            width,
+            height
+        );
+        
+        // Create temporary canvas to convert to blob
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = width;
+        tempCanvas.height = height;
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCtx.putImageData(imageData, 0, 0);
+        
+        return new Promise((resolve) => {
+            tempCanvas.toBlob((blob) => {
+                if (!blob) {
+                    resolve(null);
+                    return;
+                }
+                
+                // Convert blob to base64 for C# interop
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64 = reader.result.split(',')[1];
+                    // Convert base64 to byte array
+                    const binaryString = atob(base64);
+                    const bytes = new Uint8Array(binaryString.length);
+                    for (let i = 0; i < binaryString.length; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    resolve(Array.from(bytes));
+                };
+                reader.readAsDataURL(blob);
+            }, format === 'jpg' ? 'image/jpeg' : 'image/png', format === 'jpg' ? 0.8 : undefined);
+        });
+    },
+    
     cleanup: function(contextId) {
         const ctx = this.contexts.get(contextId);
         if (!ctx) return;

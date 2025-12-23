@@ -58,6 +58,18 @@ public class CameraService
         if (_cameraId == null) return;
         await _jsRuntime.InvokeVoidAsync("cameraControls.update", _cameraId, shiftPressed);
     }
+
+    public async Task SetModeAsync(string mode)
+    {
+        if (_cameraId == null) return;
+        await _jsRuntime.InvokeVoidAsync("cameraControls.setMode", _cameraId, mode);
+    }
+
+    public async Task<string> GetModeAsync()
+    {
+        if (_cameraId == null) return "freefly";
+        return await _jsRuntime.InvokeAsync<string>("cameraControls.getMode", _cameraId) ?? "freefly";
+    }
 }
 
 public class CameraPosition

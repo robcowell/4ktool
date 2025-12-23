@@ -6,6 +6,39 @@ importScripts('/js/wasm_exec.js');
 let go = null;
 let isInitialized = false;
 
+// Intercept console.log to capture progress messages from Go
+const originalConsoleLog = console.log;
+console.log = function(...args) {
+    // Call original console.log
+    originalConsoleLog.apply(console, args);
+    
+    // Check if this is a progress message from Go
+    const message = args.join(' ');
+    const progressMatch = message.match(/Render progress:\s*(\d+)%/i) || 
+                          message.match(/DEBUG: Render progress:\s*(\d+)%/i);
+    if (progressMatch) {
+        const percent = parseInt(progressMatch[1], 10);
+        // Forward progress to main thread
+        self.postMessage({ 
+            type: 'progress', 
+            percent: percent,
+            message: `Rendering: ${percent}%`
+        });
+    } else if (message.includes('Starting song render') || message.includes('DEBUG: Starting song render')) {
+        self.postMessage({ 
+            type: 'progress', 
+            percent: 0,
+            message: 'Starting render...'
+        });
+    } else if (message.includes('Song render complete') || message.includes('DEBUG: Song render complete')) {
+        self.postMessage({ 
+            type: 'progress', 
+            percent: 100,
+            message: 'Render complete!'
+        });
+    }
+};
+
 // Initialize WASM module in the worker
 async function initWasm(wasmPath) {
     try {
@@ -113,6 +146,13 @@ self.onmessage = async function(e) {
                 const compileSong = globalThis.compileSong || self.compileSong;
                 if (typeof compileSong === 'function') {
                     try {
+                        // Send initial progress
+                        self.postMessage({ 
+                            type: 'progress', 
+                            percent: 0,
+                            message: 'Compiling song...'
+                        });
+                        
                         const compileResult = compileSong(data.yamlContent);
                         
                         // Convert JavaScript arrays to Float32Array for efficient transfer
