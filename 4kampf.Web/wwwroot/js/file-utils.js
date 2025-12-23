@@ -34,6 +34,45 @@ window.downloadFile = function(filename, content, mimeType) {
 };
 
 /**
+ * Creates and downloads a zip file containing multiple files
+ * Requires JSZip library to be loaded
+ * @param {string} zipFilename - Name of the zip file to download
+ * @param {Array<{filename: string, content: string}>} files - Array of file objects with filename and content
+ * @returns {Promise} Promise that resolves when zip is downloaded
+ */
+window.downloadZip = async function(zipFilename, files) {
+    // Check if JSZip is available
+    if (typeof JSZip === 'undefined') {
+        // Load JSZip from CDN if not available
+        await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+    }
+    
+    const zip = new JSZip();
+    
+    // Add all files to zip
+    files.forEach(file => {
+        zip.file(file.filename, file.content);
+    });
+    
+    // Generate zip and download
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = zipFilename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+};
+
+/**
  * Toggles fullscreen for an element
  */
 window.toggleFullscreen = function(elementId) {

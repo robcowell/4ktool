@@ -114,29 +114,99 @@
                 return;
             }
             
+            await LogAsync("Reading .kml file...");
+            
+            // Validate file
+            if (e.File.Size == 0)
+            {
+                importError = "The selected file is empty.";
+                await LogAsync("Import failed: Empty file");
+                return;
+            }
+            
+            if (e.File.Size > 10 * 1024 * 1024) // 10MB max
+            {
+                importError = "The selected file is too large (max 10MB).";
+                await LogAsync("Import failed: File too large");
+                return;
+            }
+            
             // Read file content
-            using var stream = e.File.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // 10MB max
+            using var stream = e.File.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024);
             using var reader = new StreamReader(stream);
             string kmlContent = await reader.ReadToEndAsync();
             
+            if (string.IsNullOrWhiteSpace(kmlContent))
+            {
+                importError = "The .kml file appears to be empty or could not be read.";
+                await LogAsync("Import failed: Empty or unreadable file");
+                return;
+            }
+            
+            // Basic XML validation
+            if (!kmlContent.TrimStart().StartsWith("<?xml") && !kmlContent.TrimStart().StartsWith("<Project"))
+            {
+                importError = "The file does not appear to be a valid .kml project file. Expected XML format.";
+                await LogAsync("Import failed: Invalid file format");
+                return;
+            }
+            
             // Import project
+            await LogAsync("Parsing project settings...");
             var project = await ImportExport.ImportFromKmlAsync(kmlContent);
             
             if (project == null)
             {
-                importError = "Failed to import project. The .kml file may be invalid or corrupted.";
+                importError = "Failed to import project. The .kml file may be invalid or corrupted. Please check the file format.";
                 await LogAsync("Import failed: Invalid .kml file");
                 return;
             }
             
-            // Load shader files if they exist in the project directory
-            // (Note: In web version, shaders are stored in the project JSON, not separate files)
-            // The original app stores shaders as frag.glsl, vert.glsl, ppfrag.glsl
+            // Try to load shader files if they were uploaded together
+            // Note: In a web browser, we can't access the file system, so shaders must be uploaded separately
+            // or included in a zip file. For now, we'll use default shaders if not found.
+            await LogAsync($"Project '{project.Name}' imported successfully. Using default shaders (shader files not available in browser).");
+            
+            // Set default shaders if empty
+            // Note: Original .kml files don't contain shader code - shaders are stored as separate files
+            // In the web version, we'll use default shaders if not provided
+            if (string.IsNullOrWhiteSpace(project.FragmentShader))
+            {
+                project.FragmentShader = @"#version 300 es
+precision mediump float;
+in vec2 uv;
+out vec4 fragColor;
+uniform vec3 u; // {resX, resY, time}
+void main() {
+    fragColor = vec4(uv, 0.5, 1.0);
+}";
+            }
+            if (string.IsNullOrWhiteSpace(project.VertexShader))
+            {
+                project.VertexShader = @"#version 300 es
+in vec2 position;
+out vec2 uv;
+void main() {
+    gl_Position = vec4(position, 0.0, 1.0);
+    uv = position * 0.5 + 0.5;
+}";
+            }
+            if (string.IsNullOrWhiteSpace(project.PostProcessShader))
+            {
+                project.PostProcessShader = @"#version 300 es
+precision mediump float;
+in vec2 uv;
+out vec4 fragColor;
+uniform sampler2D tex;
+void main() {
+    fragColor = texture(tex, uv);
+}";
+            }
             
             importSuccess = $"Successfully imported project: {project.Name}";
             await LogAsync($"Imported project: {project.Name}");
             
-            // Notify parent component
+            // Notify parent component (which will save the project)
             if (ProjectImported.HasDelegate)
             {
                 await ProjectImported.InvokeAsync(project);
@@ -153,7 +223,13 @@
     {
         if (CurrentProject == null)
         {
-            exportError = "No project selected";
+            exportError = "No project selected. Please create or open a project first.";
+            return;
+        }
+        
+        if (string.IsNullOrWhiteSpace(CurrentProject.Name))
+        {
+            exportError = "Project name is required for export.";
             return;
         }
         
@@ -162,54 +238,47 @@
         
         try
         {
-            // Prompt user for download location via JavaScript
-            // In a real implementation, you might want to use a file picker or download directly
             await LogAsync("Exporting project to Visual Studio format...");
             
-            // For web, we'll generate the files and offer them as downloads
-            // In a real scenario, you might want to zip the files or use a file picker
-            
-            // Generate .vcxproj content
-            string vcxprojContent = GenerateVcxprojContent(CurrentProject);
-            string slnContent = GenerateSlnContent(CurrentProject);
-            
-            // Trigger downloads via JavaScript
-            await JSRuntime.InvokeVoidAsync("downloadFile", 
-                $"{SanitizeFileName(CurrentProject.Name)}.vcxproj", 
-                vcxprojContent, 
-                "application/xml");
-            
-            await Task.Delay(500); // Small delay between downloads
-            
-            await JSRuntime.InvokeVoidAsync("downloadFile", 
-                $"{SanitizeFileName(CurrentProject.Name)}.sln", 
-                slnContent, 
-                "text/plain");
-            
-            // Also download shader files
-            await JSRuntime.InvokeVoidAsync("downloadFile", 
-                "frag.glsl", 
-                CurrentProject.FragmentShader, 
-                "text/plain");
-            
-            await Task.Delay(500);
-            
-            await JSRuntime.InvokeVoidAsync("downloadFile", 
-                "vert.glsl", 
-                CurrentProject.VertexShader, 
-                "text/plain");
-            
-            if (!string.IsNullOrEmpty(CurrentProject.PostProcessShader))
+            // Validate project has shaders
+            if (string.IsNullOrWhiteSpace(CurrentProject.FragmentShader))
             {
-                await Task.Delay(500);
-                await JSRuntime.InvokeVoidAsync("downloadFile", 
-                    "ppfrag.glsl", 
-                    CurrentProject.PostProcessShader, 
-                    "text/plain");
+                exportError = "Project must have a fragment shader to export.";
+                await LogAsync("Export failed: Missing fragment shader");
+                return;
             }
             
-            exportSuccess = "Project exported successfully. Files downloaded.";
-            await LogAsync("Project exported to Visual Studio format");
+            // Generate .vcxproj and .sln content
+            string vcxprojContent = GenerateVcxprojContent(CurrentProject);
+            string slnContent = GenerateSlnContent(CurrentProject);
+            string projectName = SanitizeFileName(CurrentProject.Name);
+            
+            await LogAsync("Creating project files...");
+            
+            // Prepare files for zip
+            var files = new List<object>
+            {
+                new { filename = $"basecode/{projectName}.vcxproj", content = vcxprojContent },
+                new { filename = $"basecode/{projectName}.sln", content = slnContent },
+                new { filename = "frag.glsl", content = CurrentProject.FragmentShader },
+                new { filename = "vert.glsl", content = CurrentProject.VertexShader ?? "" }
+            };
+            
+            // Add post-process shader if present
+            if (!string.IsNullOrWhiteSpace(CurrentProject.PostProcessShader))
+            {
+                files.Add(new { filename = "ppfrag.glsl", content = CurrentProject.PostProcessShader });
+            }
+            
+            await LogAsync("Creating zip archive...");
+            
+            // Create and download zip file
+            await JSRuntime.InvokeVoidAsync("downloadZip", 
+                $"{projectName}.zip", 
+                files.ToArray());
+            
+            exportSuccess = $"Project '{CurrentProject.Name}' exported successfully as {projectName}.zip";
+            await LogAsync($"Project exported to Visual Studio format: {projectName}.zip");
         }
         catch (Exception ex)
         {

@@ -66,47 +66,72 @@ public class ProjectImportExportService
     {
         try
         {
+            if (string.IsNullOrWhiteSpace(kmlContent))
+            {
+                _logger?.LogWarning("Attempted to import empty .kml content");
+                return null;
+            }
+            
             using var reader = new StringReader(kmlContent);
             var serializer = new XmlSerializer(typeof(LegacyProject));
             var legacyProject = (LegacyProject?)serializer.Deserialize(reader);
 
             if (legacyProject == null)
             {
-                _logger?.LogWarning("Failed to deserialize .kml file");
+                _logger?.LogWarning("Failed to deserialize .kml file - XML structure may be invalid");
                 return null;
             }
 
             // Convert legacy project to new format
             var project = new Project
             {
-                Name = legacyProject.Name ?? "Imported Project",
+                Name = !string.IsNullOrWhiteSpace(legacyProject.Name) 
+                    ? legacyProject.Name 
+                    : "Imported Project",
                 EnableStandardUniforms = legacyProject.EnableStandardUniforms,
                 UsePostProcess = legacyProject.UsePP,
                 UseVertexShader = legacyProject.UseVertShader,
                 GitRemote = legacyProject.GitRemote,
                 CreatedAt = DateTime.UtcNow,
-                ModifiedAt = DateTime.UtcNow
+                ModifiedAt = DateTime.UtcNow,
+                // Set defaults for web version
+                EnableCamControls = true,
+                UseWasmRendering = true
             };
 
-            // Convert synth enum
-            project.Synth = legacyProject.Synth.ToLower() switch
+            // Convert synth enum with better validation
+            project.Synth = legacyProject.Synth?.ToLower() switch
             {
-                "vierklang" => Synth.Vierklang,
+                "vierklang" or "4klang" => Synth.Vierklang,
                 "clinkster" => Synth.Clinkster,
                 "oidos" => Synth.Oidos,
                 "sointu" => Synth.Sointu,
-                _ => legacyProject.UseClinkster ? Synth.Clinkster : Synth.Vierklang
+                _ => legacyProject.UseClinkster ? Synth.Clinkster : Synth.Sointu // Default to Sointu for web
             };
 
             // Convert envelope sync
             project.EnableEnvelopeSync = legacyProject.Use4klangEnv;
 
-            _logger?.LogInformation("Successfully imported project from .kml: {ProjectName}", project.Name);
+            // Note: Shader files (frag.glsl, vert.glsl, ppfrag.glsl) are not included in .kml
+            // They must be loaded separately or will use defaults
+
+            _logger?.LogInformation("Successfully imported project from .kml: {ProjectName} (Synth: {Synth})", 
+                project.Name, project.Synth);
             return project;
+        }
+        catch (XmlException ex)
+        {
+            _logger?.LogError(ex, "XML parsing error when importing .kml file");
+            return null;
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger?.LogError(ex, "Invalid XML structure when importing .kml file");
+            return null;
         }
         catch (Exception ex)
         {
-            _logger?.LogError(ex, "Error importing project from .kml");
+            _logger?.LogError(ex, "Unexpected error importing project from .kml");
             return null;
         }
     }
