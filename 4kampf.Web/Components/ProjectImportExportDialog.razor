@@ -1,0 +1,482 @@
+@using _4kampf.Web.Services
+@using _4kampf.Shared.Models
+@using Microsoft.AspNetCore.Components.Forms
+@inject ProjectImportExportService ImportExport
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+
+<div class="import-export-dialog @(IsVisible ? "visible" : "")">
+    <div class="dialog-overlay" @onclick="Close"></div>
+    <div class="dialog-content">
+        <div class="dialog-header">
+            <h5>Import / Export Project</h5>
+            <button class="btn-close" @onclick="Close" type="button">×</button>
+        </div>
+        
+        <div class="dialog-body">
+            <div class="import-export-section">
+                <h6>Import Project</h6>
+                <div class="mb-3">
+                    <label class="form-label">Import from .kml file (original format)</label>
+                    <input type="file" 
+                           accept=".kml" 
+                           @ref="importFileInput" 
+                           @onchange="OnImportFileSelected" 
+                           class="form-control" />
+                    <small class="form-text text-muted">Select a .kml project file from the original 4kampf application</small>
+                </div>
+                @if (!string.IsNullOrEmpty(importError))
+                {
+                    <div class="alert alert-danger">@importError</div>
+                }
+                @if (!string.IsNullOrEmpty(importSuccess))
+                {
+                    <div class="alert alert-success">@importSuccess</div>
+                }
+            </div>
+            
+            <hr />
+            
+            <div class="import-export-section">
+                <h6>Export Project</h6>
+                <div class="mb-3">
+                    <label class="form-label">Export to Visual Studio format</label>
+                    <p class="text-muted">This will create a .vcxproj file and solution file that can be opened in Visual Studio.</p>
+                    <button class="btn btn-primary" @onclick="ExportToVisualStudio" type="button" disabled="@(CurrentProject == null)">
+                        Export to Visual Studio
+                    </button>
+                </div>
+                @if (!string.IsNullOrEmpty(exportError))
+                {
+                    <div class="alert alert-danger">@exportError</div>
+                }
+                @if (!string.IsNullOrEmpty(exportSuccess))
+                {
+                    <div class="alert alert-success">@exportSuccess</div>
+                }
+            </div>
+        </div>
+        
+        <div class="dialog-footer">
+            <button class="btn btn-secondary" @onclick="Close" type="button">Close</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Project? CurrentProject { get; set; }
+    [Parameter] public EventCallback<Project> ProjectImported { get; set; }
+    [Parameter] public EventCallback<string> OnLog { get; set; }
+    
+    private bool isVisible = false;
+    private ElementReference importFileInput;
+    private string? importError;
+    private string? importSuccess;
+    private string? exportError;
+    private string? exportSuccess;
+    
+    public bool IsVisible
+    {
+        get => isVisible;
+        set
+        {
+            if (isVisible != value)
+            {
+                isVisible = value;
+                if (!isVisible)
+                {
+                    // Reset messages when closing
+                    importError = null;
+                    importSuccess = null;
+                    exportError = null;
+                    exportSuccess = null;
+                }
+            }
+        }
+    }
+    
+    public void Show()
+    {
+        IsVisible = true;
+    }
+    
+    public void Close()
+    {
+        IsVisible = false;
+    }
+    
+    private async Task OnImportFileSelected(InputFileChangeEventArgs e)
+    {
+        importError = null;
+        importSuccess = null;
+        
+        try
+        {
+            if (e.File == null)
+            {
+                return;
+            }
+            
+            // Read file content
+            using var stream = e.File.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // 10MB max
+            using var reader = new StreamReader(stream);
+            string kmlContent = await reader.ReadToEndAsync();
+            
+            // Import project
+            var project = await ImportExport.ImportFromKmlAsync(kmlContent);
+            
+            if (project == null)
+            {
+                importError = "Failed to import project. The .kml file may be invalid or corrupted.";
+                await LogAsync("Import failed: Invalid .kml file");
+                return;
+            }
+            
+            // Load shader files if they exist in the project directory
+            // (Note: In web version, shaders are stored in the project JSON, not separate files)
+            // The original app stores shaders as frag.glsl, vert.glsl, ppfrag.glsl
+            
+            importSuccess = $"Successfully imported project: {project.Name}";
+            await LogAsync($"Imported project: {project.Name}");
+            
+            // Notify parent component
+            if (ProjectImported.HasDelegate)
+            {
+                await ProjectImported.InvokeAsync(project);
+            }
+        }
+        catch (Exception ex)
+        {
+            importError = $"Error importing project: {ex.Message}";
+            await LogAsync($"Import error: {ex.Message}");
+        }
+    }
+    
+    private async Task ExportToVisualStudio()
+    {
+        if (CurrentProject == null)
+        {
+            exportError = "No project selected";
+            return;
+        }
+        
+        exportError = null;
+        exportSuccess = null;
+        
+        try
+        {
+            // Prompt user for download location via JavaScript
+            // In a real implementation, you might want to use a file picker or download directly
+            await LogAsync("Exporting project to Visual Studio format...");
+            
+            // For web, we'll generate the files and offer them as downloads
+            // In a real scenario, you might want to zip the files or use a file picker
+            
+            // Generate .vcxproj content
+            string vcxprojContent = GenerateVcxprojContent(CurrentProject);
+            string slnContent = GenerateSlnContent(CurrentProject);
+            
+            // Trigger downloads via JavaScript
+            await JSRuntime.InvokeVoidAsync("downloadFile", 
+                $"{SanitizeFileName(CurrentProject.Name)}.vcxproj", 
+                vcxprojContent, 
+                "application/xml");
+            
+            await Task.Delay(500); // Small delay between downloads
+            
+            await JSRuntime.InvokeVoidAsync("downloadFile", 
+                $"{SanitizeFileName(CurrentProject.Name)}.sln", 
+                slnContent, 
+                "text/plain");
+            
+            // Also download shader files
+            await JSRuntime.InvokeVoidAsync("downloadFile", 
+                "frag.glsl", 
+                CurrentProject.FragmentShader, 
+                "text/plain");
+            
+            await Task.Delay(500);
+            
+            await JSRuntime.InvokeVoidAsync("downloadFile", 
+                "vert.glsl", 
+                CurrentProject.VertexShader, 
+                "text/plain");
+            
+            if (!string.IsNullOrEmpty(CurrentProject.PostProcessShader))
+            {
+                await Task.Delay(500);
+                await JSRuntime.InvokeVoidAsync("downloadFile", 
+                    "ppfrag.glsl", 
+                    CurrentProject.PostProcessShader, 
+                    "text/plain");
+            }
+            
+            exportSuccess = "Project exported successfully. Files downloaded.";
+            await LogAsync("Project exported to Visual Studio format");
+        }
+        catch (Exception ex)
+        {
+            exportError = $"Error exporting project: {ex.Message}";
+            await LogAsync($"Export error: {ex.Message}");
+        }
+    }
+    
+    private string GenerateVcxprojContent(Project project)
+    {
+        // Use the same logic as ProjectImportExportService
+        var guid = Guid.NewGuid().ToString("B").ToUpper();
+        var projectName = SanitizeFileName(project.Name);
+        
+        return $@"<?xml version=""1.0"" encoding=""utf-8""?>
+<Project DefaultTargets=""Build"" ToolsVersion=""14.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+  <ItemGroup Label=""ProjectConfigurations"">
+    <ProjectConfiguration Include=""Debug|Win32"">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include=""Packed Release|Win32"">
+      <Configuration>Packed Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include=""main_deb.cpp"">
+      <ExcludedFromBuild Condition=""'$(Configuration)|$(Platform)'=='Packed Release|Win32'"">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include=""main_rel.cpp"">
+      <ExcludedFromBuild Condition=""'$(Configuration)|$(Platform)'=='Debug|Win32'"">true</ExcludedFromBuild>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include=""intro.h"" />
+    <ClInclude Include=""4klang.h"" />
+    <ClInclude Include=""glext.h"" />
+  </ItemGroup>
+  <PropertyGroup Label=""Globals"">
+    <ProjectName>{projectName}</ProjectName>
+    <ProjectGuid>{guid}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project=""$(VCTargetsPath)\\Microsoft.Cpp.Default.props"" />
+  <PropertyGroup Condition=""'$(Configuration)|$(Platform)'=='Packed Release|Win32'"" Label=""Configuration"">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition=""'$(Configuration)|$(Platform)'=='Debug|Win32'"" Label=""Configuration"">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project=""$(VCTargetsPath)\\Microsoft.Cpp.props"" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition=""'$(Configuration)|$(Platform)'=='Debug|Win32'"">.\\exe\\</OutDir>
+    <IntDir Condition=""'$(Configuration)|$(Platform)'=='Debug|Win32'"">.\\bin\\</IntDir>
+    <OutDir Condition=""'$(Configuration)|$(Platform)'=='Packed Release|Win32'"">.\\exe\\</OutDir>
+    <IntDir Condition=""'$(Configuration)|$(Platform)'=='Packed Release|Win32'"">.\\bin\\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition=""'$(Configuration)|$(Platform)'=='Debug|Win32'"">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;WINDOWS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+      <OutputFile>.\\exe\\{projectName}.exe</OutputFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition=""'$(Configuration)|$(Platform)'=='Packed Release|Win32'"">
+    <ClCompile>
+      <Optimization>MinSpace</Optimization>
+      <AdditionalIncludeDirectories>.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <StructMemberAlignment>1Byte</StructMemberAlignment>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>4klang.obj;opengl32.lib;glu32.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>.\\exe\\{projectName}.exe</OutputFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project=""$(VCTargetsPath)\\Microsoft.Cpp.targets"" />
+</Project>";
+    }
+    
+    private string GenerateSlnContent(Project project)
+    {
+        var projectGuid = Guid.NewGuid().ToString("B").ToUpper();
+        var solutionGuid = Guid.NewGuid().ToString("B").ToUpper();
+        var projectName = SanitizeFileName(project.Name);
+        
+        return $@"Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project(""{{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}}"") = ""{projectName}"", ""{projectName}.vcxproj"", ""{projectGuid}""
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Packed Release|Win32 = Packed Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{projectGuid}.Debug|Win32.ActiveCfg = Debug|Win32
+		{projectGuid}.Debug|Win32.Build.0 = Debug|Win32
+		{projectGuid}.Packed Release|Win32.ActiveCfg = Packed Release|Win32
+		{projectGuid}.Packed Release|Win32.Build.0 = Packed Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal";
+    }
+    
+    private string SanitizeFileName(string fileName)
+    {
+        if (string.IsNullOrEmpty(fileName))
+            return "UntitledProject";
+        
+        var invalidChars = Path.GetInvalidFileNameChars();
+        var sanitized = new System.Text.StringBuilder();
+        
+        foreach (var c in fileName)
+        {
+            if (!invalidChars.Contains(c))
+            {
+                sanitized.Append(c);
+            }
+            else
+            {
+                sanitized.Append('_');
+            }
+        }
+        
+        return sanitized.ToString();
+    }
+    
+    private async Task LogAsync(string message)
+    {
+        if (OnLog.HasDelegate)
+        {
+            await OnLog.InvokeAsync(message);
+        }
+    }
+}
+
+<style>
+.import-export-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    display: none;
+}
+
+.import-export-dialog.visible {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dialog-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.dialog-content {
+    position: relative;
+    background: #252526;
+    border: 1px solid #3e3e3e;
+    border-radius: 4px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    z-index: 2001;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #3e3e3e;
+    background: #1e1e1e;
+}
+
+.dialog-header h5 {
+    margin: 0;
+    color: #d4d4d4;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    color: #d4d4d4;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    line-height: 1;
+}
+
+.btn-close:hover {
+    color: #fff;
+    background: #3e3e3e;
+    border-radius: 4px;
+}
+
+.dialog-body {
+    padding: 20px;
+}
+
+.dialog-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #3e3e3e;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.import-export-section {
+    margin-bottom: 20px;
+}
+
+.import-export-section h6 {
+    color: #4ec9b0;
+    margin-bottom: 15px;
+}
+
+.alert {
+    border-radius: 4px;
+    padding: 12px;
+    margin-top: 10px;
+}
+
+.alert-danger {
+    background: #5a1d1d;
+    border: 1px solid #8b1a1a;
+    color: #f48771;
+}
+
+.alert-success {
+    background: #1e4620;
+    border: 1px solid #2d5a2f;
+    color: #4ec9b0;
+}
+</style>
+
