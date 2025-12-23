@@ -55,15 +55,30 @@ A cross-platform web-based development environment for creating 4k intros (demos
   - Status bar with real-time indicators
   - Log panel for build/compile messages
   - Music player controls
+  - **Toolbar** with buttons matching original UI (New, Open, Save, Build, Run, etc.)
+  - **Advanced Camera Controls** (freefly, lockfly modes, reset camera)
+  - **Screenshot Functionality** (capture canvas as PNG/JPG)
+  - **Color Helper Tool** (RGB picker with GLSL vec3 output)
+  - **Line Number Navigation** (toggle line numbers, goto line for errors)
+  - **Editor Features** (Undo/Redo, Find, Fullscreen)
+
+- **Project Import/Export**
+  - Import from original `.kml` format (legacy XML project files)
+  - Export to Visual Studio project format (`.vcxproj`, `.sln`)
+  - Project file conversion utilities
+  - Download projects as ZIP archives
+
+- **Sointu YAML Song Management**
+  - UI for managing Sointu YAML song files
+  - Create, edit, delete song files
+  - Load example songs
+  - Monaco Editor integration for song editing
 
 ### 🚧 In Progress / Planned
 
-- Full project import/export
 - Git integration (BitBucket)
-- Advanced camera controls (freefly, lockfly, etc.)
-- Toolbar buttons matching original UI
-- Screenshot functionality
-- Color helper tools
+- Progress bar in main application (currently only in test page)
+- Real-time synthesis option (AudioWorklet migration)
 
 ### ✅ Storage Features
 
@@ -255,8 +270,17 @@ See [BUILD_WASM_INSTRUCTIONS.md](4kampf.Web/BUILD_WASM_INSTRUCTIONS.md) for deta
    - **WASD** keys to move
    - **Right-click + drag** for mouse look
    - **Shift** for faster movement
+   - Use toolbar buttons for **Freefly** (unrestricted) or **Lockfly** (pitch-restricted) modes
+   - **Reset Camera** button to return to default position
 
-5. **Render Music**
+5. **Use Toolbar Features**
+   - **Screenshot**: Capture the canvas (Shift+Click for JPG format)
+   - **Color Helper**: Open RGB color picker to generate GLSL `vec3` color values
+   - **Line Numbers**: Toggle line number display in shader editors
+   - **Find**: Search within the active shader editor
+   - **Undo/Redo**: Undo and redo editor changes
+
+6. **Render Music**
    - Create or select a Sointu YAML song file
    - Go to **Build → Render Music**
    - Choose rendering mode:
@@ -287,7 +311,7 @@ See [BUILD_WASM_INSTRUCTIONS.md](4kampf.Web/BUILD_WASM_INSTRUCTIONS.md) for deta
    - **File → Save All** saves project and shaders
    - Project stored as JSON in `wwwroot/projects/ProjectName/`
 
-5. **Render Music**
+6. **Render Music**
    - **Build → Render Music** compiles and renders audio
    - If WASM is enabled: Compiles in browser (Web Worker prevents UI blocking), pre-renders audio
    - If server-side: Uses Sointu command-line tools
@@ -295,12 +319,22 @@ See [BUILD_WASM_INSTRUCTIONS.md](4kampf.Web/BUILD_WASM_INSTRUCTIONS.md) for deta
    - Music loads into player automatically
    - **Test Page**: Visit `/test-wasm.html` to see progress bar visualization during compilation
 
+7. **Import/Export Projects**
+   - **File → Import Project**: Import legacy `.kml` format projects
+   - **File → Export Project**: Export to Visual Studio format (`.vcxproj`, `.sln`) as ZIP
+   - Imported projects automatically get default shaders if missing
+   - Exported projects include all shader files and project configuration
+
 ### Keyboard Shortcuts
 
 - **W/A/S/D**: Camera movement
 - **Right-click + Drag**: Mouse look
 - **Shift**: Faster camera movement
+- **Shift + Screenshot**: Capture as JPG (instead of PNG)
 - **Tab**: Focus canvas (for keyboard input)
+- **Ctrl+F**: Find in editor (when editor is focused)
+- **Ctrl+Z**: Undo (when editor is focused)
+- **Ctrl+Y** or **Ctrl+Shift+Z**: Redo (when editor is focused)
 
 ### Settings Panel
 
@@ -432,22 +466,31 @@ See [4kampf.Web/TROUBLESHOOTING.md](4kampf.Web/TROUBLESHOOTING.md) for common is
   - ✅ Efficient audio buffer transfer from worker to main thread
   - 🚧 Future: Progress bar in main application, real-time synthesis option, AudioWorklet migration
 
-- [ ] **Project Import/Export**
-  - Import from original `.kml` format
-  - Export to Visual Studio project format
-  - Project file conversion utilities
+- [x] **Project Import/Export** ✅ **COMPLETE**
+  - ✅ Import from original `.kml` format (legacy XML project files)
+  - ✅ Export to Visual Studio project format (`.vcxproj`, `.sln`)
+  - ✅ Project file conversion utilities
+  - ✅ Download projects as ZIP archives containing all project files
+  - ✅ Automatic default shader provision for legacy imports
+
+- [x] **UI Improvements** ✅ **COMPLETE**
+  - ✅ Toolbar buttons matching original (New, Open, Save, Build, Run, Screenshot, etc.)
+  - ✅ Advanced camera controls (freefly, lockfly modes, reset camera)
+  - ✅ Screenshot functionality (capture canvas as PNG/JPG)
+  - ✅ Color helper tools (RGB picker with GLSL vec3 output, copy to clipboard)
+  - ✅ Line number navigation (toggle line numbers, goto line for errors)
+  - ✅ Editor features (Undo/Redo, Find dialog, Fullscreen mode)
+
+- [x] **Sointu YAML Song Management** ✅ **COMPLETE**
+  - ✅ UI for managing Sointu YAML song files within projects
+  - ✅ Create, edit, delete song files
+  - ✅ Load example songs from repository
+  - ✅ Monaco Editor integration for syntax-highlighted song editing
 
 - [ ] **Git Integration**
   - BitBucket integration (from original)
   - Git operations UI
   - Commit/push/pull functionality
-
-- [ ] **UI Improvements**
-  - Toolbar buttons matching original
-  - Advanced camera controls (freefly, lockfly)
-  - Screenshot functionality
-  - Color helper tools
-  - Line number navigation for errors
 
 ### Medium Priority
 
@@ -456,10 +499,10 @@ See [4kampf.Web/TROUBLESHOOTING.md](4kampf.Web/TROUBLESHOOTING.md) for common is
   - Extract reusable components
   - Create shared models
 
-- [ ] **Sointu YAML Editor**
-  - UI for editing Sointu song files
-  - Visual song editor
-  - Pattern editor
+- [ ] **Sointu YAML Editor (Advanced)**
+  - Visual song editor (pattern-based editing)
+  - Pattern editor with timeline
+  - Instrument editor with visual controls
 
 - [ ] **Performance Optimization**
   - Optimize render loop
@@ -527,5 +570,5 @@ Contributions are welcome! Areas that need help:
 
 ---
 
-**Status**: 🟢 Active Development - Core features implemented including Sointu WebAssembly, enhancements in progress
+**Status**: 🟢 Active Development - Core features implemented including Sointu WebAssembly, Project Import/Export, UI Improvements, and Sointu YAML Management. Git integration and advanced features in progress.
 
