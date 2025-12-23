@@ -128,14 +128,17 @@ namespace kampfpanzerin.git {
             Logger.log("* Creating new Bitbucket repo...");
             Cursor.Current = Cursors.WaitCursor;
             try {
-                RestClient r = new RestClient("https://bitbucket.org/");
-                r.Authenticator = new RestSharp.Authenticators.HttpBasicAuthenticator(credentials.UserName, credentials.Password);
-                RestRequest request = new RestRequest("api/2.0/repositories/" + data.Team + "/" + data.RepoSlug, Method.POST);
+                var options = new RestClientOptions("https://bitbucket.org/")
+                {
+                    Authenticator = new HttpBasicAuthenticator(credentials.UserName, credentials.Password)
+                };
+                RestClient r = new RestClient(options);
+                RestRequest request = new RestRequest("api/2.0/repositories/" + data.Team + "/" + data.RepoSlug, Method.Post);
                 request.AddParameter("name", data.RepoSlug);
                 request.AddParameter("is_private", "true");
                 request.AddParameter("scm", "git");
                 string t = request.ToString();
-                IRestResponse response = r.Post(request);
+                RestResponse response = r.Execute(request);
                 if (response.StatusCode != HttpStatusCode.OK) {
                     Logger.logf("! Couldn't create the repo :(\r\n");
                     Cursor.Current = Cursors.Default;
@@ -155,11 +158,14 @@ namespace kampfpanzerin.git {
 
         public static IEnumerable<RepoDescriptor> GetBitBucketRepos(string team, NetworkCredential credentials) {
             try {
-                RestClient r = new RestClient("https://bitbucket.org/");
-                r.Authenticator = new HttpBasicAuthenticator(credentials.UserName, credentials.Password);
-                RestRequest request = new RestRequest("api/2.0/repositories/" + team, Method.GET);
+                var options = new RestClientOptions("https://bitbucket.org/")
+                {
+                    Authenticator = new HttpBasicAuthenticator(credentials.UserName, credentials.Password)
+                };
+                RestClient r = new RestClient(options);
+                RestRequest request = new RestRequest("api/2.0/repositories/" + team, Method.Get);
                 string t = request.ToString();
-                IRestResponse response = r.Get(request);
+                RestResponse response = r.Execute(request);
                 IDictionary<string, object> o = (IDictionary<string, object>)SimpleJson.DeserializeObject(response.Content);
                 if (response.StatusCode != HttpStatusCode.OK) {
                     return null;
