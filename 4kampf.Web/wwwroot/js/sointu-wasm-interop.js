@@ -72,7 +72,18 @@ window.sointuWasmInterop = {
             
             // Handle messages from worker
             this.worker.onmessage = (e) => {
-                const { type, result, error, id, log } = e.data;
+                const { type, result, error, id, log, percent, message } = e.data;
+                
+                // Handle progress updates
+                if (type === 'progress' && this.progressCallback) {
+                    // Use DotNetObjectReference's invokeMethodAsync directly
+                    if (this.progressCallback.invokeMethodAsync) {
+                        this.progressCallback.invokeMethodAsync('Invoke', percent || 0, message || 'Processing...').catch(err => {
+                            console.warn('Error calling progress callback:', err);
+                        });
+                    }
+                    return;
+                }
                 
                 // Forward log messages from worker to console (for progress bar updates)
                 if (log) {
@@ -113,18 +124,47 @@ window.sointuWasmInterop = {
     },
     
     /**
+     * Progress callback for rendering updates
+     * @type {Object|null}
+     */
+    progressCallback: null,
+    
+    /**
+     * Set progress callback for rendering updates
+     * @param {Object} dotNetRef - DotNetObjectReference with Invoke(percent, message) method
+     */
+    setProgressCallback(dotNetRef) {
+        this.progressCallback = dotNetRef;
+    },
+    
+    /**
      * Load a Sointu YAML song file and compile it
      * @param {string} yamlContent - YAML song content
+     * @param {Function} progressCallback - Optional callback(percentage, message) for progress updates
      * @returns {Promise<boolean>} - True if compilation succeeded
      */
-    async loadSong(yamlContent) {
+    async loadSong(yamlContent, progressCallback = null) {
         if (!this.isInitialized) {
             console.error('WASM module not initialized');
             return false;
         }
         
+        // Store progress callback
+        if (progressCallback) {
+            this.setProgressCallback(progressCallback);
+        }
+        
         try {
             console.log('Compiling song in Web Worker (this may take 10-30 seconds)...');
+                if (this.progressCallback) {
+                    if (typeof DotNet !== 'undefined' && DotNet.invokeMethodAsync) {
+                        DotNet.invokeMethodAsync('_4kampf.Web', 'InvokeProgressCallback', 
+                            this.progressCallback, 0, 'Starting compilation...').catch(() => {});
+                    } else if (this.progressCallback.invokeMethodAsync) {
+                        this.progressCallback.invokeMethodAsync('Invoke', 0, 'Starting compilation...').catch(() => {});
+                    }
+                }
+            
             const result = await this._sendToWorker('compileSong', { yamlContent });
             
             if (result && result.success) {
@@ -146,14 +186,39 @@ window.sointuWasmInterop = {
                     this.envelopeData = result.envelopeData;
                 }
                 
+                if (this.progressCallback) {
+                    if (typeof DotNet !== 'undefined' && DotNet.invokeMethodAsync) {
+                        DotNet.invokeMethodAsync('_4kampf.Web', 'InvokeProgressCallback', 
+                            this.progressCallback, 100, 'Compilation complete!').catch(() => {});
+                    } else if (this.progressCallback.invokeMethodAsync) {
+                        this.progressCallback.invokeMethodAsync('Invoke', 100, 'Compilation complete!').catch(() => {});
+                    }
+                }
+                
                 console.log(`Song loaded: ${this.numInstruments} instruments, duration: ${this.songDuration.toFixed(2)}s`);
                 return true;
             } else {
                 const errorMsg = result?.error || 'Unknown error';
+                if (this.progressCallback) {
+                    if (typeof DotNet !== 'undefined' && DotNet.invokeMethodAsync) {
+                        DotNet.invokeMethodAsync('_4kampf.Web', 'InvokeProgressCallback', 
+                            this.progressCallback, 0, `Error: ${errorMsg}`).catch(() => {});
+                    } else if (this.progressCallback.invokeMethodAsync) {
+                        this.progressCallback.invokeMethodAsync('Invoke', 0, `Error: ${errorMsg}`).catch(() => {});
+                    }
+                }
                 console.error('Song compilation failed:', errorMsg);
                 return false;
             }
         } catch (error) {
+            if (this.progressCallback) {
+                if (typeof DotNet !== 'undefined' && DotNet.invokeMethodAsync) {
+                    DotNet.invokeMethodAsync('_4kampf.Web', 'InvokeProgressCallback', 
+                        this.progressCallback, 0, `Error: ${error.message}`).catch(() => {});
+                } else if (this.progressCallback.invokeMethodAsync) {
+                    this.progressCallback.invokeMethodAsync('Invoke', 0, `Error: ${error.message}`).catch(() => {});
+                }
+            }
             console.error('Error loading song:', error);
             return false;
         }

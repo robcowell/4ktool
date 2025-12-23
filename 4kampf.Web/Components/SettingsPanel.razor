@@ -1,5 +1,6 @@
 @using _4kampf.Web.Services
 @inject SointuService Sointu
+@inject SointuWasmService SointuWasm
 @rendermode InteractiveServer
 
 <div class="settings-panel @(IsVisible ? "visible" : "")">
@@ -50,6 +51,14 @@
                     <input type="checkbox" checked="@UseWasmRendering" @onchange="OnWasmRenderingChanged" />
                     Use WebAssembly Rendering
                 </label>
+                @if (SointuWasm.IsAvailable)
+                {
+                    <span class="setting-hint text-success">✓ WASM available (recommended)</span>
+                }
+                else
+                {
+                    <span class="setting-hint text-warning">⚠ WASM not available - will use server-side rendering</span>
+                }
                 <span class="setting-hint">Client-side real-time synthesis (requires WASM module)</span>
             </div>
             <div class="setting-item">

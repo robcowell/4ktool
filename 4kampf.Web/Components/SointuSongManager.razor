@@ -109,6 +109,7 @@
     private string? editingSong;
     private string? editingContent;
     private bool editorInitialized = false;
+    private DotNetObjectReference<CodeEditorCallback>? editorCallbackRef;
     
     public bool IsVisible
     {
@@ -219,7 +220,7 @@ patch:
                 stereo: 1
 ";
         
-        bool saved = await ProjectFile.SaveSointuSongAsync(currentProject.Name, template, newFileName);
+        bool saved = await ProjectFile.SaveSointuSongAsync(CurrentProject.Name, template, newFileName);
         if (saved)
         {
             await LogAsync($"Created new song: {newFileName}");
@@ -328,8 +329,12 @@ patch:
             if (!editorInitialized)
             {
                 await CodeEditor.InitializeAsync();
-                await CodeEditor.CreateEditorAsync("song-editor", "yaml", content, 
-                    DotNetObjectReference.Create(this));
+                editorCallbackRef = DotNetObjectReference.Create(new CodeEditorCallback(async (value) =>
+                {
+                    editingContent = value;
+                    await InvokeAsync(StateHasChanged);
+                }));
+                await CodeEditor.CreateEditorAsync("song-editor", "yaml", content, editorCallbackRef);
                 editorInitialized = true;
             }
             else

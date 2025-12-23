@@ -1,0 +1,142 @@
+@rendermode InteractiveServer
+
+<div class="rendering-progress-dialog @(IsVisible ? "visible" : "")">
+    <div class="dialog-overlay"></div>
+    <div class="dialog-content">
+        <div class="dialog-header">
+            <h5>Rendering Music</h5>
+        </div>
+        
+        <div class="dialog-body">
+            <div class="progress-section">
+                <div class="progress-text">@StatusMessage</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: @(ProgressPercentage)%"></div>
+                </div>
+                <div class="progress-percentage">@(ProgressPercentage)%</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public int ProgressPercentage { get; set; } = 0;
+    [Parameter] public string StatusMessage { get; set; } = "Initializing...";
+    
+    public void Show()
+    {
+        IsVisible = true;
+        ProgressPercentage = 0;
+        StatusMessage = "Initializing...";
+        InvokeAsync(StateHasChanged);
+    }
+    
+    public void Hide()
+    {
+        IsVisible = false;
+        InvokeAsync(StateHasChanged);
+    }
+    
+    public void UpdateProgress(int percentage, string message)
+    {
+        ProgressPercentage = Math.Clamp(percentage, 0, 100);
+        StatusMessage = message;
+        InvokeAsync(StateHasChanged);
+    }
+}
+
+<style>
+.rendering-progress-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.rendering-progress-dialog.visible {
+    display: flex;
+}
+
+.dialog-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(2px);
+}
+
+.dialog-content {
+    position: relative;
+    background: #252526;
+    border: 1px solid #3e3e3e;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    z-index: 3001;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.dialog-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #3e3e3e;
+    background: #1e1e1e;
+    border-radius: 8px 8px 0 0;
+}
+
+.dialog-header h5 {
+    margin: 0;
+    color: #d4d4d4;
+    font-size: 1.1rem;
+}
+
+.dialog-body {
+    padding: 24px;
+}
+
+.progress-section {
+    text-align: center;
+}
+
+.progress-text {
+    color: #d4d4d4;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+    min-height: 1.5em;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 24px;
+    background: #1e1e1e;
+    border: 1px solid #3e3e3e;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    position: relative;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #007acc 0%, #4ec9b0 100%);
+    transition: width 0.3s ease;
+    border-radius: 4px;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.progress-percentage {
+    color: #4ec9b0;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+</style>
+

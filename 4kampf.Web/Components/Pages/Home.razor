@@ -11,6 +11,8 @@
 @inject MusicEnvelopeService MusicEnvelope
 @inject ProjectFileService ProjectFile
 @inject ProjectImportExportService ImportExport
+@inject IHttpClientFactory HttpClientFactory
+@inject IWebHostEnvironment WebHostEnvironment
 @inject IJSRuntime _jsRuntime
 @implements IAsyncDisposable
 @rendermode InteractiveServer
@@ -18,6 +20,34 @@
 <PageTitle>4kampf - Web Edition</PageTitle>
 
 <div class="app-container">
+    <Toolbar @ref="toolbar"
+             OnNew="CreateNew"
+             OnOpen="OpenProject"
+             OnSave="SaveAll"
+             OnUndo="UndoAction"
+             OnRedo="RedoAction"
+             OnFind="FindAction"
+             OnToggleLineNumbers="ToggleLineNumbers"
+             OnToggleStandardUniforms="ToggleStandardUniforms"
+             OnToggleEnvelopes="ToggleEnvelopes"
+             OnToggleCamera="ToggleCamera"
+             OnBuild="DoBuild"
+             OnRun="Run"
+             OnRenderMusic="RenderMusic"
+             OnScreenshot="ScreenshotAction"
+             OnColorHelper="ColorHelperAction"
+             OnFullscreen="FullscreenAction"
+             OnFreefly="FreeflyAction"
+             OnLockfly="LockflyAction"
+             OnResetCamera="ResetCameraAction"
+             CanUndo="@canUndo"
+             CanRedo="@canRedo"
+             ShowLineNumbers="@showLineNumbers"
+             EnableStandardUniforms="@enableStandardUniforms"
+             EnableEnvelopeSync="@enableEnvelopeSync"
+             EnableCamControls="@enableCamControls"
+             CameraMode="@cameraMode" />
+    
     <div class="menu-bar">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
@@ -169,7 +199,10 @@
                         tabindex="0"></canvas>
             </div>
             <div class="music-player-container">
-                <MusicPlayerComponent @ref="musicPlayer" />
+                <MusicPlayerComponent @ref="musicPlayer" 
+                                     OnPlayPause="OnMusicPlayerPlayPause"
+                                     IsWasmMode="@(currentProject?.UseWasmRendering ?? false)"
+                                     IsMusicReady="@isMusicReady" />
             </div>
         </div>
     </div>
@@ -193,6 +226,12 @@
                               CurrentProject="@currentProject"
                               ProjectImported="OnProjectImported"
                               OnLog="AddLog" />
+    
+    <ColorHelper @ref="colorHelper"
+                OnColorSelected="OnColorSelected"
+                OnReplace="OnColorReplace" />
+    
+    <RenderingProgressDialog @ref="renderingProgressDialog" />
 </div>
 
 @code {
@@ -200,6 +239,22 @@
     private MusicPlayerComponent? musicPlayer;
     private SointuSongManager? songManager;
     private ProjectImportExportDialog? importExportDialog;
+    private Toolbar? toolbar;
+    private ColorHelper? colorHelper;
+    private RenderingProgressDialog? renderingProgressDialog;
+    
+    private bool canUndo = false;
+    private bool canRedo = false;
+    private bool showLineNumbers = true;
+    private string cameraMode = "freefly";
+    private bool isMusicPlaying = false;
+    
+    private async Task OnMusicPlayerPlayPause(bool isPlaying)
+    {
+        isMusicPlaying = isPlaying;
+        // Also control shader rendering if needed
+        // The render loop should already be running, but we can pause/resume it if needed
+    }
     
     private string vertexShaderCode = "";
     private string fragmentShaderCode = "";
@@ -220,7 +275,7 @@
     private bool usePostProcess = true;
     private bool useVertexShader = true;
     private bool enableLooping = false;
-    private bool useWasmRendering = false;
+    private bool useWasmRendering = true; // Default to WASM rendering
     private DotNetObjectReference<CodeEditorCallback>? vertCallbackRef;
     private DotNetObjectReference<CodeEditorCallback>? fragCallbackRef;
     private DotNetObjectReference<CodeEditorCallback>? postCallbackRef;
@@ -330,10 +385,62 @@
         {
             AddLog("Loading default sample project...");
             
+            // Create or get the default project
+            if (currentProject == null)
+            {
+                currentProject = ProjectFile.CreateNewProject("Default Project");
+                currentProjectName = currentProject.Name;
+            }
+            
             // Load default shaders
             vertexShaderCode = ProjectService.DefaultVertexShader;
             fragmentShaderCode = ProjectService.DefaultFragmentShader;
             postProcessShaderCode = ProjectService.DefaultPostProcessShader;
+            
+            // Update project with shaders
+            currentProject.VertexShader = vertexShaderCode;
+            currentProject.FragmentShader = fragmentShaderCode;
+            currentProject.PostProcessShader = postProcessShaderCode;
+            
+            // Set default Sointu song to physics_girl_st.yml
+            string defaultSongFile = "physics_girl_st.yml";
+            currentProject.SointuSongFile = defaultSongFile;
+            
+            // Load the example song content and save it to the project
+            try
+            {
+                // Read the file directly from wwwroot/examples
+                string exampleFilePath = Path.Combine(WebHostEnvironment.WebRootPath, "examples", defaultSongFile);
+                
+                if (File.Exists(exampleFilePath))
+                {
+                    string songContent = await File.ReadAllTextAsync(exampleFilePath);
+                    
+                    // Save the song file to the project directory
+                    bool saved = await ProjectFile.SaveSointuSongAsync(currentProject.Name, songContent, defaultSongFile);
+                    if (saved)
+                    {
+                        AddLog($"Default song file '{defaultSongFile}' loaded successfully");
+                    }
+                    else
+                    {
+                        AddLog($"Warning: Could not save default song file '{defaultSongFile}'");
+                    }
+                }
+                else
+                {
+                    AddLog($"Warning: Example song file not found at '{exampleFilePath}'");
+                    // Continue without the song file - user can load it later
+                }
+            }
+            catch (Exception ex)
+            {
+                AddLog($"Warning: Could not load example song '{defaultSongFile}': {ex.Message}");
+                // Continue without the song file - user can load it later
+            }
+            
+            // Save the project
+            await ProjectFile.SaveProjectAsync(currentProject);
             
             StateHasChanged();
             
@@ -545,6 +652,13 @@
         }
     }
     
+    private async Task OnProjectChanged(Project updatedProject)
+    {
+        currentProject = updatedProject;
+        await ProjectFile.SaveProjectAsync(currentProject);
+        StateHasChanged();
+    }
+    
     private async Task SaveAll()
     {
         try
@@ -662,7 +776,7 @@
         selectedSynth = project.Synth.ToString().ToLower();
         
         // Save imported project
-        await SaveProjectAsync();
+        await ProjectFile.SaveProjectAsync(currentProject);
         
         AddLog($"Project imported: {project.Name}");
         
@@ -682,15 +796,32 @@
                 currentProject = ProjectFile.CreateNewProject(currentProjectName);
             }
             
-            // Check if we should use WASM rendering
-            bool useWasm = currentProject.UseWasmRendering && SointuWasm.IsAvailable;
-            
-            if (useWasm)
+            // Prefer WASM rendering when available (default and recommended)
+            if (SointuWasm.IsAvailable)
             {
+                // WASM is available - use it (preferred method)
+                AddLog("Using WebAssembly rendering (client-side)...");
+                
+                // Update project setting to prefer WASM if not already set
+                if (!currentProject.UseWasmRendering)
+                {
+                    currentProject.UseWasmRendering = true;
+                    useWasmRendering = true;
+                    await ProjectFile.SaveProjectAsync(currentProject);
+                }
+                
                 await RenderMusicWasm();
+            }
+            else if (currentProject.UseWasmRendering)
+            {
+                // WASM was requested but not available - try server-side
+                AddLog("WASM rendering requested but not available. Trying server-side rendering...");
+                await RenderMusicServer();
             }
             else
             {
+                // Use server-side rendering
+                AddLog("Using server-side rendering...");
                 await RenderMusicServer();
             }
         }
@@ -701,16 +832,29 @@
         }
     }
     
+    private bool isMusicReady = false;
+    
     private async Task RenderMusicWasm()
     {
         try
         {
+            // Show progress dialog
+            if (renderingProgressDialog != null)
+            {
+                renderingProgressDialog.Show();
+                await InvokeAsync(StateHasChanged);
+            }
+            
             AddLog("Using WebAssembly rendering (client-side)...");
             
             // Ensure we have a project
             if (currentProject == null)
             {
                 AddLog("Error: No project loaded");
+                if (renderingProgressDialog != null)
+                {
+                    renderingProgressDialog.Hide();
+                }
                 return;
             }
             
@@ -729,12 +873,37 @@
             {
                 AddLog("Error: No Sointu song file found.");
                 AddLog("Please create or select a Sointu YAML song file first.");
+                if (renderingProgressDialog != null)
+                {
+                    renderingProgressDialog.Hide();
+                }
                 return;
             }
             
-            // Load song into WASM module
+            // Load song into WASM module with progress callback
             AddLog("Loading song into WASM module...");
-            bool loaded = await SointuWasm.LoadSongAsync(songYamlContent);
+            
+            // Set up progress callback
+            Action<int, string> progressCallback = (percent, message) =>
+            {
+                if (renderingProgressDialog != null)
+                {
+                    renderingProgressDialog.UpdateProgress(percent, message);
+                    // Force UI update on the main thread (fire and forget)
+                    _ = InvokeAsync(StateHasChanged);
+                }
+                AddLog($"[{percent}%] {message}");
+            };
+            
+            bool loaded = await SointuWasm.LoadSongAsync(songYamlContent, progressCallback);
+            
+            // Hide progress dialog
+            if (renderingProgressDialog != null)
+            {
+                renderingProgressDialog.Hide();
+                await InvokeAsync(StateHasChanged);
+            }
+            
             if (!loaded)
             {
                 AddLog("Error: Failed to load song into WASM module");
@@ -750,27 +919,24 @@
                 AddLog($"Song loaded: {numInstruments} instrument(s)");
             }
             
-            // Start playback
-            AddLog("Starting real-time synthesis...");
-            bool playing = await SointuWasm.PlayAsync();
-            if (playing)
-            {
-                AddLog("✓ Real-time music synthesis started!");
-                AddLog("Note: Envelope sync will work automatically during playback");
-            }
-            else
-            {
-                AddLog("Error: Failed to start playback");
-            }
+            // Mark music as ready (but don't auto-play)
+            isMusicReady = true;
+            AddLog("✓ Song rendered successfully! Click Play to start preview.");
             
             // Save project with updated settings
             await ProjectFile.SaveProjectAsync(currentProject);
+            StateHasChanged();
         }
         catch (Exception ex)
         {
             AddLog($"Error in WASM rendering: {ex.Message}");
+            if (renderingProgressDialog != null)
+            {
+                renderingProgressDialog.Hide();
+            }
         }
     }
+    
     
     private async Task RenderMusicServer()
     {
@@ -882,6 +1048,212 @@
     
     private void DoBuild() => AddLog("Build");
     private void Run() => AddLog("Run");
+    
+    // Toolbar handlers
+    private async Task UndoAction()
+    {
+        string activeEditor = GetActiveEditorId();
+        if (!string.IsNullOrEmpty(activeEditor))
+        {
+            await CodeEditor.UndoAsync(activeEditor);
+            await UpdateUndoRedoState();
+        }
+    }
+    
+    private async Task RedoAction()
+    {
+        string activeEditor = GetActiveEditorId();
+        if (!string.IsNullOrEmpty(activeEditor))
+        {
+            await CodeEditor.RedoAsync(activeEditor);
+            await UpdateUndoRedoState();
+        }
+    }
+    
+    private async Task FindAction()
+    {
+        string activeEditor = GetActiveEditorId();
+        if (!string.IsNullOrEmpty(activeEditor))
+        {
+            await CodeEditor.ShowFindAsync(activeEditor);
+        }
+    }
+    
+    private async Task ToggleLineNumbers()
+    {
+        showLineNumbers = !showLineNumbers;
+        await CodeEditor.SetLineNumbersAsync("vert-editor", showLineNumbers);
+        await CodeEditor.SetLineNumbersAsync("frag-editor", showLineNumbers);
+        await CodeEditor.SetLineNumbersAsync("post-editor", showLineNumbers);
+    }
+    
+    private void ToggleStandardUniforms()
+    {
+        enableStandardUniforms = !enableStandardUniforms;
+        if (currentProject != null)
+        {
+            currentProject.EnableStandardUniforms = enableStandardUniforms;
+        }
+    }
+    
+    private void ToggleEnvelopes()
+    {
+        enableEnvelopeSync = !enableEnvelopeSync;
+        if (currentProject != null)
+        {
+            currentProject.EnableEnvelopeSync = enableEnvelopeSync;
+        }
+    }
+    
+    private void ToggleCamera()
+    {
+        enableCamControls = !enableCamControls;
+        if (currentProject != null)
+        {
+            currentProject.EnableCamControls = enableCamControls;
+        }
+    }
+    
+    private async Task ScreenshotAction()
+    {
+        try
+        {
+            // Check if shift is pressed (for JPG)
+            bool isJpg = shiftPressed;
+            string format = isJpg ? "jpg" : "png";
+            
+            byte[]? screenshotData = await WebGL.CaptureScreenshotAsync(format);
+            if (screenshotData != null)
+            {
+                string base64 = Convert.ToBase64String(screenshotData);
+                string mimeType = isJpg ? "image/jpeg" : "image/png";
+                string filename = $"screenshot_{DateTime.Now:yyyyMMddHHmmss}.{(isJpg ? "jpg" : "png")}";
+                
+                await _jsRuntime.InvokeVoidAsync("downloadFile", filename, 
+                    $"data:{mimeType};base64,{base64}", mimeType);
+                
+                AddLog($"Screenshot saved: {filename}");
+            }
+            else
+            {
+                AddLog("Failed to capture screenshot");
+            }
+        }
+        catch (Exception ex)
+        {
+            AddLog($"Error capturing screenshot: {ex.Message}");
+        }
+    }
+    
+    private void ColorHelperAction()
+    {
+        if (colorHelper == null) return;
+        
+        // Try to parse selected text as vec3 color
+        string? selectedText = GetSelectedText();
+        double? r = null, g = null, b = null;
+        bool isReplacing = false;
+        
+        if (!string.IsNullOrEmpty(selectedText))
+        {
+            // Try to parse vec3(r, g, b) format
+            var match = System.Text.RegularExpressions.Regex.Match(
+                selectedText, 
+                @"vec3\s*\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*\)",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            
+            if (match.Success)
+            {
+                if (float.TryParse(match.Groups[1].Value, out float rf) &&
+                    float.TryParse(match.Groups[2].Value, out float gf) &&
+                    float.TryParse(match.Groups[3].Value, out float bf))
+                {
+                    r = rf;
+                    g = gf;
+                    b = bf;
+                    isReplacing = true;
+                }
+            }
+        }
+        
+        colorHelper.Show(r, g, b, isReplacing);
+    }
+    
+    private async Task OnColorSelected(string colorValue)
+    {
+        // Insert color value at cursor position
+        string activeEditor = GetActiveEditorId();
+        if (!string.IsNullOrEmpty(activeEditor))
+        {
+            // Monaco editor insert text at cursor
+            await _jsRuntime.InvokeVoidAsync("monacoLoader.insertText", activeEditor, colorValue);
+        }
+    }
+    
+    private async Task OnColorReplace()
+    {
+        // Replace selected text with color value
+        string activeEditor = GetActiveEditorId();
+        if (!string.IsNullOrEmpty(activeEditor))
+        {
+            // Get color from helper and replace selection
+            if (colorHelper != null)
+            {
+                string colorValue = $"vec3({colorHelper.R:F3}, {colorHelper.G:F3}, {colorHelper.B:F3})";
+                await _jsRuntime.InvokeVoidAsync("monacoLoader.replaceSelection", activeEditor, colorValue);
+            }
+        }
+    }
+    
+    private void FullscreenAction()
+    {
+        _jsRuntime.InvokeVoidAsync("toggleFullscreen", "preview-canvas");
+    }
+    
+    private async Task FreeflyAction()
+    {
+        cameraMode = "freefly";
+        await Camera.SetModeAsync("freefly");
+        AddLog("Camera mode: Freefly");
+    }
+    
+    private async Task LockflyAction()
+    {
+        cameraMode = "lockfly";
+        await Camera.SetModeAsync("lockfly");
+        AddLog("Camera mode: Lockfly (horizontal only)");
+    }
+    
+    private async Task ResetCameraAction()
+    {
+        await Camera.ResetAsync();
+        AddLog("Camera reset");
+    }
+    
+    private string GetActiveEditorId()
+    {
+        // Determine which editor tab is active based on Bootstrap tab state
+        // Check which tab button has 'active' class
+        return "frag-editor"; // Default to fragment shader - TODO: track active tab
+    }
+    
+    private string? GetSelectedText()
+    {
+        // Get selected text from active Monaco editor
+        // This would need JavaScript interop
+        return null;
+    }
+    
+    private async Task UpdateUndoRedoState()
+    {
+        string activeEditor = GetActiveEditorId();
+        if (!string.IsNullOrEmpty(activeEditor))
+        {
+            canUndo = await CodeEditor.CanUndoAsync(activeEditor);
+            canRedo = await CodeEditor.CanRedoAsync(activeEditor);
+            StateHasChanged();
+        }
+    }
     private void ClearLog() => logEntries.Clear();
     
     private void ToggleSettings()
@@ -1091,12 +1463,14 @@
         align-items: center;
         justify-content: center;
         background-color: #000;
+        position: relative;
     }
 
     #preview-canvas {
         max-width: 100%;
         max-height: 100%;
     }
+    
 
     .music-player-container {
         height: 100px;

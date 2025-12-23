@@ -1,0 +1,183 @@
+@rendermode InteractiveServer
+
+<div class="toolbar">
+    <div class="toolbar-group">
+        <button class="toolbar-btn" @onclick="OnNew" title="New Project" type="button">
+            <span class="toolbar-icon">📄</span>
+        </button>
+        <button class="toolbar-btn" @onclick="OnOpen" title="Open Project" type="button">
+            <span class="toolbar-icon">📂</span>
+        </button>
+        <button class="toolbar-btn" @onclick="OnSave" title="Save All" type="button">
+            <span class="toolbar-icon">💾</span>
+        </button>
+    </div>
+    
+    <div class="toolbar-separator"></div>
+    
+    <div class="toolbar-group">
+        <button class="toolbar-btn" @onclick="OnUndo" title="Undo" type="button" disabled="@(!CanUndo)">
+            <span class="toolbar-icon">↶</span>
+        </button>
+        <button class="toolbar-btn" @onclick="OnRedo" title="Redo" type="button" disabled="@(!CanRedo)">
+            <span class="toolbar-icon">↷</span>
+        </button>
+        <button class="toolbar-btn" @onclick="OnFind" title="Find" type="button">
+            <span class="toolbar-icon">🔍</span>
+        </button>
+    </div>
+    
+    <div class="toolbar-separator"></div>
+    
+    <div class="toolbar-group">
+        <button class="toolbar-btn @(ShowLineNumbers ? "active" : "")" @onclick="OnToggleLineNumbers" title="Toggle Line Numbers" type="button">
+            <span class="toolbar-icon">#</span>
+        </button>
+        <button class="toolbar-btn @(EnableStandardUniforms ? "active" : "")" @onclick="OnToggleStandardUniforms" title="Standard Uniforms" type="button">
+            <span class="toolbar-icon">U</span>
+        </button>
+        <button class="toolbar-btn @(EnableEnvelopeSync ? "active" : "")" @onclick="OnToggleEnvelopes" title="Envelope Sync" type="button">
+            <span class="toolbar-icon">📊</span>
+        </button>
+        <button class="toolbar-btn @(EnableCamControls ? "active" : "")" @onclick="OnToggleCamera" title="Camera Controls" type="button">
+            <span class="toolbar-icon">📷</span>
+        </button>
+    </div>
+    
+    <div class="toolbar-separator"></div>
+    
+    <div class="toolbar-group">
+        <button class="toolbar-btn" @onclick="OnBuild" title="Build" type="button">
+            <span class="toolbar-icon">🔨</span>
+        </button>
+        <button class="toolbar-btn" @onclick="OnRun" title="Run" type="button">
+            <span class="toolbar-icon">▶</span>
+        </button>
+        <button class="toolbar-btn" @onclick="OnRenderMusic" title="Render Music" type="button">
+            <span class="toolbar-icon">🎵</span>
+        </button>
+    </div>
+    
+    <div class="toolbar-separator"></div>
+    
+    <div class="toolbar-group">
+        <button class="toolbar-btn" @onclick="OnScreenshot" title="Screenshot (Shift+Click for JPG)" type="button">
+            <span class="toolbar-icon">📸</span>
+        </button>
+        <button class="toolbar-btn" @onclick="OnColorHelper" title="Color Helper" type="button">
+            <span class="toolbar-icon">🎨</span>
+        </button>
+        <button class="toolbar-btn" @onclick="OnFullscreen" title="Fullscreen" type="button">
+            <span class="toolbar-icon">⛶</span>
+        </button>
+    </div>
+    
+    <div class="toolbar-separator"></div>
+    
+    <div class="toolbar-group">
+        <button class="toolbar-btn @(CameraMode == "freefly" ? "active" : "")" @onclick="OnFreefly" title="Freefly Camera" type="button">
+            <span class="toolbar-icon">🕊</span>
+        </button>
+        <button class="toolbar-btn @(CameraMode == "lockfly" ? "active" : "")" @onclick="OnLockfly" title="Lockfly Camera" type="button">
+            <span class="toolbar-icon">🔒</span>
+        </button>
+        <button class="toolbar-btn" @onclick="OnResetCamera" title="Reset Camera" type="button">
+            <span class="toolbar-icon">↺</span>
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnNew { get; set; }
+    [Parameter] public EventCallback OnOpen { get; set; }
+    [Parameter] public EventCallback OnSave { get; set; }
+    [Parameter] public EventCallback OnUndo { get; set; }
+    [Parameter] public EventCallback OnRedo { get; set; }
+    [Parameter] public EventCallback OnFind { get; set; }
+    [Parameter] public EventCallback OnToggleLineNumbers { get; set; }
+    [Parameter] public EventCallback OnToggleStandardUniforms { get; set; }
+    [Parameter] public EventCallback OnToggleEnvelopes { get; set; }
+    [Parameter] public EventCallback OnToggleCamera { get; set; }
+    [Parameter] public EventCallback OnBuild { get; set; }
+    [Parameter] public EventCallback OnRun { get; set; }
+    [Parameter] public EventCallback OnRenderMusic { get; set; }
+    [Parameter] public EventCallback OnScreenshot { get; set; }
+    [Parameter] public EventCallback OnColorHelper { get; set; }
+    [Parameter] public EventCallback OnFullscreen { get; set; }
+    [Parameter] public EventCallback OnFreefly { get; set; }
+    [Parameter] public EventCallback OnLockfly { get; set; }
+    [Parameter] public EventCallback OnResetCamera { get; set; }
+    
+    [Parameter] public bool CanUndo { get; set; } = false;
+    [Parameter] public bool CanRedo { get; set; } = false;
+    [Parameter] public bool ShowLineNumbers { get; set; } = false;
+    [Parameter] public bool EnableStandardUniforms { get; set; } = true;
+    [Parameter] public bool EnableEnvelopeSync { get; set; } = false;
+    [Parameter] public bool EnableCamControls { get; set; } = true;
+    [Parameter] public string CameraMode { get; set; } = "freefly";
+}
+
+<style>
+.toolbar {
+    display: flex;
+    align-items: center;
+    background: #2d2d30;
+    border-bottom: 1px solid #3e3e3e;
+    padding: 4px 8px;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.toolbar-group {
+    display: flex;
+    gap: 2px;
+}
+
+.toolbar-separator {
+    width: 1px;
+    height: 24px;
+    background: #3e3e3e;
+    margin: 0 4px;
+}
+
+.toolbar-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #d4d4d4;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    font-size: 14px;
+    transition: all 0.15s;
+}
+
+.toolbar-btn:hover:not(:disabled) {
+    background: #3e3e3e;
+    border-color: #007acc;
+}
+
+.toolbar-btn:active:not(:disabled) {
+    background: #007acc;
+}
+
+.toolbar-btn.active {
+    background: #0e639c;
+    border-color: #1177bb;
+}
+
+.toolbar-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.toolbar-icon {
+    display: inline-block;
+    line-height: 1;
+}
+</style>
+

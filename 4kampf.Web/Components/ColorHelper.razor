@@ -1,0 +1,262 @@
+@using _4kampf.Shared.Math
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+
+<div class="color-helper-dialog @(IsVisible ? "visible" : "")">
+    <div class="dialog-overlay" @onclick="Close"></div>
+    <div class="dialog-content">
+        <div class="dialog-header">
+            <h5>Color Helper</h5>
+            <button class="btn-close" @onclick="Close" type="button">×</button>
+        </div>
+        
+        <div class="dialog-body">
+            <div class="color-picker-section">
+                <div class="color-preview" style="background-color: rgb(@((int)(R * 255)), @((int)(G * 255)), @((int)(B * 255)))"></div>
+                <div class="color-values">
+                    <div class="color-input-group">
+                        <label>R: <input type="number" @bind="R" @bind:event="oninput" min="0" max="1" step="0.01" /></label>
+                        <label>G: <input type="number" @bind="G" @bind:event="oninput" min="0" max="1" step="0.01" /></label>
+                        <label>B: <input type="number" @bind="B" @bind:event="oninput" min="0" max="1" step="0.01" /></label>
+                    </div>
+                    <div class="color-output">
+                        <code>vec3(@R.ToString("F3"), @G.ToString("F3"), @B.ToString("F3"))</code>
+                        <button class="btn btn-sm btn-primary" @onclick="CopyToClipboard">Copy</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="color-sliders">
+                <div class="slider-group">
+                    <label>Red</label>
+                    <input type="range" @bind="R" @bind:event="oninput" min="0" max="1" step="0.01" />
+                </div>
+                <div class="slider-group">
+                    <label>Green</label>
+                    <input type="range" @bind="G" @bind:event="oninput" min="0" max="1" step="0.01" />
+                </div>
+                <div class="slider-group">
+                    <label>Blue</label>
+                    <input type="range" @bind="B" @bind:event="oninput" min="0" max="1" step="0.01" />
+                </div>
+            </div>
+            
+            @if (IsReplacing)
+            {
+                <div class="replace-section">
+                    <p>Replace selected text with color value?</p>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" @onclick="ReplaceText">Replace</button>
+                        <button class="btn btn-secondary" @onclick="Close">Cancel</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public EventCallback<string> OnColorSelected { get; set; }
+    [Parameter] public EventCallback OnReplace { get; set; }
+    
+    public double R { get; set; } = 0.5;
+    public double G { get; set; } = 0.5;
+    public double B { get; set; } = 0.5;
+    private bool IsReplacing { get; set; } = false;
+    
+    public void Show(double? r = null, double? g = null, double? b = null, bool isReplacing = false)
+    {
+        if (r.HasValue) R = r.Value;
+        if (g.HasValue) G = g.Value;
+        if (b.HasValue) B = b.Value;
+        IsReplacing = isReplacing;
+        IsVisible = true;
+    }
+    
+    public void Close()
+    {
+        IsVisible = false;
+    }
+    
+    private async Task CopyToClipboard()
+    {
+        string colorValue = $"vec3({R:F3}, {G:F3}, {B:F3})";
+        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", colorValue);
+    }
+    
+    private async Task ReplaceText()
+    {
+        if (OnReplace.HasDelegate)
+        {
+            await OnReplace.InvokeAsync();
+        }
+        string colorValue = $"vec3({R:F3}, {G:F3}, {B:F3})";
+        if (OnColorSelected.HasDelegate)
+        {
+            await OnColorSelected.InvokeAsync(colorValue);
+        }
+        Close();
+    }
+}
+
+<style>
+.color-helper-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    display: none;
+}
+
+.color-helper-dialog.visible {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dialog-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.dialog-content {
+    position: relative;
+    background: #252526;
+    border: 1px solid #3e3e3e;
+    border-radius: 4px;
+    width: 90%;
+    max-width: 400px;
+    z-index: 2001;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #3e3e3e;
+    background: #1e1e1e;
+}
+
+.dialog-header h5 {
+    margin: 0;
+    color: #d4d4d4;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    color: #d4d4d4;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    line-height: 1;
+}
+
+.btn-close:hover {
+    color: #fff;
+    background: #3e3e3e;
+    border-radius: 4px;
+}
+
+.dialog-body {
+    padding: 20px;
+}
+
+.color-picker-section {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.color-preview {
+    width: 80px;
+    height: 80px;
+    border: 2px solid #3e3e3e;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.color-values {
+    flex: 1;
+}
+
+.color-input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.color-input-group label {
+    color: #d4d4d4;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.color-input-group input {
+    width: 80px;
+    background: #1e1e1e;
+    border: 1px solid #3e3e3e;
+    color: #d4d4d4;
+    padding: 4px 8px;
+    border-radius: 2px;
+}
+
+.color-output {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.color-output code {
+    background: #1e1e1e;
+    padding: 6px 10px;
+    border-radius: 2px;
+    color: #4ec9b0;
+    flex: 1;
+}
+
+.color-sliders {
+    margin-bottom: 20px;
+}
+
+.slider-group {
+    margin-bottom: 15px;
+}
+
+.slider-group label {
+    display: block;
+    color: #d4d4d4;
+    margin-bottom: 5px;
+}
+
+.slider-group input[type="range"] {
+    width: 100%;
+}
+
+.replace-section {
+    padding-top: 15px;
+    border-top: 1px solid #3e3e3e;
+}
+
+.replace-section p {
+    color: #d4d4d4;
+    margin-bottom: 10px;
+}
+
+.gap-2 {
+    gap: 10px;
+}
+</style>
+

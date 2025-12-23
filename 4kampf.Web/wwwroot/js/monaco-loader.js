@@ -86,6 +86,79 @@ window.monacoLoader = {
         return editor ? editor.getValue() : '';
     },
     
+    destroyEditor: function(containerId) {
+        this.dispose(containerId);
+    },
+    
+    undo: function(containerId) {
+        const editor = this.editors.get(containerId);
+        if (editor) {
+            editor.trigger('source', 'undo', null);
+        }
+    },
+    
+    redo: function(containerId) {
+        const editor = this.editors.get(containerId);
+        if (editor) {
+            editor.trigger('source', 'redo', null);
+        }
+    },
+    
+    canUndo: function(containerId) {
+        const editor = this.editors.get(containerId);
+        return editor ? editor.getModel()?.canUndo() || false : false;
+    },
+    
+    canRedo: function(containerId) {
+        const editor = this.editors.get(containerId);
+        return editor ? editor.getModel()?.canRedo() || false : false;
+    },
+    
+    showFind: function(containerId) {
+        const editor = this.editors.get(containerId);
+        if (editor) {
+            editor.getAction('actions.find').run();
+        }
+    },
+    
+    setLineNumbers: function(containerId, visible) {
+        const editor = this.editors.get(containerId);
+        if (editor) {
+            editor.updateOptions({ lineNumbers: visible ? 'on' : 'off' });
+        }
+    },
+    
+    gotoLine: function(containerId, lineNumber) {
+        const editor = this.editors.get(containerId);
+        if (editor) {
+            editor.revealLineInCenter(lineNumber);
+            editor.setPosition({ lineNumber: lineNumber, column: 1 });
+            editor.focus();
+        }
+    },
+    
+    insertText: function(containerId, text) {
+        const editor = this.editors.get(containerId);
+        if (editor) {
+            const selection = editor.getSelection();
+            editor.executeEdits('', [{
+                range: selection,
+                text: text
+            }]);
+        }
+    },
+    
+    replaceSelection: function(containerId, text) {
+        const editor = this.editors.get(containerId);
+        if (editor) {
+            const selection = editor.getSelection();
+            editor.executeEdits('', [{
+                range: selection,
+                text: text
+            }]);
+        }
+    },
+    
     dispose: function(containerId) {
         const editor = this.editors.get(containerId);
         if (editor) {

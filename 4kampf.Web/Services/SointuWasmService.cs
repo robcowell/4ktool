@@ -59,8 +59,9 @@ public class SointuWasmService : IAsyncDisposable
     /// Load a Sointu YAML song file and compile it for synthesis.
     /// </summary>
     /// <param name="yamlContent">YAML song content</param>
+    /// <param name="progressCallback">Optional callback for progress updates (percentage, message)</param>
     /// <returns>True if song loaded successfully</returns>
-    public async Task<bool> LoadSongAsync(string yamlContent)
+    public async Task<bool> LoadSongAsync(string yamlContent, Action<int, string>? progressCallback = null)
     {
         if (!_isInitialized)
         {
@@ -70,6 +71,13 @@ public class SointuWasmService : IAsyncDisposable
 
         try
         {
+            // Set up progress callback if provided
+            if (progressCallback != null)
+            {
+                var callbackRef = DotNetObjectReference.Create(new ProgressCallback(progressCallback));
+                await _jsRuntime.InvokeVoidAsync("sointuWasmInterop.setProgressCallback", callbackRef);
+            }
+            
             var result = await _jsRuntime.InvokeAsync<bool>("sointuWasmInterop.loadSong", yamlContent);
             
             if (result)
@@ -87,6 +95,22 @@ public class SointuWasmService : IAsyncDisposable
         {
             _logger?.LogError(ex, "Error loading song into Sointu WASM module");
             return false;
+        }
+    }
+    
+    private class ProgressCallback
+    {
+        private readonly Action<int, string> _callback;
+        
+        public ProgressCallback(Action<int, string> callback)
+        {
+            _callback = callback;
+        }
+        
+        [JSInvokable]
+        public void Invoke(int percent, string message)
+        {
+            _callback(percent, message);
         }
     }
 
