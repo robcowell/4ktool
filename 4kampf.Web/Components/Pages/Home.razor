@@ -10,6 +10,7 @@
 @inject SointuWasmService SointuWasm
 @inject MusicEnvelopeService MusicEnvelope
 @inject ProjectFileService ProjectFile
+@inject ProjectImportExportService ImportExport
 @inject IJSRuntime _jsRuntime
 @implements IAsyncDisposable
 @rendermode InteractiveServer
@@ -35,9 +36,10 @@
                                 <li><a class="dropdown-item" href="#" @onclick="OpenProject" @onclick:preventDefault="true">Open</a></li>
                                 <li><a class="dropdown-item" href="#" @onclick="SaveAll" @onclick:preventDefault="true">Save All</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#" @onclick="ManageSointuSong" @onclick:preventDefault="true">Manage Sointu Song...</a></li>
+                                <li><a class="dropdown-item" href="#" @onclick="ImportProject" @onclick:preventDefault="true">Import from .kml...</a></li>
+                                <li><a class="dropdown-item" href="#" @onclick="ExportProject" @onclick:preventDefault="true">Export to VS...</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#" @onclick="ExportProject" @onclick:preventDefault="true">Export to VS</a></li>
+                                <li><a class="dropdown-item" href="#" @onclick="ManageSointuSong" @onclick:preventDefault="true">Manage Sointu Song...</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
@@ -186,11 +188,18 @@
                       CurrentProject="@currentProject"
                       ProjectChanged="OnProjectChanged"
                       OnLog="AddLog" />
+    
+    <ProjectImportExportDialog @ref="importExportDialog"
+                              CurrentProject="@currentProject"
+                              ProjectImported="OnProjectImported"
+                              OnLog="AddLog" />
 </div>
 
 @code {
     private ElementReference previewCanvas;
     private MusicPlayerComponent? musicPlayer;
+    private SointuSongManager? songManager;
+    private ProjectImportExportDialog? importExportDialog;
     
     private string vertexShaderCode = "";
     private string fragmentShaderCode = "";
@@ -607,7 +616,59 @@
         }
     }
     
-    private void ExportProject() => AddLog("Export Project");
+    private void ImportProject()
+    {
+        if (importExportDialog != null)
+        {
+            importExportDialog.Show();
+        }
+        else
+        {
+            AddLog("Import/Export dialog not available");
+        }
+    }
+    
+    private void ExportProject()
+    {
+        if (importExportDialog != null)
+        {
+            importExportDialog.Show();
+        }
+        else
+        {
+            AddLog("Import/Export dialog not available");
+        }
+    }
+    
+    private async Task OnProjectImported(Project project)
+    {
+        currentProject = project;
+        currentProjectName = project.Name;
+        
+        // Load shaders from project
+        vertexShaderCode = project.VertexShader;
+        fragmentShaderCode = project.FragmentShader;
+        postProcessShaderCode = project.PostProcessShader;
+        
+        // Update UI state
+        enableStandardUniforms = project.EnableStandardUniforms;
+        enableCamControls = project.EnableCamControls;
+        enableEnvelopeSync = project.EnableEnvelopeSync;
+        usePostProcess = project.UsePostProcess;
+        useVertexShader = project.UseVertexShader;
+        enableLooping = project.EnableLooping;
+        useWasmRendering = project.UseWasmRendering;
+        
+        selectedSynth = project.Synth.ToString().ToLower();
+        
+        // Save imported project
+        await SaveProjectAsync();
+        
+        AddLog($"Project imported: {project.Name}");
+        
+        // Rebuild shaders
+        await RebuildShadersAction();
+    }
     
     private async Task RenderMusic()
     {
