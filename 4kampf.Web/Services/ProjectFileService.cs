@@ -229,4 +229,48 @@ public class ProjectFileService
     {
         return projectName;
     }
+
+    /// <summary>
+    /// Lists all Sointu YAML song files in a project.
+    /// </summary>
+    public async Task<IEnumerable<string>> ListSointuSongsAsync(string projectName)
+    {
+        try
+        {
+            var files = await _storage.ListFilesAsync(projectName, "*.yml");
+            return files.Select(f => Path.GetFileName(f))
+                .Where(name => !string.IsNullOrEmpty(name))
+                .Cast<string>()
+                .OrderBy(name => name);
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "Error listing Sointu songs");
+            return Enumerable.Empty<string>();
+        }
+    }
+
+    /// <summary>
+    /// Deletes a Sointu YAML song file from the project directory.
+    /// </summary>
+    public async Task<bool> DeleteSointuSongAsync(string projectName, string fileName)
+    {
+        try
+        {
+            string filePath = $"{projectName}/{fileName}";
+            bool success = await _storage.DeleteFileAsync(filePath);
+            
+            if (success)
+            {
+                _logger?.LogInformation("Sointu song deleted: {FilePath} ({StorageType})", filePath, _storage.StorageType);
+            }
+            
+            return success;
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "Error deleting Sointu song");
+            return false;
+        }
+    }
 }

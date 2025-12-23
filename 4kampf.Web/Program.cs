@@ -69,6 +69,9 @@ else
     builder.Services.AddSingleton<IStorageService, LocalStorageService>();
 }
 
+// Add HttpClient for fetching example files
+builder.Services.AddHttpClient();
+
 // Register custom services
 builder.Services.AddScoped<WebGLService>();
 builder.Services.AddScoped<WebAudioService>();

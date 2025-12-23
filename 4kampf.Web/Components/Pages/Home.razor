@@ -177,10 +177,15 @@
                    @bind-EnableCamControls="enableCamControls"
                    @bind-EnableEnvelopeSync="enableEnvelopeSync"
                    @bind-SelectedSynth="selectedSynth"
+                   @bind-UseWasmRendering="useWasmRendering"
                    @bind-UsePostProcess="usePostProcess"
                    @bind-UseVertexShader="useVertexShader"
-                   @bind-EnableLooping="enableLooping"
-                   @bind-UseWasmRendering="useWasmRendering" />
+                   @bind-EnableLooping="enableLooping" />
+    
+    <SointuSongManager @ref="songManager"
+                      CurrentProject="@currentProject"
+                      ProjectChanged="OnProjectChanged"
+                      OnLog="AddLog" />
 </div>
 
 @code {
