@@ -83,6 +83,8 @@ builder.Services.AddScoped<SointuWasmService>();
 builder.Services.AddScoped<MusicEnvelopeService>();
 builder.Services.AddSingleton<ProjectFileService>();
 builder.Services.AddSingleton<ProjectImportExportService>();
+builder.Services.AddScoped<GitService>();
+builder.Services.AddScoped<BitBucketService>();
 
 var app = builder.Build();
 

@@ -69,6 +69,8 @@
                                 <li><a class="dropdown-item" href="#" @onclick="ImportProject" @onclick:preventDefault="true">Import from .kml...</a></li>
                                 <li><a class="dropdown-item" href="#" @onclick="ExportProject" @onclick:preventDefault="true">Export to VS...</a></li>
                                 <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" @onclick="ShowGitOperations" @onclick:preventDefault="true">Git Operations...</a></li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="#" @onclick="ManageSointuSong" @onclick:preventDefault="true">Manage Sointu Song...</a></li>
                             </ul>
                         </li>
@@ -227,6 +229,11 @@
                               ProjectImported="OnProjectImported"
                               OnLog="AddLog" />
     
+    <GitOperationsDialog @ref="gitOperationsDialog"
+                        CurrentProject="@currentProject"
+                        OnProjectUpdated="OnProjectUpdated"
+                        OnLog="AddLog" />
+    
     <ColorHelper @ref="colorHelper"
                 OnColorSelected="OnColorSelected"
                 OnReplace="OnColorReplace" />
@@ -239,6 +246,7 @@
     private MusicPlayerComponent? musicPlayer;
     private SointuSongManager? songManager;
     private ProjectImportExportDialog? importExportDialog;
+    private GitOperationsDialog? gitOperationsDialog;
     private Toolbar? toolbar;
     private ColorHelper? colorHelper;
     private RenderingProgressDialog? renderingProgressDialog;
@@ -751,6 +759,53 @@
         else
         {
             AddLog("Import/Export dialog not available");
+        }
+    }
+    
+    private void ShowGitOperations()
+    {
+        if (gitOperationsDialog != null)
+        {
+            gitOperationsDialog.Show();
+        }
+        else
+        {
+            AddLog("Git operations dialog not available");
+        }
+    }
+    
+    private async Task OnProjectUpdated()
+    {
+        // Reload project after Git pull
+        if (currentProject != null)
+        {
+            var projectPath = $"{currentProject.Name}/{currentProject.Name}.json";
+            var reloadedProject = await ProjectFile.LoadProjectAsync(projectPath);
+            if (reloadedProject != null)
+            {
+                currentProject = reloadedProject;
+                currentProjectName = reloadedProject.Name;
+                
+                // Reload shaders
+                vertexShaderCode = currentProject.VertexShader;
+                fragmentShaderCode = currentProject.FragmentShader;
+                postProcessShaderCode = currentProject.PostProcessShader;
+                
+                // Update UI state
+                enableStandardUniforms = currentProject.EnableStandardUniforms;
+                enableCamControls = currentProject.EnableCamControls;
+                enableEnvelopeSync = currentProject.EnableEnvelopeSync;
+                usePostProcess = currentProject.UsePostProcess;
+                useVertexShader = currentProject.UseVertexShader;
+                enableLooping = currentProject.EnableLooping;
+                useWasmRendering = currentProject.UseWasmRendering;
+                selectedSynth = currentProject.Synth.ToString().ToLower();
+                
+                // Rebuild shaders
+                await RebuildShadersAction();
+                
+                AddLog("Project reloaded after Git pull");
+            }
         }
     }
     

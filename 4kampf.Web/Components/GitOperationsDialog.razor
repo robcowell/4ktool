@@ -1,0 +1,717 @@
+@using _4kampf.Web.Services
+@using _4kampf.Shared.Models
+@using System.Net
+@inject GitService Git
+@inject BitBucketService BitBucket
+@inject ProjectFileService ProjectFile
+@rendermode InteractiveServer
+
+<div class="git-dialog @(IsVisible ? "visible" : "")">
+    <div class="dialog-overlay" @onclick="Close"></div>
+    <div class="dialog-content">
+        <div class="dialog-header">
+            <h5>Git Operations</h5>
+            <button class="btn-close" @onclick="Close" type="button">×</button>
+        </div>
+        
+        <div class="dialog-body">
+            @if (CurrentProject == null)
+            {
+                <div class="alert alert-warning">No project selected</div>
+            }
+            else
+            {
+                <!-- Git Status -->
+                <div class="git-section">
+                    <h6>Repository Status</h6>
+                    @if (gitStatus == null)
+                    {
+                        <p class="text-muted">Loading...</p>
+                    }
+                    else if (!gitStatus.IsInitialized)
+                    {
+                        <div class="alert alert-info">
+                            <p>Git repository not initialized for this project.</p>
+                            <button class="btn btn-sm btn-primary" @onclick="InitializeRepo" type="button">
+                                Initialize Repository
+                            </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="status-info">
+                            <p><strong>Branch:</strong> @gitStatus.CurrentBranch</p>
+                            @if (gitStatus.HasRemote)
+                            {
+                                <p><strong>Remote:</strong> @gitStatus.RemoteUrl</p>
+                            }
+                            else
+                            {
+                                <p class="text-warning">No remote configured</p>
+                            }
+                            
+                            @if (gitStatus.IsDirty)
+                            {
+                                <div class="alert alert-warning">
+                                    <strong>Uncommitted changes:</strong>
+                                    <ul class="mb-0 mt-2">
+                                        @foreach (var file in gitStatus.ModifiedFiles)
+                                        {
+                                            <li>@file (modified)</li>
+                                        }
+                                        @foreach (var file in gitStatus.UntrackedFiles)
+                                        {
+                                            <li>@file (new)</li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-success">Working directory clean</div>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <hr />
+
+                <!-- BitBucket Configuration -->
+                <div class="git-section">
+                    <h6>BitBucket Configuration</h6>
+                    <div class="mb-3">
+                        <label class="form-label">Team/Workspace</label>
+                        <input type="text" class="form-control" @bind="bitBucketTeam" 
+                               placeholder="your-team" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Repository Slug</label>
+                        <input type="text" class="form-control" @bind="repoSlug" 
+                               placeholder="project-name" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" @bind="bitBucketUsername" 
+                               placeholder="your-username" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">App Password</label>
+                        <input type="password" class="form-control" @bind="bitBucketPassword" 
+                               placeholder="Enter BitBucket app password" />
+                        <small class="form-text text-muted">
+                            Use a BitBucket App Password (not your account password). 
+                            Create one at: <a href="https://bitbucket.org/account/settings/app-passwords/" target="_blank">BitBucket App Passwords</a>
+                        </small>
+                    </div>
+                    <div class="mb-3">
+                        <button class="btn btn-secondary" @onclick="TestBitBucketConnection" type="button">
+                            Test Connection
+                        </button>
+                        <button class="btn btn-primary" @onclick="CreateBitBucketRepo" type="button">
+                            Create Repository
+                        </button>
+                    </div>
+                    @if (!string.IsNullOrEmpty(bitBucketError))
+                    {
+                        <div class="alert alert-danger">@bitBucketError</div>
+                    }
+                    @if (!string.IsNullOrEmpty(bitBucketSuccess))
+                    {
+                        <div class="alert alert-success">@bitBucketSuccess</div>
+                    }
+                </div>
+
+                <hr />
+
+                <!-- Git Operations -->
+                <div class="git-section">
+                    <h6>Git Operations</h6>
+                    <div class="mb-3">
+                        <label class="form-label">Commit Message</label>
+                        <textarea class="form-control" @bind="commitMessage" rows="3" 
+                                  placeholder="Enter commit message..."></textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-primary" @onclick="CommitChanges" type="button"
+                                disabled="@(gitStatus == null || !gitStatus.IsInitialized || !gitStatus.IsDirty)">
+                            Commit Changes
+                        </button>
+                        <button class="btn btn-success" @onclick="PushChanges" type="button"
+                                disabled="@(gitStatus == null || !gitStatus.IsInitialized || !gitStatus.HasRemote)">
+                            Push to Remote
+                        </button>
+                        <button class="btn btn-info" @onclick="PullChanges" type="button"
+                                disabled="@(gitStatus == null || !gitStatus.IsInitialized || !gitStatus.HasRemote)">
+                            Pull from Remote
+                        </button>
+                        <button class="btn btn-secondary" @onclick="RefreshStatus" type="button">
+                            Refresh Status
+                        </button>
+                    </div>
+                    @if (!string.IsNullOrEmpty(gitError))
+                    {
+                        <div class="alert alert-danger mt-3">@gitError</div>
+                    }
+                    @if (!string.IsNullOrEmpty(gitSuccess))
+                    {
+                        <div class="alert alert-success mt-3">@gitSuccess</div>
+                    }
+                </div>
+            }
+        </div>
+        
+        <div class="dialog-footer">
+            <button class="btn btn-secondary" @onclick="Close" type="button">Close</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Project? CurrentProject { get; set; }
+    [Parameter] public EventCallback OnProjectUpdated { get; set; }
+    [Parameter] public EventCallback<string> OnLog { get; set; }
+    
+    private bool isVisible = false;
+    private GitStatus? gitStatus;
+    private string commitMessage = "";
+    private string bitBucketTeam = "";
+    private string repoSlug = "";
+    private string bitBucketUsername = "";
+    private string bitBucketPassword = "";
+    private string gitError = "";
+    private string gitSuccess = "";
+    private string bitBucketError = "";
+    private string bitBucketSuccess = "";
+    
+    public bool IsVisible
+    {
+        get => isVisible;
+        set
+        {
+            if (isVisible != value)
+            {
+                isVisible = value;
+                if (isVisible)
+                {
+                    _ = LoadStatusAsync();
+                }
+                else
+                {
+                    ClearMessages();
+                }
+            }
+        }
+    }
+    
+    public void Show()
+    {
+        IsVisible = true;
+    }
+    
+    public void Close()
+    {
+        IsVisible = false;
+    }
+    
+    private void ClearMessages()
+    {
+        gitError = "";
+        gitSuccess = "";
+        bitBucketError = "";
+        bitBucketSuccess = "";
+    }
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        if (CurrentProject != null)
+        {
+            // Load BitBucket settings from project
+            if (!string.IsNullOrEmpty(CurrentProject.GitRemote))
+            {
+                // Parse remote URL to extract team and slug
+                var uri = new Uri(CurrentProject.GitRemote);
+                var segments = uri.Segments;
+                if (segments.Length >= 2)
+                {
+                    bitBucketTeam = segments[segments.Length - 2].TrimEnd('/');
+                    repoSlug = segments[segments.Length - 1].Replace(".git", "");
+                }
+            }
+        }
+        
+        await base.OnParametersSetAsync();
+    }
+    
+    private async Task LoadStatusAsync()
+    {
+        if (CurrentProject == null) return;
+        
+        gitStatus = null;
+        gitError = "";
+        
+        try
+        {
+            gitStatus = await Git.GetStatusAsync(CurrentProject.Name);
+            if (!string.IsNullOrEmpty(gitStatus.Error))
+            {
+                gitError = gitStatus.Error;
+            }
+        }
+        catch (Exception ex)
+        {
+            gitError = $"Error loading Git status: {ex.Message}";
+            await LogAsync(gitError);
+        }
+        
+        StateHasChanged();
+    }
+    
+    private async Task RefreshStatus()
+    {
+        await LoadStatusAsync();
+        gitSuccess = "Status refreshed";
+        await Task.Delay(2000);
+        gitSuccess = "";
+        StateHasChanged();
+    }
+    
+    private async Task InitializeRepo()
+    {
+        if (CurrentProject == null) return;
+        
+        gitError = "";
+        gitSuccess = "";
+        
+        try
+        {
+            await LogAsync("Initializing Git repository...");
+            bool success = await Git.InitializeRepositoryAsync(CurrentProject.Name, CurrentProject.GitRemote);
+            
+            if (success)
+            {
+                gitSuccess = "Repository initialized successfully";
+                await LogAsync("Git repository initialized");
+                await LoadStatusAsync();
+            }
+            else
+            {
+                gitError = "Failed to initialize repository";
+                await LogAsync("Failed to initialize Git repository");
+            }
+        }
+        catch (Exception ex)
+        {
+            gitError = $"Error initializing repository: {ex.Message}";
+            await LogAsync($"Error: {ex.Message}");
+        }
+        
+        StateHasChanged();
+    }
+    
+    private async Task CommitChanges()
+    {
+        if (CurrentProject == null || string.IsNullOrWhiteSpace(commitMessage))
+        {
+            gitError = "Please enter a commit message";
+            return;
+        }
+        
+        gitError = "";
+        gitSuccess = "";
+        
+        try
+        {
+            await LogAsync($"Committing changes: {commitMessage}");
+            bool success = await Git.CommitAsync(CurrentProject.Name, commitMessage);
+            
+            if (success)
+            {
+                gitSuccess = "Changes committed successfully";
+                commitMessage = "";
+                await LogAsync("Changes committed");
+                await LoadStatusAsync();
+            }
+            else
+            {
+                gitError = "No changes to commit";
+            }
+        }
+        catch (Exception ex)
+        {
+            gitError = $"Error committing changes: {ex.Message}";
+            await LogAsync($"Error: {ex.Message}");
+        }
+        
+        StateHasChanged();
+    }
+    
+    private async Task PushChanges()
+    {
+        if (CurrentProject == null) return;
+        
+        gitError = "";
+        gitSuccess = "";
+        
+        try
+        {
+            var credentials = GetCredentials();
+            if (credentials == null)
+            {
+                gitError = "BitBucket credentials required. Please configure and test connection first.";
+                return;
+            }
+            
+            await LogAsync("Pushing changes to remote...");
+            var result = await Git.PushAsync(CurrentProject.Name, credentials);
+            
+            if (result.Success)
+            {
+                gitSuccess = result.Message;
+                await LogAsync("Changes pushed successfully");
+                await LoadStatusAsync();
+            }
+            else
+            {
+                gitError = result.Message;
+                await LogAsync($"Push failed: {result.Message}");
+            }
+        }
+        catch (Exception ex)
+        {
+            gitError = $"Error pushing changes: {ex.Message}";
+            await LogAsync($"Error: {ex.Message}");
+        }
+        
+        StateHasChanged();
+    }
+    
+    private async Task PullChanges()
+    {
+        if (CurrentProject == null) return;
+        
+        gitError = "";
+        gitSuccess = "";
+        
+        try
+        {
+            var credentials = GetCredentials();
+            if (credentials == null)
+            {
+                gitError = "BitBucket credentials required. Please configure and test connection first.";
+                return;
+            }
+            
+            await LogAsync("Pulling changes from remote...");
+            var result = await Git.PullAsync(CurrentProject.Name, credentials);
+            
+            if (result.Success)
+            {
+                gitSuccess = result.Message;
+                await LogAsync("Changes pulled successfully");
+                await LoadStatusAsync();
+                
+                // Notify parent to reload project
+                if (OnProjectUpdated.HasDelegate)
+                {
+                    await OnProjectUpdated.InvokeAsync();
+                }
+            }
+            else
+            {
+                gitError = result.Message;
+                await LogAsync($"Pull failed: {result.Message}");
+            }
+        }
+        catch (Exception ex)
+        {
+            gitError = $"Error pulling changes: {ex.Message}";
+            await LogAsync($"Error: {ex.Message}");
+        }
+        
+        StateHasChanged();
+    }
+    
+    private async Task TestBitBucketConnection()
+    {
+        bitBucketError = "";
+        bitBucketSuccess = "";
+        
+        if (string.IsNullOrWhiteSpace(bitBucketTeam) || string.IsNullOrWhiteSpace(bitBucketUsername) || string.IsNullOrWhiteSpace(bitBucketPassword))
+        {
+            bitBucketError = "Please fill in all BitBucket fields";
+            return;
+        }
+        
+        try
+        {
+            var credentials = new NetworkCredential(bitBucketUsername, bitBucketPassword);
+            bool valid = await BitBucket.ValidateCredentialsAsync(bitBucketTeam, credentials);
+            
+            if (valid)
+            {
+                bitBucketSuccess = "Connection successful!";
+                await LogAsync("BitBucket connection test successful");
+            }
+            else
+            {
+                bitBucketError = "Invalid credentials or team name";
+                await LogAsync("BitBucket connection test failed");
+            }
+        }
+        catch (Exception ex)
+        {
+            bitBucketError = $"Error testing connection: {ex.Message}";
+            await LogAsync($"Error: {ex.Message}");
+        }
+        
+        StateHasChanged();
+    }
+    
+    private async Task CreateBitBucketRepo()
+    {
+        if (CurrentProject == null) return;
+        
+        bitBucketError = "";
+        bitBucketSuccess = "";
+        
+        if (string.IsNullOrWhiteSpace(bitBucketTeam) || string.IsNullOrWhiteSpace(repoSlug) || 
+            string.IsNullOrWhiteSpace(bitBucketUsername) || string.IsNullOrWhiteSpace(bitBucketPassword))
+        {
+            bitBucketError = "Please fill in all BitBucket fields";
+            return;
+        }
+        
+        try
+        {
+            var data = new BitBucketData
+            {
+                Team = bitBucketTeam,
+                RepoSlug = repoSlug,
+                UserName = bitBucketUsername
+            };
+            
+            var credentials = new NetworkCredential(bitBucketUsername, bitBucketPassword);
+            await LogAsync($"Creating BitBucket repository: {bitBucketTeam}/{repoSlug}");
+            
+            string? remoteUrl = await BitBucket.CreateRepositoryAsync(data, credentials);
+            
+            if (remoteUrl != null)
+            {
+                // Update project with remote URL
+                CurrentProject.GitRemote = remoteUrl;
+                await ProjectFile.SaveProjectAsync(CurrentProject);
+                
+                // Set remote in Git repository
+                if (gitStatus?.IsInitialized == true)
+                {
+                    await Git.SetRemoteAsync(CurrentProject.Name, remoteUrl);
+                }
+                else
+                {
+                    // Initialize repo with remote
+                    await Git.InitializeRepositoryAsync(CurrentProject.Name, remoteUrl);
+                }
+                
+                bitBucketSuccess = $"Repository created: {remoteUrl}";
+                await LogAsync($"BitBucket repository created: {remoteUrl}");
+                await LoadStatusAsync();
+            }
+            else
+            {
+                bitBucketError = "Failed to create repository. It may already exist or credentials are invalid.";
+                await LogAsync("Failed to create BitBucket repository");
+            }
+        }
+        catch (Exception ex)
+        {
+            bitBucketError = $"Error creating repository: {ex.Message}";
+            await LogAsync($"Error: {ex.Message}");
+        }
+        
+        StateHasChanged();
+    }
+    
+    private NetworkCredential? GetCredentials()
+    {
+        if (string.IsNullOrWhiteSpace(bitBucketUsername) || string.IsNullOrWhiteSpace(bitBucketPassword))
+        {
+            return null;
+        }
+        
+        return new NetworkCredential(bitBucketUsername, bitBucketPassword);
+    }
+    
+    private async Task LogAsync(string message)
+    {
+        if (OnLog.HasDelegate)
+        {
+            await OnLog.InvokeAsync(message);
+        }
+    }
+}
+
+<style>
+.git-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    display: none;
+}
+
+.git-dialog.visible {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dialog-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.dialog-content {
+    position: relative;
+    background: #252526;
+    border: 1px solid #3e3e3e;
+    border-radius: 4px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    z-index: 2001;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #3e3e3e;
+    background: #1e1e1e;
+}
+
+.dialog-header h5 {
+    margin: 0;
+    color: #d4d4d4;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    color: #d4d4d4;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    line-height: 1;
+}
+
+.btn-close:hover {
+    color: #fff;
+    background: #3e3e3e;
+    border-radius: 4px;
+}
+
+.dialog-body {
+    padding: 20px;
+}
+
+.dialog-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #3e3e3e;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.git-section {
+    margin-bottom: 25px;
+}
+
+.git-section h6 {
+    color: #4ec9b0;
+    margin-bottom: 15px;
+}
+
+.status-info p {
+    margin-bottom: 8px;
+    color: #d4d4d4;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.button-group .btn {
+    flex: 1;
+    min-width: 120px;
+}
+
+.alert {
+    border-radius: 4px;
+    padding: 12px;
+    margin-top: 10px;
+}
+
+.alert-warning {
+    background: #5a4a1d;
+    border: 1px solid #8b7a2a;
+    color: #f4c430;
+}
+
+.alert-info {
+    background: #1d3a5a;
+    border: 1px solid #2a5a8b;
+    color: #4ec9b0;
+}
+
+.alert-success {
+    background: #1e4620;
+    border: 1px solid #2d5a2f;
+    color: #4ec9b0;
+}
+
+.alert-danger {
+    background: #5a1d1d;
+    border: 1px solid #8b1a1a;
+    color: #f48771;
+}
+
+.form-label {
+    color: #d4d4d4;
+    margin-bottom: 5px;
+}
+
+.form-control {
+    background: #1e1e1e;
+    border: 1px solid #3e3e3e;
+    color: #d4d4d4;
+}
+
+.form-control:focus {
+    background: #252526;
+    border-color: #007acc;
+    color: #fff;
+}
+
+.form-text {
+    color: #858585;
+    font-size: 0.875rem;
+}
+
+.form-text a {
+    color: #4ec9b0;
+}
+</style>
+
