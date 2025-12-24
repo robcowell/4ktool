@@ -5,11 +5,15 @@ using _4kampf.Web.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure Kestrel to use PORT environment variable (Heroku requirement)
-// Use * instead of 0.0.0.0 to avoid requiring root permissions
+// On Heroku, bind to localhost - the router handles external connections
 var port = Environment.GetEnvironmentVariable("PORT");
 if (!string.IsNullOrEmpty(port))
 {
-    builder.WebHost.UseUrls($"http://*:{port}");
+    // Configure Kestrel programmatically to override appsettings
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.ListenLocalhost(int.Parse(port));
+    });
 }
 
 // Add services to the container.
