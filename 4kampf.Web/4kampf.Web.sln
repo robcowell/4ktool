@@ -2,6 +2,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4kampf.Shared", "..\4kampf.Shared\4kampf.Shared.csproj", "{0018E20E-7BF6-4F29-BDE2-5060B0EBC6CD}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4kampf.Web", "4kampf.Web.csproj", "{0961AD5D-5F98-44E6-88B7-C37CBA5996B7}"
 EndProject
 Global
@@ -10,6 +12,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0018E20E-7BF6-4F29-BDE2-5060B0EBC6CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0018E20E-7BF6-4F29-BDE2-5060B0EBC6CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0018E20E-7BF6-4F29-BDE2-5060B0EBC6CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0018E20E-7BF6-4F29-BDE2-5060B0EBC6CD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0961AD5D-5F98-44E6-88B7-C37CBA5996B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0961AD5D-5F98-44E6-88B7-C37CBA5996B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0961AD5D-5F98-44E6-88B7-C37CBA5996B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
