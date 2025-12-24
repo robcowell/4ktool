@@ -2,5 +2,5 @@
 schema-version = "0.2"
 
 [com.heroku.buildpacks.dotnet]
-solution_file = "4kampf.Web/4kampf.Web.sln"
+solution_file = "4kampf.Web.sln"
 
